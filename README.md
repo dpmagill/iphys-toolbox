@@ -78,7 +78,7 @@ FacePulseRate Toolbox copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>.
 
 For interest in a commercial license, please contact the author.
 
-Note: the author claims no affilation with iPhys Toolbox.
+Note: the author claims no affilation with iPhys Toolbox, which is the property of its respective owners.
 
 ### GNU General Public License, Version 2
 
