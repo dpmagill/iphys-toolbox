@@ -99,7 +99,7 @@ For third-party copyright notices, see FacePulseRate/License/License.txt.
 
 FacePulseRate is only possible through the use of third-party open-source software. The author is grateful for its use.
 
-See an acknowledgement of third-party software in file 'FacePulseRate/License/Third-Party Copyright Acknowledgements.txt'.
+See an acknowledgement of third-party software in file 'FacePulseRate/License/Third-Party Software Acknowledgements.txt'.
 
 ## References
 
