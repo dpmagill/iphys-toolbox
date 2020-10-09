@@ -74,16 +74,14 @@ The following Matlab toolboxes are also required. Note that these toolboxes are 
 
 ## License and Third-Party Copyright Notices
 
-FacePulseRate Toolbox and this script copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>.
+FacePulseRate Toolbox copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>.
 
 For interest in a commercial license, please contact the author.
 
 ### GNU General Public License, Version 2
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, see <https://www.gnu.org/licenses>.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
-You should have received a copy of the GNU General Public License along with this program; if not, see <https://www.gnu.org/licenses>.
 In addition, as a special exception, the copyright holder of FacePulseRate gives you permission to combine FacePulseRate with free software programs or libraries that are released under the GNU LGPL and with code included in the standard release of MATLAB under the appropriate MATLAB license (or modified versions of such code, with unchanged license). You may copy and distribute such a system following the terms of the GNU GPL for FacePulseRate and the licenses of the other code concerned.
 
 ### RAIL License      
