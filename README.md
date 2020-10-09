@@ -92,8 +92,7 @@ In addition, as a special exception, the copyright holder of FacePulseRate gives
 
 ### RAIL License      
 
-In addition to the aforementioned GNU General Public License, this program is licensed under the terms of the Responsible AI License (RAIL).
-For third-party copyright notices, see FacePulseRate/License/License.txt.
+In addition to the aforementioned GNU General Public License, this program is licensed under the terms of the Responsible AI License (RAIL). 
 
 ### Third-Party Software Acknowledgements
 
