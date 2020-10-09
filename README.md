@@ -74,9 +74,9 @@ The following Matlab toolboxes are also required. Note that these toolboxes are 
 
 ## Implementation
 
-For a detailed discussion on the implmentation of FacePulseRate, see file FacePulseRate.m. Addition discussion is included in the helper files to FacePulseRate.m.
+For a detailed discussion on the implmentation of FacePulseRate, see file FacePulseRate.m. Additional discussion is included in the helper files to FacePulseRate.m.
 
-## License and Third-Party Copyright Notices
+## License and Third-Party Software Acknowledgements
 
 FacePulseRate Toolbox copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>.
 
@@ -99,7 +99,7 @@ For third-party copyright notices, see FacePulseRate/License/License.txt.
 
 FacePulseRate is only possible through the use of third-party open-source software. The author is grateful for its use.
 
-See an acknowledgement of third-party software in file 'FacePulseRate/License/Third-Party Copyright Acknowledgements.txt'.
+See an acknowledgement of third-party software in file 'FacePulseRate/License/Third-Party Software Acknowledgements.txt'.
 
 ## References
 
