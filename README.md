@@ -8,7 +8,7 @@ Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from
 - Separate versions of each of the four algorithms while controlled for variation in luminance across frames are provided (see Madan et al., 2018). 
 - Provides verification of ROI placement and skin-segmentation by providing an annotated output video. Arguments are available to make adjustments to ROI placement and skin-segmentation based upon inspection of the output video
 
-## Examples ##
+## Examples and Detailed Description ##
 
 See Example_Script.mlx.
 
