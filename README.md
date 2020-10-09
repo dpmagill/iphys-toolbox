@@ -74,7 +74,7 @@ The following Matlab toolboxes are also required. Note that these toolboxes are 
 
 ## Implementation
 
-For a detailed discussion on the implmentation of FacePulseRate, see file FacePulseRate.m. Addition discussion is included in the helper files to FacePulseRate.m.
+For a detailed discussion on the implmentation of FacePulseRate, see file FacePulseRate.m. Additional discussion is included in the helper files to FacePulseRate.m.
 
 ## License and Third-Party Copyright Notices
 
