@@ -132,6 +132,46 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       inform modifications to the arguments, see the description in function WriteFaceVideo.
 %
 %
+%   System Requirements
+%   -------------------
+%
+%       - 64-bit Windows 
+%
+%       Currently, 64-bit macOS has not been implemented and tested.
+%
+%       Note on macOS: 
+%
+%       macOS can be supported if macOS versions of ffmpeg and ffprobe (see folder 
+%       FacePulseRate/Funs/General/ffmpeg/mac) are included. Currently, they are not. These 
+%       versions should be compiled under flags that permit compatibility with the LGPL license
+%       rather than the GPL license. Otherwise, FacePulseRate must be released under the GPL
+%       license. Once these files are included, the validation check in function  
+%       ValidateAndConfigure_Validate should be modified to include macOS architecture.
+%
+%       Currently, compiled versions of functions are only provided for 64-bit Windows. 
+%       FacePulseRate is designed to work without compiled versions of functions, but it will be
+%       slower.
+%
+%
+%   Required Software
+%   -----------------
+%
+%       - Matlab. FacePulseRate has been tested on Matlab versions 2020a and 2020b.
+%
+%       The following Matlab toolboxes are also required. Note that these toolboxes are licensed by 
+%       Matlab and are not free software. These are the toolbox names as of Matlab release 2020b; 
+%       toolboxes are occassionally renamed. 
+%
+%       - Statistics and Machine Learning Toolbox: Various functions.
+%       - Computer Vision System Toolbox:          Face-detection operations and video reading.
+%       - Image Processing Toolbox:                Skin-segmentation and skin-detection operations.
+%       - Signal Processing Toolbox:               Butterworth filtering and periodogram for pulse 
+%                                                  rate operations.
+%       - DSP System Toolbox:                      Filtering operaions for pulse rate operations. 
+%       - Optimization Toolbox:                    Training RGB probability for skin-detection 
+%                                                  operations.
+%
+%
 %   Example Script
 %   --------------
 %
@@ -603,45 +643,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       - csv               = TableByFrame written to csv file.
 %       - csv               = TableByWindow written to csv file.
 %       - Output video      = mp4 media file with pulse rate and diagnostic annotations.      
-%
-%
-%   Supported Platforms
-%   -------------------
-%
-%       - 64-bit Windows 
-%
-%       Currently, 64-bit macOS has not been implemented and tested.
-%
-%       Note on macOS: 
-%
-%       macOS can be supported if macOS versions of ffmpeg and ffprobe (see folder 
-%       FacePulseRate/Funs/General/ffmpeg/mac) are included. Currently, they are not. These 
-%       versions should be compiled under flags that permit compatibility with the LGPL license
-%       rather than the GPL license. Otherwise, FacePulseRate will be locked into using the GPL
-%       license. Once these files are included, the validation check in function  
-%       ValidateAndConfigure_Validate should be modified to include macOS architecture.
-%
-%       Currently, compiled versions of functions are only provided for 64-bit Windows. 
-%       FacePulseRate is designed to work without compiled versions of functions, but it will be
-%       slower.
-%
-%
-%   Matlab Toolboxes Required
-%   -------------------------
-%
-%       Note: These are the toolbox names as of Matlab release 2020b. Toolbox names occassionally 
-%       change. 
-%
-%       - Statistics and Machine Learning Toolbox: Various functions.
-%       - Computer Vision System Toolbox:          Face-detection operations and video reading.
-%       - Image Processing Toolbox:                Skin-segmentation and skin-detection operations.
-%       - Signal Processing Toolbox:               Butterworth filtering and periodogram for pulse 
-%                                                  rate operations.
-%       - DSP System Toolbox:                      Filtering operaions for pulse rate operations. 
-%       - Optimization Toolbox:                    Training RGB probability for skin-detection 
-%                                                  operations.
 %        
-%
 %
 %   Input Video Requirements and Recommendations
 %   --------------------------------------------
@@ -652,7 +654,6 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       - .mp4
 %       - .avi
-%       - .mov (macOS platform only)
 %
 %       Other file extensions may be supported. Use VideoReader.getFileFormats() to return a list 
 %       of supported file extensions. 
@@ -739,7 +740,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %   For Faster Operation
 %   --------------------
 %
-%       Faster read performance will occur when argument StartTime is less than 5% the length of 
+%       Faster read performance will occur when argument StartTime is less than 10% the length of 
 %       the full video based on video-reading implementations.
 %
 %
@@ -852,7 +853,12 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. 
 %
-%       For interest in commercial licensing, please contact the author.
+%       For commercial licensing, please contact the author.
+%
+%       Note: the author claims no affilation with iPhys Toolbox, which is the property of its 
+%       respective owners.
+% 
+%       -- GNU General Public License, Version 2 --
 %
 %       This program is free software: you can redistribute it and/or modify it under the terms of 
 %       the GNU General Public License, version 2, as published by the Free Software Foundation.
@@ -871,7 +877,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       You may copy and distribute such a system following the terms of the GNU GPL for 
 %       FacePulseRate and the licenses of the other code concerned.
 %       
-%       RAIL license:
+%       -- RAIL License --
 %              
 %       In addition to the aforementioned GNU General Public License, this program is licensed 
 %       under the terms of the Responsible AI License (RAIL).
@@ -892,7 +898,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       (2019). iphys: An open non-contact imaging-based physiological measurement toolbox. In 2019      
 %       Annual International Conference of the IEEE Engineering in Medicine and Biology Society  
 %       (EMBC), pp. 6521-6524. These files, as well as the licenses for iPhys Toolbox, can be found
-%       in folder 'FacePulseRate/Funs/PulseRate/iPhysToolbox_modified'.
+%       in folder '.../FacePulseRate/Funs/PulseRate/iPhysToolbox_modified'.
 %
 %           CHROM_DEHAAN_modified.m ("Chrominance" method). See discussion in De Haan, G., &     
 %           Jeanne, V. (2013). Robust pulse rate from chrominance-based rPPG. IEEE Transactions on   
@@ -934,7 +940,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       The following Viola-Jones face-detection files were accessed from OpenCV (Open Source  
 %       Computer Vision Library) copyright (c) 2020, OpenCV team. See files, which also contain the
 %       respective licences, in
-%       .../FacePulseRate/Funs/ROI_Means/Detect_Algs/Face/Open_CV_Viola-Jones.
+%       '.../FacePulseRate/Funs/ROI_Means/Detect_Algs/Face/Open_CV_Viola-Jones'.
 %          
 %           lbpcascade_frontalface_improved.xml. Copyright (c) 2017, Puttemans Steven, Can Ergun    
 %           and Toon Goedeme, all rights reserved. See discussion in Puttemans, S., Can, E., &  
@@ -990,9 +996,9 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       ffmpeg.exe and ffprobe.exe are used by FacePulseRate as unmodified binary files. These 
 %       files are from the FFmpeg project, which licenses these files under LGPLv2.1. These binary 
-%       files can be found in FacePulseRate/Funs/General/ffmpeg. In accordance with the license, 
-%       the source code for the files is included with the distribution of FacePulseRate. The 
-%       source code can be found in FacePulseRate/Funs/General/ffmpeg.
+%       files can be found in '.../FacePulseRate/Funs/General/ffmpeg'. In accordance with the  
+%       license, the source code for the files is included with the distribution of FacePulseRate.  
+%       The source code can also be found in '.../FacePulseRate/Funs/General/ffmpeg'.
 %
 %       getFrameTimestamps.m was adapted from file videoframets.m (v0.1), copyright (c) David  
 %       Bulkin, January, 2017. Accessed from the Matlab Central File Exchange.
@@ -1028,7 +1034,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       assignment operations are conducted after the arguments block. These additional operations 
 %       are conducted by function ValidateAndConfigure. If operations to assign a default value  
 %       cannot be conducted by the arguments block, they are flagged by -1; defaults assigned this
-%       flag will be reassigned by function ValidateAndConfigure.
+%       flag will be reassigned by functions called by function ValidateAndConfigure.
 %
 %     Notes regarding general behavior of the arguments block:
 %
@@ -1342,6 +1348,10 @@ end
 % - Skin-detection algorithm diagnositics
 % - Skin-segmentation mask
 
+%Function WriteFaceVideo provides a description of how the annotations can be used to fix ROI
+%placement and skin segmentation. Specifically, it provides recommendations on how input arguments
+%can be modified to correct ROI placement and skin segmentation.
+
 %If writing to video is enabled
 if OutputConfig.WriteVideoTF 
     
@@ -1361,4 +1371,4 @@ end
 FacePulseRate_CompletionMessage(VideoReadConfig, FunctionStartTime);
 
 
-end  %end function
+end %end function
