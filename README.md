@@ -1,3 +1,4 @@
+
 # FacePulseRate: A Suite of Features to Use with iPhys Toolbox
 
 Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). Additionally, FacePulseRate ...
