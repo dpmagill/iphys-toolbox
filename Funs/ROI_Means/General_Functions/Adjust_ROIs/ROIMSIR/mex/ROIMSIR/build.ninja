@@ -1,0 +1,61 @@
+# CompilerName=mingw64
+# Mode=optim
+ninja_required_version = 1.3
+
+# Basic folders
+root = .
+builddir = $root/build/win64
+matlabdir = C:/Program Files/MATLAB/R2020b
+startdir = G:/My Drive/Articles/topics/physio/Articles Chapters/Measures/Autonomic NS (GSR HR)/HR/HR webcam/McDuff Github/My work/FacePulseRate
+
+# Toolchain information
+cc = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+cxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+linker = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+linkerxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+
+cflags =  -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ROIMSIR" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ROIMSIR\interface" -I "C:\Program Files\MATLAB\R2020b\extern\include" -I "." -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1  
+
+cxxflags =  -c -fexceptions -fno-omit-frame-pointer -std=c++11 -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c++11 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ROIMSIR" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ROIMSIR\interface" -I "C:\Program Files\MATLAB\R2020b\extern\include" -I "." -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1  
+
+ldflags =  -m64 -Wl,--no-undefined -shared -static -L"C:\Program Files\MATLAB\R2020b\extern\lib\win64\mingw64" -llibmx -llibmex -llibmat -lm -llibmwlapack -llibmwblas -o "ROIMSIR_mex.mexw64" -llibemlrt -llibcovrt -llibut -llibmwmathutil -Ofast -Wl,--version-script,ROIMSIR_mex.map
+
+# Build Rules
+rule cc
+    command = $cc $cflags $in -o $out
+
+rule cxx
+    command = $cxx $cxxflags $in -o $out
+
+rule link
+    command = $linker @$out.rsp $ldflags
+    rspfile = $out.rsp
+    rspfile_content = $in
+
+rule linkxx
+    command = $linkerxx $in $ldflags
+
+# Build
+build $builddir/ROIMSIR_data.o : cc $root/ROIMSIR_data.c
+build $builddir/rt_nonfinite.o : cc $root/rt_nonfinite.c
+build $builddir/ROIMSIR_initialize.o : cc $root/ROIMSIR_initialize.c
+build $builddir/ROIMSIR_terminate.o : cc $root/ROIMSIR_terminate.c
+build $builddir/colon.o : cc $root/colon.c
+build $builddir/sprintf.o : cc $root/sprintf.c
+build $builddir/any.o : cc $root/any.c
+build $builddir/repmat.o : cc $root/repmat.c
+build $builddir/allOrAny.o : cc $root/allOrAny.c
+build $builddir/movmedian.o : cc $root/movmedian.c
+build $builddir/SortedBuffer.o : cc $root/SortedBuffer.c
+build $builddir/_coder_ROIMSIR_api.o : cc $root/interface/_coder_ROIMSIR_api.c
+build $builddir/_coder_ROIMSIR_mex.o : cc $root/interface/_coder_ROIMSIR_mex.c
+build $builddir/ROIMSIR.o : cc $root/ROIMSIR.c
+build $builddir/sort.o : cc $root/sort.c
+build $builddir/sortIdx.o : cc $root/sortIdx.c
+build $builddir/ROIMSIR_emxutil.o : cc $root/ROIMSIR_emxutil.c
+build $builddir/ROIMSIR_mexutil.o : cc $root/ROIMSIR_mexutil.c
+build $builddir/_coder_ROIMSIR_info.o : cc $root/interface/_coder_ROIMSIR_info.c
+build $builddir/c_mexapi_version.o : cc $matlabdir/extern/version/c_mexapi_version.c
+
+# Link
+build $root\ROIMSIR_mex.mexw64 : link $builddir/ROIMSIR_data.o $builddir/rt_nonfinite.o $builddir/ROIMSIR_initialize.o $builddir/ROIMSIR_terminate.o $builddir/colon.o $builddir/sprintf.o $builddir/any.o $builddir/repmat.o $builddir/allOrAny.o $builddir/movmedian.o $builddir/SortedBuffer.o $builddir/_coder_ROIMSIR_api.o $builddir/_coder_ROIMSIR_mex.o $builddir/ROIMSIR.o $builddir/sort.o $builddir/sortIdx.o $builddir/ROIMSIR_emxutil.o $builddir/ROIMSIR_mexutil.o $builddir/_coder_ROIMSIR_info.o $builddir/c_mexapi_version.o 

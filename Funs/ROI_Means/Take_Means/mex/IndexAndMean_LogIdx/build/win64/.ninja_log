@@ -1,0 +1,13 @@
+# ninja log v5
+33	839	6201106830970000	build/win64/rt_nonfinite.o	bdf483f09226d99c
+80	1690	6201106835580000	build/win64/_coder_IndexAndMean_LogIdx_info.o	f1b40ecfdd1092bb
+15	1917	6201106837250000	build/win64/IndexAndMean_LogIdx_data.o	d7256ab8c1fff424
+45	2335	6201106837890000	build/win64/IndexAndMean_LogIdx_mexutil.o	8af1c6b22761efe4
+24	2715	6201106838820000	build/win64/IndexAndMean_LogIdx_initialize.o	c73fb8692cddcaf
+62	3208	6201106839600000	build/win64/_coder_IndexAndMean_LogIdx_mex.o	53d4cc360fafca71
+1683	4419	6201106845020000	build/win64/_coder_IndexAndMean_LogIdx_api.o	cbc075a113b669ed
+1911	4613	6201106854080000	build/win64/IndexAndMean_LogIdx.o	d58c0134ba1efb0f
+2325	4777	6201106851610000	build/win64/c_mexapi_version.o	3cad3bb99e9cec89
+2708	4916	6201106861510000	build/win64/IndexAndMean_LogIdx_emxutil.o	ac530dbde9b50de7
+3201	5118	6201106864480000	build/win64/IndexAndMean_LogIdx_terminate.o	5d0927971c28f704
+5291	7073	6201106893070000	IndexAndMean_LogIdx_mex.mexw64	2ed7c459dd9cd015

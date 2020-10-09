@@ -1,0 +1,59 @@
+# CompilerName=mingw64
+# Mode=optim
+ninja_required_version = 1.3
+
+# Basic folders
+root = .
+builddir = $root/build/win64
+matlabdir = C:/Program Files/MATLAB/R2020a
+startdir = G:/My Drive/Articles/topics/physio/Articles Chapters/Measures/Autonomic NS (GSR HR)/HR/HR webcam/McDuff Github/My work/FacePulseRate
+
+# Toolchain information
+cc = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+cxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+linker = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+linkerxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+
+cflags =  -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ROIMeans_FirstRead_CollectSkinColorSamples" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "C:\Program Files\MATLAB\R2020a\extern\include" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ROIMeans_FirstRead_CollectSkinColorSamples\interface" -I "." -DMODEL=ROIMeans_FirstRead_CollectSkinColorSamples_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp 
+
+cxxflags =  -c -fexceptions -fno-omit-frame-pointer -std=c++11 -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c++11 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ROIMeans_FirstRead_CollectSkinColorSamples" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "C:\Program Files\MATLAB\R2020a\extern\include" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ROIMeans_FirstRead_CollectSkinColorSamples\interface" -I "." -DMODEL=ROIMeans_FirstRead_CollectSkinColorSamples_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp 
+
+ldflags =  -m64 -Wl,--no-undefined -shared -static -L"C:\Program Files\MATLAB\R2020a\extern\lib\win64\mingw64" -llibmx -llibmex -llibmat -lm -llibmwlapack -llibmwblas -o "ROIMeans_FirstRead_CollectSkinColorSamples_mex.mexw64" -llibemlrt -llibcovrt -llibut -llibmwmathutil -Ofast -fopenmp "$matlabdir\extern\lib\win64\mingw64\libmwbwpackctbb.lib" "$matlabdir\extern\lib\win64\mingw64\libmwbwunpackctbb.lib" "$matlabdir\extern\lib\win64\mingw64\libmwmorphop_packed.lib" "$matlabdir\extern\lib\win64\mingw64\libmwmorphop_ipp.lib" -Wl,--version-script,ROIMeans_FirstRead_CollectSkinColorSamples_mex.map
+
+# Build Rules
+rule cc
+    command = $cc $cflags $in -o $out
+
+rule cxx
+    command = $cxx $cxxflags $in -o $out
+
+rule link
+    command = $linker @$out.rsp $ldflags
+    rspfile = $out.rsp
+    rspfile_content = $in
+
+rule linkxx
+    command = $linkerxx $in $ldflags
+
+# Build
+build $builddir/rt_nonfinite.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/rt_nonfinite.c
+build $builddir/ROIMeans_FirstRead_CollectSkinColorSamples_mexutil.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/ROIMeans_FirstRead_CollectSkinColorSamples_mexutil.c
+build $builddir/ROIMeans_FirstRead_CollectSkinColorSamples_data.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/ROIMeans_FirstRead_CollectSkinColorSamples_data.c
+build $builddir/ROIMeans_FirstRead_CollectSkinColorSamples_initialize.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/ROIMeans_FirstRead_CollectSkinColorSamples_initialize.c
+build $builddir/ROIMeans_FirstRead_CollectSkinColorSamples_terminate.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/ROIMeans_FirstRead_CollectSkinColorSamples_terminate.c
+build $builddir/ROIMeans_FirstRead_CollectSkinColorSamples.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/ROIMeans_FirstRead_CollectSkinColorSamples.c
+build $builddir/SkinSegmentMask_Threshold.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/SkinSegmentMask_Threshold.c
+build $builddir/SkinSegmentMask_Threshold_Colors.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/SkinSegmentMask_Threshold_Colors.c
+build $builddir/imdilate.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/imdilate.c
+build $builddir/imerode.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/imerode.c
+build $builddir/SkinSegmentMask_MorphClose.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/SkinSegmentMask_MorphClose.c
+build $builddir/setPackedFillBits.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/setPackedFillBits.c
+build $builddir/bwconncomp.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/bwconncomp.c
+build $builddir/_coder_ROIMeans_FirstRead_CollectSkinColorSamples_api.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/interface/_coder_ROIMeans_FirstRead_CollectSkinColorSamples_api.c
+build $builddir/_coder_ROIMeans_FirstRead_CollectSkinColorSamples_mex.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/interface/_coder_ROIMeans_FirstRead_CollectSkinColorSamples_mex.c
+build $builddir/ROIMeans_FirstRead_CollectSkinColorSamples_emxutil.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/ROIMeans_FirstRead_CollectSkinColorSamples_emxutil.c
+build $builddir/_coder_ROIMeans_FirstRead_CollectSkinColorSamples_info.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ROIMeans_FirstRead_CollectSkinColorSamples/interface/_coder_ROIMeans_FirstRead_CollectSkinColorSamples_info.c
+build $builddir/c_mexapi_version.o : cc C$:/Program$ Files/MATLAB/R2020a/extern/version/c_mexapi_version.c
+
+# Link
+build $root\ROIMeans_FirstRead_CollectSkinColorSamples_mex.mexw64 : link $builddir\rt_nonfinite.o $builddir\ROIMeans_FirstRead_CollectSkinColorSamples_mexutil.o $builddir\ROIMeans_FirstRead_CollectSkinColorSamples_data.o $builddir\ROIMeans_FirstRead_CollectSkinColorSamples_initialize.o $builddir\ROIMeans_FirstRead_CollectSkinColorSamples_terminate.o $builddir\ROIMeans_FirstRead_CollectSkinColorSamples.o $builddir\SkinSegmentMask_Threshold.o $builddir\SkinSegmentMask_Threshold_Colors.o $builddir\imdilate.o $builddir\imerode.o $builddir\SkinSegmentMask_MorphClose.o $builddir\setPackedFillBits.o $builddir\bwconncomp.o $builddir\_coder_ROIMeans_FirstRead_CollectSkinColorSamples_api.o $builddir\_coder_ROIMeans_FirstRead_CollectSkinColorSamples_mex.o $builddir\ROIMeans_FirstRead_CollectSkinColorSamples_emxutil.o $builddir\_coder_ROIMeans_FirstRead_CollectSkinColorSamples_info.o $builddir\c_mexapi_version.o 

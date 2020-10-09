@@ -1,0 +1,52 @@
+# CompilerName=mingw64
+# Mode=optim
+ninja_required_version = 1.3
+
+# Basic folders
+root = .
+builddir = $root/build/win64
+matlabdir = C:/Program Files/MATLAB/R2020a
+startdir = G:/My Drive/Articles/topics/physio/Articles Chapters/Measures/Autonomic NS (GSR HR)/HR/HR webcam/McDuff Github/My work/FacePulseRate
+
+# Toolchain information
+cc = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+cxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+linker = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+linkerxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+
+cflags =  -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ConfirmSkinPresent_SkinDetectReject" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ConfirmSkinPresent_SkinDetectReject\interface" -I "C:\Program Files\MATLAB\R2020a\extern\include" -I "." -DMODEL=ConfirmSkinPresent_SkinDetectReject_mex -D__USE_MINGW_ANSI_STDIO=1  
+
+cxxflags =  -c -fexceptions -fno-omit-frame-pointer -std=c++11 -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c++11 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ConfirmSkinPresent_SkinDetectReject" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\ConfirmSkinPresent_SkinDetectReject\interface" -I "C:\Program Files\MATLAB\R2020a\extern\include" -I "." -DMODEL=ConfirmSkinPresent_SkinDetectReject_mex -D__USE_MINGW_ANSI_STDIO=1  
+
+ldflags =  -m64 -Wl,--no-undefined -shared -static -L"C:\Program Files\MATLAB\R2020a\extern\lib\win64\mingw64" -llibmx -llibmex -llibmat -lm -llibmwlapack -llibmwblas -o "ConfirmSkinPresent_SkinDetectReject_mex.mexw64" -llibemlrt -llibcovrt -llibut -llibmwmathutil -Ofast -Wl,--version-script,ConfirmSkinPresent_SkinDetectReject_mex.map
+
+# Build Rules
+rule cc
+    command = $cc $cflags $in -o $out
+
+rule cxx
+    command = $cxx $cxxflags $in -o $out
+
+rule link
+    command = $linker @$out.rsp $ldflags
+    rspfile = $out.rsp
+    rspfile_content = $in
+
+rule linkxx
+    command = $linkerxx $in $ldflags
+
+# Build
+build $builddir/rt_nonfinite.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/rt_nonfinite.c
+build $builddir/ConfirmSkinPresent_SkinDetectReject_data.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/ConfirmSkinPresent_SkinDetectReject_data.c
+build $builddir/ConfirmSkinPresent_SkinDetectReject_initialize.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/ConfirmSkinPresent_SkinDetectReject_initialize.c
+build $builddir/ConfirmSkinPresent_SkinDetectReject_terminate.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/ConfirmSkinPresent_SkinDetectReject_terminate.c
+build $builddir/ConfirmSkinPresent_SkinDetectReject.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/ConfirmSkinPresent_SkinDetectReject.c
+build $builddir/bwconncomp.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/bwconncomp.c
+build $builddir/_coder_ConfirmSkinPresent_SkinDetectReject_api.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/interface/_coder_ConfirmSkinPresent_SkinDetectReject_api.c
+build $builddir/_coder_ConfirmSkinPresent_SkinDetectReject_mex.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/interface/_coder_ConfirmSkinPresent_SkinDetectReject_mex.c
+build $builddir/ConfirmSkinPresent_SkinDetectReject_emxutil.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/ConfirmSkinPresent_SkinDetectReject_emxutil.c
+build $builddir/_coder_ConfirmSkinPresent_SkinDetectReject_info.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/ConfirmSkinPresent_SkinDetectReject/interface/_coder_ConfirmSkinPresent_SkinDetectReject_info.c
+build $builddir/c_mexapi_version.o : cc C$:/Program$ Files/MATLAB/R2020a/extern/version/c_mexapi_version.c
+
+# Link
+build $root\ConfirmSkinPresent_SkinDetectReject_mex.mexw64 : link $builddir\rt_nonfinite.o $builddir\ConfirmSkinPresent_SkinDetectReject_data.o $builddir\ConfirmSkinPresent_SkinDetectReject_initialize.o $builddir\ConfirmSkinPresent_SkinDetectReject_terminate.o $builddir\ConfirmSkinPresent_SkinDetectReject.o $builddir\bwconncomp.o $builddir\_coder_ConfirmSkinPresent_SkinDetectReject_api.o $builddir\_coder_ConfirmSkinPresent_SkinDetectReject_mex.o $builddir\ConfirmSkinPresent_SkinDetectReject_emxutil.o $builddir\_coder_ConfirmSkinPresent_SkinDetectReject_info.o $builddir\c_mexapi_version.o 

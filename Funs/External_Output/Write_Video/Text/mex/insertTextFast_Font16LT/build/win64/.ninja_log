@@ -1,0 +1,13 @@
+# ninja log v5
+14	450	6196748696070000	build/win64/rt_nonfinite.o	573b8530031ffaa
+20	1367	6196748698670000	build/win64/insertTextFast_Font16LT_data.o	365c87fcbfd76255
+8	1586	6196748699640000	build/win64/insertTextFast_Font16LT_terminate.o	2a1175cb12062156
+27	1895	6196748699650000	build/win64/insertTextFast_Font16LT_initialize.o	9fd4e9620a289676
+40	2286	6196748704440000	build/win64/_coder_insertTextFast_Font16LT_api.o	1a7dba8aa9b5f6b
+34	2549	6196748704420000	build/win64/insertTextFast_Font16LT.o	f23a7b69ff8cc350
+1361	2838	6196748714030000	build/win64/insertTextFast_Font16LT_emxutil.o	60aea4ddb76792b6
+1580	3091	6196748712330000	build/win64/_coder_insertTextFast_Font16LT_mex.o	56c9977c66443ee4
+1884	3303	6196748714070000	build/win64/c_mexapi_version.o	535762ee83be1271
+2281	3456	6196748723650000	build/win64/insertTextNoValidation.o	d5dad49f1321e84a
+2543	3616	6196748720910000	build/win64/_coder_insertTextFast_Font16LT_info.o	d167f314487f241f
+3810	4689	6196748738090000	insertTextFast_Font16LT_mex.mexw64	1c327634de2d3609

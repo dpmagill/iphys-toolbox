@@ -1,0 +1,18 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		ROIResize_initialize;
+		ROIResize_terminate;
+		ROIResize_atexit;
+		ROIResize;
+		emxEnsureCapacity_int16_T;
+		emxInit_int16_T;
+		emxFree_int16_T;
+		emxInit_int32_T;
+		emxFree_int32_T;
+		emxEnsureCapacity_int32_T;
+	local:
+		*;
+};

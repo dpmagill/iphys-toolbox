@@ -1,0 +1,15 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		ROIAdjustIfExceedsFrameDims_initialize;
+		ROIAdjustIfExceedsFrameDims_terminate;
+		ROIAdjustIfExceedsFrameDims_atexit;
+		ROIAdjustIfExceedsFrameDims;
+		emxInit_int16_T;
+		emxFree_int16_T;
+		emxEnsureCapacity_int16_T;
+	local:
+		*;
+};

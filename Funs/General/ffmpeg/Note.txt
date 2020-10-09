@@ -1,0 +1,2 @@
+ffmpeg executables should be compiled using flags that permit licensing under the LGPL license 
+rather than the GPL license. Otherwise, FacePulseRate can only be released under the GPL.

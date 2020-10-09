@@ -1,0 +1,5 @@
+The build files and binary files were downloaded from https://github.com/BtbN/FFmpeg-Builds/releases
+
+The build options excluded programs licensed under the GPL version 2 and the GPL version 3.
+
+

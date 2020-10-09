@@ -1,0 +1,122 @@
+[
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   ROIMSIR_data.c -o build/win64/ROIMSIR_data.o",
+    "file": "ROIMSIR_data.c",
+    "output": "build/win64/ROIMSIR_data.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   rt_nonfinite.c -o build/win64/rt_nonfinite.o",
+    "file": "rt_nonfinite.c",
+    "output": "build/win64/rt_nonfinite.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   ROIMSIR_initialize.c -o build/win64/ROIMSIR_initialize.o",
+    "file": "ROIMSIR_initialize.c",
+    "output": "build/win64/ROIMSIR_initialize.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   ROIMSIR_terminate.c -o build/win64/ROIMSIR_terminate.o",
+    "file": "ROIMSIR_terminate.c",
+    "output": "build/win64/ROIMSIR_terminate.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   colon.c -o build/win64/colon.o",
+    "file": "colon.c",
+    "output": "build/win64/colon.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   sprintf.c -o build/win64/sprintf.o",
+    "file": "sprintf.c",
+    "output": "build/win64/sprintf.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   any.c -o build/win64/any.o",
+    "file": "any.c",
+    "output": "build/win64/any.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   repmat.c -o build/win64/repmat.o",
+    "file": "repmat.c",
+    "output": "build/win64/repmat.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   allOrAny.c -o build/win64/allOrAny.o",
+    "file": "allOrAny.c",
+    "output": "build/win64/allOrAny.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   movmedian.c -o build/win64/movmedian.o",
+    "file": "movmedian.c",
+    "output": "build/win64/movmedian.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   SortedBuffer.c -o build/win64/SortedBuffer.o",
+    "file": "SortedBuffer.c",
+    "output": "build/win64/SortedBuffer.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   interface/_coder_ROIMSIR_api.c -o build/win64/_coder_ROIMSIR_api.o",
+    "file": "interface/_coder_ROIMSIR_api.c",
+    "output": "build/win64/_coder_ROIMSIR_api.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   interface/_coder_ROIMSIR_mex.c -o build/win64/_coder_ROIMSIR_mex.o",
+    "file": "interface/_coder_ROIMSIR_mex.c",
+    "output": "build/win64/_coder_ROIMSIR_mex.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   ROIMSIR.c -o build/win64/ROIMSIR.o",
+    "file": "ROIMSIR.c",
+    "output": "build/win64/ROIMSIR.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   sort.c -o build/win64/sort.o",
+    "file": "sort.c",
+    "output": "build/win64/sort.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   sortIdx.c -o build/win64/sortIdx.o",
+    "file": "sortIdx.c",
+    "output": "build/win64/sortIdx.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   ROIMSIR_emxutil.c -o build/win64/ROIMSIR_emxutil.o",
+    "file": "ROIMSIR_emxutil.c",
+    "output": "build/win64/ROIMSIR_emxutil.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   ROIMSIR_mexutil.c -o build/win64/ROIMSIR_mexutil.o",
+    "file": "ROIMSIR_mexutil.c",
+    "output": "build/win64/ROIMSIR_mexutil.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   interface/_coder_ROIMSIR_info.c -o build/win64/_coder_ROIMSIR_info.o",
+    "file": "interface/_coder_ROIMSIR_info.c",
+    "output": "build/win64/_coder_ROIMSIR_info.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\" -I \"G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\McDuff Github\\My work\\FacePulseRate\\codegen\\mex\\ROIMSIR\\interface\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \".\" -DMODEL=ROIMSIR_mex -D__USE_MINGW_ANSI_STDIO=1   \"C:/Program Files/MATLAB/R2020b/extern/version/c_mexapi_version.c\" -o build/win64/c_mexapi_version.o",
+    "file": "C:/Program Files/MATLAB/R2020b/extern/version/c_mexapi_version.c",
+    "output": "build/win64/c_mexapi_version.o"
+  }
+]

@@ -1,0 +1,52 @@
+# CompilerName=mingw64
+# Mode=optim
+ninja_required_version = 1.3
+
+# Basic folders
+root = .
+builddir = $root/build/win64
+matlabdir = C:/Program Files/MATLAB/R2020a
+startdir = G:/My Drive/Articles/topics/physio/Articles Chapters/Measures/Autonomic NS (GSR HR)/HR/HR webcam/McDuff Github/My work/FacePulseRate
+
+# Toolchain information
+cc = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+cxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+linker = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+linkerxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+
+cflags =  -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\IndexAndMean_LogIdx" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\IndexAndMean_LogIdx\interface" -I "C:\Program Files\MATLAB\R2020a\extern\include" -I "." -DMODEL=IndexAndMean_LogIdx_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp 
+
+cxxflags =  -c -fexceptions -fno-omit-frame-pointer -std=c++11 -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c++11 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\IndexAndMean_LogIdx" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\IndexAndMean_LogIdx\interface" -I "C:\Program Files\MATLAB\R2020a\extern\include" -I "." -DMODEL=IndexAndMean_LogIdx_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp 
+
+ldflags =  -m64 -Wl,--no-undefined -shared -static -L"C:\Program Files\MATLAB\R2020a\extern\lib\win64\mingw64" -llibmx -llibmex -llibmat -lm -llibmwlapack -llibmwblas -o "IndexAndMean_LogIdx_mex.mexw64" -llibemlrt -llibcovrt -llibut -llibmwmathutil -Ofast -fopenmp -Wl,--version-script,IndexAndMean_LogIdx_mex.map
+
+# Build Rules
+rule cc
+    command = $cc $cflags $in -o $out
+
+rule cxx
+    command = $cxx $cxxflags $in -o $out
+
+rule link
+    command = $linker @$out.rsp $ldflags
+    rspfile = $out.rsp
+    rspfile_content = $in
+
+rule linkxx
+    command = $linkerxx $in $ldflags
+
+# Build
+build $builddir/rt_nonfinite.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/rt_nonfinite.c
+build $builddir/IndexAndMean_LogIdx_mexutil.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/IndexAndMean_LogIdx_mexutil.c
+build $builddir/IndexAndMean_LogIdx_data.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/IndexAndMean_LogIdx_data.c
+build $builddir/IndexAndMean_LogIdx_initialize.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/IndexAndMean_LogIdx_initialize.c
+build $builddir/IndexAndMean_LogIdx_terminate.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/IndexAndMean_LogIdx_terminate.c
+build $builddir/IndexAndMean_LogIdx.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/IndexAndMean_LogIdx.c
+build $builddir/_coder_IndexAndMean_LogIdx_api.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/interface/_coder_IndexAndMean_LogIdx_api.c
+build $builddir/_coder_IndexAndMean_LogIdx_mex.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/interface/_coder_IndexAndMean_LogIdx_mex.c
+build $builddir/IndexAndMean_LogIdx_emxutil.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/IndexAndMean_LogIdx_emxutil.c
+build $builddir/_coder_IndexAndMean_LogIdx_info.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/IndexAndMean_LogIdx/interface/_coder_IndexAndMean_LogIdx_info.c
+build $builddir/c_mexapi_version.o : cc C$:/Program$ Files/MATLAB/R2020a/extern/version/c_mexapi_version.c
+
+# Link
+build $root\IndexAndMean_LogIdx_mex.mexw64 : link $builddir\rt_nonfinite.o $builddir\IndexAndMean_LogIdx_mexutil.o $builddir\IndexAndMean_LogIdx_data.o $builddir\IndexAndMean_LogIdx_initialize.o $builddir\IndexAndMean_LogIdx_terminate.o $builddir\IndexAndMean_LogIdx.o $builddir\_coder_IndexAndMean_LogIdx_api.o $builddir\_coder_IndexAndMean_LogIdx_mex.o $builddir\IndexAndMean_LogIdx_emxutil.o $builddir\_coder_IndexAndMean_LogIdx_info.o $builddir\c_mexapi_version.o 

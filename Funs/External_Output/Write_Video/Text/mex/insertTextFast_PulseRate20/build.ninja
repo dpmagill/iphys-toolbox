@@ -1,0 +1,51 @@
+# CompilerName=mingw64
+# Mode=optim
+ninja_required_version = 1.3
+
+# Basic folders
+root = .
+builddir = $root/build/win64
+matlabdir = C:/Program Files/MATLAB/R2020a
+startdir = G:/My Drive/Articles/topics/physio/Articles Chapters/Measures/Autonomic NS (GSR HR)/HR/HR webcam/McDuff Github/My work/FacePulseRate
+
+# Toolchain information
+cc = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+cxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+linker = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
+linkerxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
+
+cflags =  -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\insertTextFast_PulseRate20" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\insertTextFast_PulseRate20\interface" -I "C:\Program Files\MATLAB\R2020a\extern\include" -I "." -DMODEL=insertTextFast_PulseRate20_mex -D__USE_MINGW_ANSI_STDIO=1 -Ofast 
+
+cxxflags =  -c -fexceptions -fno-omit-frame-pointer -std=c++11 -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c++11 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\insertTextFast_PulseRate20" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\McDuff Github\My work\FacePulseRate\codegen\mex\insertTextFast_PulseRate20\interface" -I "C:\Program Files\MATLAB\R2020a\extern\include" -I "." -DMODEL=insertTextFast_PulseRate20_mex -D__USE_MINGW_ANSI_STDIO=1 -Ofast 
+
+ldflags =  -m64 -Wl,--no-undefined -shared -static -L"C:\Program Files\MATLAB\R2020a\extern\lib\win64\mingw64" -llibmx -llibmex -llibmat -lm -llibmwlapack -llibmwblas -o "insertTextFast_PulseRate20_mex.mexw64" -llibemlrt -llibcovrt -llibut -llibmwmathutil -Ofast -Wl,--version-script,insertTextFast_PulseRate20_mex.map
+
+# Build Rules
+rule cc
+    command = $cc $cflags $in -o $out
+
+rule cxx
+    command = $cxx $cxxflags $in -o $out
+
+rule link
+    command = $linker @$out.rsp $ldflags
+    rspfile = $out.rsp
+    rspfile_content = $in
+
+rule linkxx
+    command = $linkerxx $in $ldflags
+
+# Build
+build $builddir/rt_nonfinite.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/rt_nonfinite.c
+build $builddir/insertTextFast_PulseRate20_data.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/insertTextFast_PulseRate20_data.c
+build $builddir/insertTextFast_PulseRate20_initialize.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/insertTextFast_PulseRate20_initialize.c
+build $builddir/insertTextFast_PulseRate20_terminate.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/insertTextFast_PulseRate20_terminate.c
+build $builddir/insertTextFast_PulseRate20.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/insertTextFast_PulseRate20.c
+build $builddir/insertTextNoValidation.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/insertTextNoValidation.c
+build $builddir/_coder_insertTextFast_PulseRate20_api.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/interface/_coder_insertTextFast_PulseRate20_api.c
+build $builddir/_coder_insertTextFast_PulseRate20_mex.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/interface/_coder_insertTextFast_PulseRate20_mex.c
+build $builddir/_coder_insertTextFast_PulseRate20_info.o : cc G$:/My$ Drive/Articles/topics/physio/Articles$ Chapters/Measures/Autonomic$ NS$ (GSR$ HR)/HR/HR$ webcam/McDuff$ Github/My$ work/FacePulseRate/codegen/mex/insertTextFast_PulseRate20/interface/_coder_insertTextFast_PulseRate20_info.c
+build $builddir/c_mexapi_version.o : cc C$:/Program$ Files/MATLAB/R2020a/extern/version/c_mexapi_version.c
+
+# Link
+build $root\insertTextFast_PulseRate20_mex.mexw64 : link $builddir\rt_nonfinite.o $builddir\insertTextFast_PulseRate20_data.o $builddir\insertTextFast_PulseRate20_initialize.o $builddir\insertTextFast_PulseRate20_terminate.o $builddir\insertTextFast_PulseRate20.o $builddir\insertTextNoValidation.o $builddir\_coder_insertTextFast_PulseRate20_api.o $builddir\_coder_insertTextFast_PulseRate20_mex.o $builddir\_coder_insertTextFast_PulseRate20_info.o $builddir\c_mexapi_version.o 

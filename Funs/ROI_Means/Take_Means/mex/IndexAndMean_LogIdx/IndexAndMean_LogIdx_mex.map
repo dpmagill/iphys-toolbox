@@ -1,0 +1,23 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		IndexAndMean_LogIdx_initialize;
+		IndexAndMean_LogIdx_terminate;
+		IndexAndMean_LogIdx_atexit;
+		IndexAndMean_LogIdx;
+		emlrtGetRootTLSGlobal;
+		emlrtLockerFunction;
+		emxInit_uint8_T;
+		emxFree_uint8_T;
+		emxInit_real32_T;
+		emxFree_real32_T;
+		emxInit_boolean_T;
+		emxFree_boolean_T;
+		emxEnsureCapacity_uint8_T;
+		emxEnsureCapacity_real32_T;
+		emxEnsureCapacity_boolean_T;
+	local:
+		*;
+};

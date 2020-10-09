@@ -1,0 +1,15 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		insertShapeFast_FilledCircles_initialize;
+		insertShapeFast_FilledCircles_terminate;
+		insertShapeFast_FilledCircles_atexit;
+		insertShapeFast_FilledCircles;
+		emxInit_uint8_T;
+		emxFree_uint8_T;
+		emxEnsureCapacity_uint8_T;
+	local:
+		*;
+};

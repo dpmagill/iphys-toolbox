@@ -1,0 +1,15 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		insertMarkerFast_initialize;
+		insertMarkerFast_terminate;
+		insertMarkerFast_atexit;
+		insertMarkerFast;
+		emxInit_uint8_T;
+		emxFree_uint8_T;
+		emxEnsureCapacity_uint8_T;
+	local:
+		*;
+};

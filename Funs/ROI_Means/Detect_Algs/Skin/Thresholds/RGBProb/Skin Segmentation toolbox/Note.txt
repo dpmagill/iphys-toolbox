@@ -1,0 +1,12 @@
+Madhav Rajan (2014) "Skin Segmentation toolbox". 
+See discussion on Github (https://github.com/madhrajan91/Skin-Segmentation).        
+
+data.txt is from Bhatt and Dhall 2009, 'Skin Segmentation Dataset', UCI Machine 
+Learning Repository. See discussion in Bhatt, Sharma, Dhall, Chaudhury (2009). Efficient skin 
+region segmentation using low complexity fuzzy decision tree model. IEEE-INDICON, Dec 16-18, 
+Ahmedabad, India, pp. 1-4. See also Dhall, Sharma, Bhatt, and Khan (2009). Adaptive Digital 
+Makeup, Proc. of International Symposium on Visual Computing (ISVC), Nov. 30 -Dec. 02, 
+Las Vegas, Nevada, USA, Lecture Notes in Computer Science, Vol. 5876, pp. 728-736.
+
+
+

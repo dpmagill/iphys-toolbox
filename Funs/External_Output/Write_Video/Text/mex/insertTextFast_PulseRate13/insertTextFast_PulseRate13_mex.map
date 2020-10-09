@@ -1,0 +1,12 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		insertTextFast_PulseRate13_initialize;
+		insertTextFast_PulseRate13_terminate;
+		insertTextFast_PulseRate13_atexit;
+		insertTextFast_PulseRate13;
+	local:
+		*;
+};

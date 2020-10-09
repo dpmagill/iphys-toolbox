@@ -1,0 +1,12 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		insertTextFast_ROIAnnotation13_initialize;
+		insertTextFast_ROIAnnotation13_terminate;
+		insertTextFast_ROIAnnotation13_atexit;
+		insertTextFast_ROIAnnotation13;
+	local:
+		*;
+};

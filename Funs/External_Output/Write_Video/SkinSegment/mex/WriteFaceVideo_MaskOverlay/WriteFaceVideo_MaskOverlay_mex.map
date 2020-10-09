@@ -1,0 +1,18 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		WriteFaceVideo_MaskOverlay_initialize;
+		WriteFaceVideo_MaskOverlay_terminate;
+		WriteFaceVideo_MaskOverlay_atexit;
+		WriteFaceVideo_MaskOverlay;
+		emxInit_uint8_T;
+		emxFree_uint8_T;
+		emxInit_boolean_T;
+		emxFree_boolean_T;
+		emxEnsureCapacity_uint8_T;
+		emxEnsureCapacity_boolean_T;
+	local:
+		*;
+};

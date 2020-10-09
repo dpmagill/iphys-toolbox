@@ -1,0 +1,2 @@
+Note: various input-argument validation operations have been removed from these functions to
+increase their performance. These functions are used only for code-generation purposes. 
