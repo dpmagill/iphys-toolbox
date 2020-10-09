@@ -14,12 +14,12 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). Additionally, 
 %       FacePulseRate ...
 %
-%       - Breaks down pulse rate into windows, permitting pulse rate to vary across time
-%       - Automically positions a face ROI for each frame
-%       - Provides enhanced skin segmentation
+%       - Breaks down pulse rate into windows, permitting pulse rate to vary across time.
+%       - Automically positions a face ROI for each frame.
+%       - Provides enhanced skin segmentation.
 %       - Provides separate versions of each of the four algorithms while controlled for variation   
-%         in luminance across frames are provided (see Madan et al., 2018). This is in addition to
-%         providing the four versions without controlling for luminance.
+%         in luminance across frames (see Madan et al., 2018). This is in addition to providing the
+%         four versions without controlling for luminance.
 %       - Provides verification of ROI placement and skin-segmentation by providing an annotated
 %         output video. Arguments are available to make adjustments to ROI placement and 
 %         skin-segmentation based upon inspection of the output video. For a description of how the
