@@ -25,8 +25,8 @@ function [ROI, ROIForBBox, ROIDiagnostic, HasROI_TF, ROIMatchSizeData] = ...
 %    ---------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
-%    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
-%    licensing, please contact the author.
+%    licenses with exceptions noted in file FacePulseRate/License/License.txt. For interest in   
+%    commercial licensing, please contact the author.
 
 
 %Assign number of frames
