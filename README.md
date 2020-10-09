@@ -1,4 +1,4 @@
-# FacePulseRate: A Suite of Features To Use With iPhys Toolbox
+# FacePulseRate: A Suite of Features to Use with iPhys Toolbox
 
 Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). Additionally, FacePulseRate ...
 
@@ -72,6 +72,10 @@ The following Matlab toolboxes are also required. Note that these toolboxes are 
 
 5. See "Video and Recording Environment Recommendations.pdf" for recommendations on the input video and the physical enviroment in which it is recorded.
 
+## Implementation
+
+For a detailed discussion on the implmentation of FacePulseRate, see file FacePulseRate.m. Addition discussion is included in the helper files to FacePulseRate.m.
+
 ## License and Third-Party Copyright Notices
 
 FacePulseRate Toolbox copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>.
@@ -90,6 +94,8 @@ In addition, as a special exception, the copyright holder of FacePulseRate gives
 
 In addition to the aforementioned GNU General Public License, this program is licensed under the terms of the Responsible AI License (RAIL).
 For third-party copyright notices, see FacePulseRate/License/License.txt.
+
+### Third-Party Copyright Acknowledgements
 
 For full license terms and acknowledgement of third-party copyrights, see folder "License".
 
