@@ -2,11 +2,11 @@
 
 Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). Additionally, FacePulseRate ...
 
-- Breaks down pulse rate into windows, permitting pulse rate to vary across time.
-- Automically positions a face ROI for each frame.
-- Provides enhanced skin segmentation.
-- Provides separate versions of each of the four algorithms while controlled for variation in luminance across frames (see Madan et al., 2018). This is in addition to providing the four versions without controlling for luminance.
-- Provides verification of ROI placement and skin-segmentation by providing an annotated output video. Arguments are available to make adjustments to ROI placement and skin-segmentation based upon inspection of the output video.
+* Breaks down pulse rate into windows, permitting pulse rate to vary across time.
+* Automically positions a face ROI for each frame.
+* Provides enhanced skin segmentation.
+* Provides separate versions of each of the four algorithms while controlled for variation in luminance across frames (see Madan et al., 2018). This is in addition to providing the four versions without controlling for luminance.
+* Provides verification of ROI placement and skin-segmentation by providing an annotated output video. Arguments are available to make adjustments to ROI placement and skin-segmentation based upon inspection of the output video.
 
 ## Treatment of Pulse Rate Variations Across Time
 
@@ -17,8 +17,8 @@ The method in iPhys Toolbox for deriving pulse rate derives BVP from a span of t
 Color Videos. 
 
 Supported file extensions include ...
-- .mp4
-- .avi
+* .mp4
+* .avi
 
 Other file extensions may be supported. Use Matlab function VideoReader.getFileFormats() to return a list of supported file extensions. 
 
@@ -37,22 +37,22 @@ For a detailed discussion of the key features and technical implementation, see 
 
 ## System Requirements
 
-- 64-bit Windows
+* 64-bit Windows
 
 Currently, 64-bit macOS has not been implemented and tested.
 
 ## Software Requirements
 
-- Matlab. FacePulseRate has been tested on Matlab versions 2020a and 2020b.
+* Matlab. FacePulseRate has been tested on Matlab versions 2020a and 2020b.
 
 The following Matlab toolboxes are also required. Note that these toolboxes are licensed by Matlab and are not free software. The following toolboxes are often provided at no cost when using an academic license. These are the toolbox names as of Matlab release 2020b; toolboxes are occassionally renamed.
 
-- Statistics and Machine Learning Toolbox
-- Computer Vision System Toolbox
-- Image Processing Toolbox
-- Signal Processing Toolbox 
-- DSP System Toolbox
-- Optimization Toolbox
+* Statistics and Machine Learning Toolbox
+* Computer Vision System Toolbox
+* Image Processing Toolbox
+* Signal Processing Toolbox 
+* DSP System Toolbox
+* Optimization Toolbox
 
 ## Getting Started
 
