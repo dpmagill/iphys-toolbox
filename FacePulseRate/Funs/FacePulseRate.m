@@ -15,7 +15,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       FacePulseRate ...
 %
 %       - Breaks down pulse rate into windows, permitting pulse rate to vary across time.
-%       - Automically positions a face ROI for each frame.
+%       - Automatically positions a face ROI for each frame.
 %       - Provides enhanced skin segmentation.
 %       - Provides separate versions of each of the four algorithms while controlled for variation   
 %         in luminance across frames (see Madan et al., 2018). This is in addition to providing the

@@ -106,3 +106,4 @@ See an acknowledgement of third-party software in file 'FacePulseRate/License/Th
 Madan, C. R., Harrison, T., & Mathewson, K. E. (2018). Noncontact measurement of emotional and physiological changes in heart rate from a webcam. Psychophysiology, 55(4), e13005.        
 
 McDuff, D., & Blackford, E. (2019). iphys: An open non-contact imaging-based physiological measurement toolbox. In 2019 Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC), pp. 6521-6524. 
+
