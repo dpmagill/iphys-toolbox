@@ -59,7 +59,7 @@ The following Matlab toolboxes are also required. Note that these toolboxes requ
 
 Most of the features of FacePulseRate occur automatically, so few lines of code need to be used to return results 
 under default options. For example, once the required toolboxes have been installed and FacePulseRate Toolbox is placed on
-Matlab's path, the following line is all that is needed to return results:
+Matlab's path, entering the following line in Matlab is all that is needed to return results:
 
     FacePulseRate(<\...\MyInputVideo.mp4>);
 
