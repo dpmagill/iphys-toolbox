@@ -139,7 +139,7 @@ end
 
 %%%%%% --- Algorithm-specific input validation %%%%%%
 
-%Input validation specifically for CHROM_DEHAAN algorithm
+%Input validation for CHROM_DEHAAN algorithm
 if Alg == 'C'   
 
     %If fewer frames used (nFramesWindow) than ceil(WinSec * FS), an error will occur in 
