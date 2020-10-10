@@ -41,7 +41,8 @@ if ROIMinWidthProportion == -1 || ROIMinHeightProportion == -1
     %Note: neither NFrames nor the length of VideoReadConfig.FrameIdx is used to determine the 
     %number of frames because these values will sometimes be much longer than the number of frames  
     %to be processed.
-    NFrames = (VideoReadConfig.EndTime - VideoReadConfig.StartTime) * VideoReadConfig.FS;
+    %Scalar integer; type double.
+    NFrames = floor( (VideoReadConfig.EndTime - VideoReadConfig.StartTime) * VideoReadConfig.FS );
     
     
     %%%%%% Insufficient number of frames for sampling %%%%%%
