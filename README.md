@@ -81,9 +81,13 @@ See file "Examples_General_Instructions.mlx".
 
 This script is aimed at users with no previous experience with Matlab and introductory experience with programming languages.
 
+Note: .mlx files can only be displayed in the Matlab Environment.
+
 ### Corrections to ROI Placement or Skin Segmentation
 
 See "Examples_Correct_ROIs_and_Skin_Segmentation.mlx".
+
+Note: .mlx files can only be displayed in the Matlab Environment.
 
 ## Implementation
 
