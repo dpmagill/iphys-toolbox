@@ -40,13 +40,13 @@ For a detailed discussion of the key features and technical implementation, see 
 
 * 64-bit Windows
 
-Currently, 64-bit macOS has not been implemented and tested.
+Currently, 64-bit macOS has not been implemented or tested.
 
 ## Software Requirements
 
-* Matlab. FacePulseRate has been tested on Matlab versions 2020a and 2020b.
+* Matlab. FacePulseRate has been tested on Matlab versions 2020a and 2020b. Matlab can often be acquired without cost through a university affiliation. 
 
-The following Matlab toolboxes are also required. Note that these toolboxes are licensed by Matlab and are not free software. The following toolboxes are often provided at no cost when using an academic license. These are the toolbox names as of Matlab release 2020b; toolboxes are occassionally renamed.
+The following Matlab toolboxes are also required. Note that these toolboxes require corresponding licenses from Matlab. However, they can often be acquired without cost through a university affiliation. These are the toolbox names as of Matlab release 2020b; toolboxes are occassionally renamed.
 
 * Statistics and Machine Learning Toolbox
 * Computer Vision System Toolbox
@@ -61,7 +61,7 @@ Most of the features of FacePulseRate occur automatically, so few lines of code 
 under default options. For example, once the required toolboxes have been installed and FacePulseRate Toolbox is placed on
 Matlab's path, the following line is all that is needed to return results:
 
-    FacePulseRate(</.../MyInputVideo.mp4>);
+    FacePulseRate(<\...\MyInputVideo.mp4>);
 
 ### Setup
 
