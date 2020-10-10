@@ -57,6 +57,12 @@ The following Matlab toolboxes are also required. Note that these toolboxes are 
 
 ## Instructions
 
+Most of the features of FacePulseRate occur automatically, so few lines of code need to be used to return results 
+under default options. For example, once the required toolboxes have been installed and the toolbox placed on
+Matlab's path, the following line is all that is needed to return results:
+
+    FacePulseRate(<.../MyInputVideo.mp4>);
+
 ### Setup
 
 1. Install Matlab on a Windows 64-bit computer. Matlab version 2020a or later is recommended. Matlab is often provided at no cost through a university affiliation. 
