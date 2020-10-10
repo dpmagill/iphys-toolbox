@@ -89,6 +89,25 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %   Description
 %   -----------
 %
+%   -- How-To Guides --
+%
+%   The text in this function is rather detailed. It may be more useful to review the How-To 
+%   guides.
+%
+%   For an overview of FacePulseRate, see README.pdf.
+%
+%   For recommendations on the input video and the physical enviroment in which it is recorded, see
+%   Video and Recording Environment Recommendations.pdf.
+%
+%   For setting up FacePulseRate, see README.pdf.
+%
+%   For general instructions, see Examples_General_Instructions.mlx.
+%
+%   For making corrections to ROI placement or skin segmentation, see 
+%   Examples_Correct_ROIs_and_Skin_Segmentation.mlx.
+%
+%   -- Overview -- 
+%
 %       The face in the video is tracked across frames and an ROI is used to separate the face from
 %       the environment. Skin segmentation is applied to further separate facial skin from the
 %       environment. Means from the RGB colorspace are taken from the ROI of each frame as the 

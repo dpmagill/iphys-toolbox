@@ -55,7 +55,9 @@ The following Matlab toolboxes are also required. Note that these toolboxes are 
 * DSP System Toolbox
 * Optimization Toolbox
 
-## Getting Started
+## Instructions
+
+### Setup
 
 1. Install Matlab on a Windows 64-bit computer. Matlab version 2020a or later is recommended. Matlab is often provided at no cost through a university affiliation. 
 
@@ -69,9 +71,19 @@ The following Matlab toolboxes are also required. Note that these toolboxes are 
 
 3. Download the folder that contains the functions for FacePulseRate. This folder is named 'FacePulseRate'. As of October 2020, FacePulseRate can be found on Github.com under the username 'dpmagill' as a fork to McDuff and Blackford's (2019) iPhys Toolbox. The examples that follow assume FacePulseRate was downloaded to the arbitrary location of "C:\Users\User1\Downloads\FacePulseRate". 
 
-4. Open file Example_Script.mlx. This covers the remaining setup. It also covers all use cases of FacePulseRate. The script is aimed at users with no previous experience with Matlab and introductory experience with programming languages.
+### Recommendations on the Input Video and Physical Environment
 
-5. See "Video and Recording Environment Recommendations.pdf" for recommendations on the input video and the physical enviroment in which it is recorded.
+See "Video and Recording Environment Recommendations.pdf".
+
+### General Instructions
+
+See file "Examples_General_Instructions.mlx". 
+
+This script is aimed at users with no previous experience with Matlab and introductory experience with programming languages.
+
+### Corrections to ROI Placement or Skin Segmentation
+
+See "Examples_Correct_ROIs_and_Skin_Segmentation.mlx".
 
 ## Implementation
 
@@ -83,7 +95,7 @@ FacePulseRate Toolbox copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>.
 
 For interest in a commercial license, please contact the author.
 
-Note: the author claims no affilation with iPhys Toolbox, which is the property of its respective owners.
+Note: the author is not affiliated with iPhys Toolbox, which is the property of its respective owners.
 
 ### GNU General Public License, Version 2
 

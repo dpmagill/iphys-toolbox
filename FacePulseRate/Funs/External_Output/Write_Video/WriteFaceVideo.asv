@@ -37,9 +37,8 @@ function WriteFaceVideo(VideoReadConfig, ROI, HasROI_TF, ROIDiagnostic, SkinSegm
 %   -- Use of Annotations to Correct ROI Placement --
 %
 %       Note: the text in this section is copied from file Example_Script.mlx. However, unlike
-%       Examples_Correct_ROIs_and_Skin_Segmentation.mlx, code examples of arguments used to make 
-%       corrections to ROI placement are not included. See 
-%       Examples_Correct_ROIs_and_Skin_Segmentation.mlx for these examples.      
+%       Example_Script.mlx, code examples of arguments used to make corrections to ROI placement 
+%       are not included. See Example_Script.mlx for these examples.      
 % 
 %       Eight courses of action can be taken to correct ROI placement. It is expected that only one 
 %       course of action will be needed for a given video. The courses of action involve changing 
@@ -122,9 +121,8 @@ function WriteFaceVideo(VideoReadConfig, ROI, HasROI_TF, ROIDiagnostic, SkinSegm
 %   -- Use of Annotations to Correct Skin Segmentation --
 %
 %       Note: the text in this section is copied from file Example_Script.mlx. However, unlike
-%       Examples_Correct_ROIs_and_Skin_Segmentation.mlx, code examples of arguments used to make   
-%       corrections to skin segmentation are not included. See 
-%       Examples_Correct_ROIs_and_Skin_Segmentation.mlx for these examples.
+%       Example_Script.mlx, code examples of arguments used to make corrections to skin  
+%       segmentation are not included. See Example_Script.mlx for these examples.
 %
 %       The courses of action described in this section can be used to modify the extent of skin 
 %       segmentation.
@@ -170,39 +168,7 @@ function WriteFaceVideo(VideoReadConfig, ROI, HasROI_TF, ROIDiagnostic, SkinSegm
 %            factor by argument SkinSegmentSeverityFactor.
 %
 %       (2): Permanent thresholds. The permanent thresholds are hard limitiations on which pixel 
-%            colors are considered skin. Consider changing these if over- or under-segmentation may 
-%            be due to environmental conditions. For example, if the face is in a shadow, it may be 
-%            necessary to allow pixels that are darker than the default permanent thresholds permit 
-%            (i.e., reduce the Y channel minimum treshold to its minimum, which is 16). Note that 
-%            FacePulseRate checks whether the ROIs appear to be in a shadow and makes a 
-%            corresponding correction; however, this check is somewhat conservative, so manually 
-%            changing the permanent thresholds may still be necessary in the case of ROIs with low 
-%            illumination. Another case where permanent thresholds may need to be changed is the 
-%            case of an unusual tint across frames. That is, sometimes the coloration, white 
-%            balance, etc., of a video may not be compatible with the default permanent thresholds; 
-%            however, this is expected to be uncommon. Change the range of permanent thesholds by 
-%            adjusting arguments SkinSegmentThresholdsGenericYCbCr and 
-%            SkinSegmentThresholdsGenericHSV. The left value of these arguments indiates the 
-%            minimum of the range, and the right value indicates the maximum of the range. 
-%            Widening the range reduces the severity of skin segmentation.
-%
-%       (3): Oversegmentation adjustments. By default, the presence of oversegmentation is checked. 
-%            If oversegmentation is determined to be present, some skin-segmentation settings will 
-%            be made less severe. The purpose of the oversegmentation check is to automatically 
-%            adjust the severity of skin segmentation without the need to modify the arguments 
-%            noted in this section. However, sometimes oversegmentation will be detected when it 
-%            doesn't exist. For example, the presense of hair occluding part of the face (e.g., the 
-%            presence of long bangs) can sometimes lead the oversegmentation check to determine 
-%            that too much of the face was segmented; in this case, the large extent of face 
-%            segmentation is appropriate rather than being an indication of oversegmentation, but 
-%            the segmentation check is not aware of this subtle difference.  If the 
-%            oversegmentation check erroneously detects oversegmentation and subsequently reduces 
-%            the severity of skin segmentation, the resulting skin segmentation may not be 
-%            satisfactory (note that low segmentation is not necessarily undesirable; see section 
-%            "Skin Segmentation Overview" above). If the oversegmentation check reduced the 
-%            severity, the legend text will indicate "Oversegmentation Adjustments: true". The 
-%            oversegmentation adjustments can be disabled by specifying argument 
-%            OversegmentationCheckTF as false.
+%           colors are considered skin. Consider changing these if over- or under-segmentation may be due to environmental conditions. For example, if the face is in a shadow, it may be necessary to allow pixels that are darker than the default permanent thresholds permit (i.e., reduce the Y channel minimum treshold to its minimum, which is 16). Note that FacePulseRate checks whether the ROIs appear to be in a shadow and makes a corresponding correction; however, this check is somewhat conservative, so manually changing the permanent thresholds may still be necessary in the case of ROIs with low illumination. Another case where permanent thresholds may need to be changed is the case of an unusual tint across frames. That is, sometimes the coloration, white balance, etc., of a video may not be compatible with the default permanent thresholds; however, this is expected to be uncommon. Change the range of permanent thesholds by adjusting arguments SkinSegmentThresholdsGenericYCbCr and SkinSegmentThresholdsGenericHSV. The left value of these arguments indiates the minimum of the range, and the right value indicates the maximum of the range.  Widening the range reduces the severity of skin segmentation.
 %
 %   -- Detailed Display Option --
 % 
