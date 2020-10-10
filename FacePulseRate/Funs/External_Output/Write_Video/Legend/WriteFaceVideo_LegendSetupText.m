@@ -359,12 +359,12 @@ else
                  'Too few skin-color samples to activate skin-detect alg.', ...
                  'Detection verfication will more lenient.'
                 } ...
-            };        
-    end
-    
-     %Concatenate text cell arrays:
+            };  
+        
+         %Concatenate text cell arrays:
 
-     text = [text, textROISkinTitle, textROISkin];     
+         text = [text, textROISkinTitle, textROISkin];        
+    end         
 end      
 
 
