@@ -46,7 +46,7 @@ Currently, 64-bit macOS has not been implemented or tested.
 
 * Matlab. FacePulseRate has been tested on Matlab versions 2020a and 2020b. Matlab can often be acquired without cost through a university affiliation. 
 
-The following Matlab toolboxes are also required. Note that these toolboxes require corresponding licenses from Matlab. However, they can often be acquired without cost through a university affiliation. These are the toolbox names as of Matlab release 2020b; toolboxes are occassionally renamed.
+The following Matlab toolboxes are also required. Note that these toolboxes require corresponding licenses from Matlab. However, these can often be acquired without cost through a university affiliation. These are the toolbox names as of Matlab release 2020b; toolboxes are occassionally renamed.
 
 * Statistics and Machine Learning Toolbox
 * Computer Vision System Toolbox
