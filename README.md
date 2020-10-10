@@ -75,7 +75,7 @@ Matlab's path, the following line is all that is needed to return results:
 - DSP System Toolbox
 - Optimization Toolbox 
 
-3. Download the folder that contains the functions for FacePulseRate. This folder is named 'FacePulseRate'. As of October 2020, FacePulseRate can be found on Github.com under the username 'dpmagill' as a fork to McDuff and Blackford's (2019) iPhys Toolbox. The examples that follow assume FacePulseRate was downloaded to the arbitrary location of "C:\Users\User1\Downloads\FacePulseRate". 
+3. Download the folder that contains the functions for FacePulseRate. This folder is named 'FacePulseRate'. As of October 2020, FacePulseRate can be found on Github.com under the username 'dpmagill' as a fork to McDuff and Blackford's (2019) iPhys Toolbox. 
 
 ### Recommendations on the Input Video and Physical Environment
 
