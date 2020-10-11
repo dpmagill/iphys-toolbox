@@ -1,49 +1,103 @@
 function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs) 
-%FacePulseRate    Top-level function to the FacePulseRate toolbox.
-%                 Calculate windows of pulse rate from a face identified within the input video.
-%                 Return data tables, write the tables to csv files, and write a video with pulse 
-%                 rate and diagnostic annotations. 
+%FacePulseRate    Top-level function to FacePulseRate Toolbox: A suite of features to facilitate
+%                 the use of pulse-rate algorithms in iPhys Toolbox.
+%                  
 %
 %   Summary
 %   -------
 %
 %       Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face 
-%       present within an input video. 
+%       present within an input video. This toolbox accepts pre-recorded video rather than video
+%       streams. The benefit of pre-recorded video is that some operations can be aware of the 
+%       future (they can look ahead in the video), which improves the accuracy of ROI placement.      
 %
 %       FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate 
-%       algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). Additionally, 
-%       FacePulseRate ...
+%       algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the
+%       pulse rate of an interval (termed a window here) is calculated by conducting a fast 
+%       Fourier transform (FFT) to select the greatest peak. 
 %
-%       - Breaks down pulse rate into windows, permitting pulse rate to vary across time.
-%       - Automatically positions a face ROI for each frame.
-%       - Provides enhanced skin segmentation.
-%       - Provides separate versions of each of the four algorithms while controlled for variation   
-%         in luminance across frames (see Madan et al., 2018). This is in addition to providing the
-%         four versions without controlling for luminance.
-%       - Provides verification of ROI placement and skin-segmentation by providing an annotated
+%       -- Purpose --
+%
+%       The first purpose of FacePulseRate is to break down time into numerous windows (each 1.5 
+%       minutes) to allow pulse rate to vary across time. An argument can be used to change the 
+%       window duration according to preference. It is unclear whether this approach has been used  
+%       previously, so developing the duration according to comparison with objective PPG data may 
+%       provide guidance.
+%
+%       The second purpose is to provide features to make the collection of data from the videos
+%       convenient, accurate, diagnosable, and correctable. These features do not alter the pulse
+%       rate algorithms from iPhys Toolbox, but rather concentrate on obtaining data for input into
+%       the algorithms. Good data should facilitate the accuracy of the pulse-rate algorithms. The 
+%       features include ... 
+%
+%       - Automatically positioning a face ROI for each frame using OpenCV (Viola-Jones) face  
+%         detection and a novel skin-detection method.
+%
+%       - Providing a novel method of skin segmentation where thresholds are tailored from 
+%         skin-color samples from the video.
+%
+%       - An argument that enables controlling for variation in luminance across frames (see Madan
+%         et al., 2018). 
+%
+%       - Providing verification of ROI placement and skin-segmentation by providing an annotated
 %         output video. Arguments are available to make adjustments to ROI placement and 
 %         skin-segmentation based upon inspection of the output video. For a description of how the
 %         annotations on the output video can inform modifications to the arguments, see the
 %         description in function WriteFaceVideo.
 %       
+%       -- Input --
+%
+%       Supported file extensions include ...
+%
+%       - .mp4
+%
+%       - .avi
+%
+%       Other file extensions may be supported.
+%
+%       For additional discussion and recommendations, see "Video and Recording Environment 
+%       Recommendations.pdf".
+%
+%       -- Output --
+%
 %       The BVP and pulse rate results are provided, along with addition information, as output 
 %       tables. Included among the additional information are the input video timestamps and means   
 %       from the red, green, and blue color channels of an ROI from each frame; these two 
 %       components of the data are the basis for the BVP. These tables are also written to CSV 
-%       files.
+%       files. Additionally, an output video is provided for verification of ROI placement and
+%       skin segmentation.
 %
-%       Note: When planning a study, pretests should be conducted where video as well as 
-%       traditional measures of pulse rate (e.g., PPG, ECG) are recorded. The traditional measures
-%       of pulse rate should be used to validate the use of video-derived pulse rate for expected
+%       -- Use of Pretesting --
+%
+%       When planning a study, pretests should be conducted where video as well as traditional
+%       measures of pulse rate (e.g., PPG, ECG) are recorded. The traditional measures of pulse 
+%       rate should be used to validate the use of video-derived pulse rate for expected
 %       behavioral tendencies. This is because the accuracy of video-derived pulse rate is highly 
 %       dependent on the degree of facial movement, where greater movement tends to result in 
 %       video-derived pulse rate that is less accurate. The four pulse-rate algorithms may vary in 
 %       accuracy depending on the degree of movement. The pulse-rate algorithm with greatest 
 %       accuracy in a given context should be used.
 %
+%       -- How-To Guides --
 %
-%   Key Features
-%   ------------
+%       The descriptive text that follows in this function is rather detailed. To begin using  
+%       FacePulseRate right away, move directly to the How-To guides:
+%
+%       - For an overview of FacePulseRate, see README.pdf.
+%
+%       - For recommendations on the input video and the physical enviroment in which it is  
+%         recorded, see Video and Recording Environment Recommendations.pdf.
+%
+%       - For setting up FacePulseRate (downloading the tools), see README.pdf.
+%
+%       - For general instructions, see Examples_General_Instructions.mlx.
+%
+%       - For making corrections to ROI placement or skin segmentation, see 
+%         Examples_Correct_ROIs_and_Skin_Segmentation.mlx.
+%
+%
+%   Features Details
+%   ----------------
 %
 %       - Provides a relatively robust automated ROI-detection system with which to conduct the
 %         four RGB-to-BVP algorithms (as of January, 2020) provided in iPhys Toolbox (McDuff &  
@@ -86,25 +140,8 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %         the value, still require further research, although a default value is provided.
 %
 %
-%   Description
-%   -----------
-%
-%   -- How-To Guides --
-%
-%       The text in this function is rather detailed. It may be more useful to review the How-To 
-%       guides:
-%
-%       - For an overview of FacePulseRate, see README.pdf.
-%
-%       - For recommendations on the input video and the physical enviroment in which it is  
-%         recorded, see Video and Recording Environment Recommendations.pdf.
-%
-%       - For setting up FacePulseRate (downloading the tools), see README.pdf.
-%
-%       - For general instructions, see Examples_General_Instructions.mlx.
-%
-%       - For making corrections to ROI placement or skin segmentation, see 
-%         Examples_Correct_ROIs_and_Skin_Segmentation.mlx.
+%   Detailed Description
+%   --------------------
 %
 %   -- Overview -- 
 %
@@ -243,19 +280,93 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %           -- ROI Settings -- 
 %    
-%               A feature of the ROIs that can be assessed by inspection of the output video is the  
-%               placement of the ROI on the face or an area of skin. If the ROI does not include   
-%               the face or skin, arguments to the function can be entered to adjust the position 
-%               of the ROI. 
-%  
-%               One option is to ignore an erroneous ROI by using argument ROIIgnoreByArgument to    
-%               specify the frame index of the erroneous ROI. In this case, the position of the   
-%               erroneous ROI will be removed and replaced by a position interpolated from nearby  
-%               ROIs. An example of doing so with argument ROIIgnoreByArgument is provided in the 
-%               Inputs section.       
+%               Note: the text in this section is copied from file Example_Script.mlx. However, 
+%               unlike Examples_Correct_ROIs_and_Skin_Segmentation.mlx, code examples of arguments    
+%               used to make corrections to skin segmentation are not included. See 
+%               Examples_Correct_ROIs_and_Skin_Segmentation.mlx for these examples. Portions of 
+%               this text are also present in function WriteFaceVideo.
 %
-%               If more than ignoring an erroneous ROI is required, values for a replacement ROI   
-%               can be entered directly for a given frame index. 
+%               Eight courses of action can be taken to correct ROI placement. It is expected that 
+%               only one course of action will be needed for a given video. The courses of action 
+%               involve changing an input argument to function FacePulseRate and rerunning 
+%               FacePulseRate to actuate the change. The courses of action are listed in order of 
+%               ease of use and the likelihood that they will lead to the desired correction. Code 
+%               examples are provided in a code section that follows.
+%               
+%               (1) To have one or more misplaced ROIs removed, enter the frame indices (shown on  
+%                   the output video) to argument ROIIgnoreByArgument. When the function is rerun,  
+%                   the ROIs corresponding to these frames will be ignored and replaced by nearby  
+%                   ROIs that are assumed to be correct.  
+%               
+%               (2) To manually specify the values of one or more misplaced ROIs, enter a frame 
+%                   index (shown on the output video) followed by the desired X, Y, width, and 
+%                   height values to argument ROISpecifyByArgument. The example in the code block 
+%                   below shows how these values can be determined. When the function is rerun, the 
+%                   ROIs corresponding to these frames will be replaced with the specified ROIs. 
+%                   For a short time span with many misplaced ROIs, it may only be necessary to 
+%                   specify a few ROIs because the normal smoothing conducted by the function may 
+%                   pull other misplaced ROIs to fit the trajectory of the manually specified ROIs.
+%               
+%               (3) To adjust the sizes of all ROIs across the video, adjust argument 
+%                   ROIWidthResizeFactor to modify the width and argument ROIHeightResizeFactor to 
+%                   modify the height. A larger value increases the size.
+%               
+%               (4) The profile face-detection algorithm tends to be less accurate than the frontal 
+%                   face-detection algorithm. If the profile algorithm appears to be responsible 
+%                   for many misplacements, it can be disabled. The algorithm that determined the 
+%                   ROI is listed on the top of the ROI box. Disable the profile detector by 
+%                   specifying argument ProfileFaceDetectorTF as false.
+%               
+%               (5) If the half-rectangles in the lower right-hand side are noticably larger than 
+%                   the size of the face, this could indicate that the minimize size of the ROI is 
+%                   set too low, resulting in too many ROIs being rejected by the Viola-Jones face 
+%                   detectors. This can be remedied by decreasing the value of arguments 
+%                   ROIWidthResizeFactor and/or ROIHeightResizeFactor.  
+%               
+%               (6) An ROI verification algorithm accepts or rejects ROIs returned by detection 
+%                   algorithms. The first step of verification involves rejected pixels in the ROI 
+%                   that are outside an accepted range. If the severity of the range is too great 
+%                   (i.e., the range is too narrow), this could lead ROIs being rejected too 
+%                   frequently. When an ROI is rejected, the annotation "R" will appear. If this 
+%                   annotation appears too frequently, this may indicate the severity is too great. 
+%                   For ROIs returned by the skin-detection algorithm, the annotation "NR" may also 
+%                   be observed frequently if the skin segmentation range used for verification is 
+%                   too severe ("NR" means no skin regions were available). To reduce the severity 
+%                   of the skin segmentation range used for verification, increase the range 
+%                   specified by arguments DetectVerifyPercentilesYCbCrH and 
+%                   DetectVerifyPercentilesS. That is, decrease the minimum of the range and 
+%                   increase the maximum of the range. Note that these values refer to percentiles 
+%                   (corresponding to skin-color samples collected from the video) rather than the 
+%                   actual pixel-color values. A description of the values of these arguments is 
+%                   provided in the code section example below.
+%               
+%               (7) The range for ROI verification (see course of action No. 6) is constrained by 
+%                   the arguments SkinSegmentThresholdsGenericYCbCr and 
+%                   SkinSegmentThresholdsGenericHSV. The default values for these arguments consist 
+%                   of rather wide ranges, reducing the likelihood of causing ROI verification to 
+%                   reject too many ROIs. However, if these arguments were manually adjusted, this 
+%                   may be the cause of ROI verification rejecting too many ROIs. As mentioned in 
+%                   course of action No. 6, a high rate of rejection will result in the display of 
+%                   "R" or "NS" on many frames. If this is the cause of too many ROIs being 
+%                   rejected, the range can be widened by decreasing the minimums of the ranges and 
+%                   increasing the maximums of the ranges (for an example argument, see the code 
+%                   block included in the section on skin segmentation).
+%               
+%               (8) Conversely, the ROI verification algorithm (see also courses of action No. 6 
+%                   and 7) may be too lenient, resulting in ROIs not being rejected when they 
+%                   should be. This is likely due to there being an insufficient number of 
+%                   skin-color samples from the video for verification mechanisms that require a 
+%                   minimum number of samples (these mechamisms include tailored skin segmentation 
+%                   and skin-detection used in the service of ROI verification). These mechanisms 
+%                   will not be activated if the required number of skin-color samples is not 
+%                   present. The legend will indicate whether tailored skin segmentation and/or the 
+%                   skin-detection algorithm could not be activated due to a low number of samples. 
+%                   Skin-color samples are collected only from ROIs returned by the frontal 
+%                   face-detection algorithm, so a lack of detections by this algorithm is likely 
+%                   the cause of too few samples. The most straightforward way to increase the 
+%                   number of samples is to increase the length of the input video. Too few samples 
+%                   could also be caused by ROIs from the frontal face-detection algorithm being 
+%                   rejected too often (see courses of action No. 5, 6, and 7).
 %
 %               ROISpecifyByArgument          = Optionally specify ROIs to use in place of those  
 %                                               determined by detection algorithms for frames   
@@ -290,69 +401,69 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                                             of ROI height to frame height.
 %                                             Default = calculated from video.
 %                                             Numeric scalar. 
-%                __________________________________________________________________________________
-%               | Tutorial to set optional arguments ROIMinWidthProportion and 
-%               | ROIMinHeightProportion
-%               |
-%               | Before a set of videos is to be processed, setting a minimum ROI (face) size can  
-%               | help the function filter out false-positive face ROI detections. Specifying a  
-%               | minimum size can also reduce processing time because the face-detection  
-%               | algorithm limits it scanning to areas larger than the minimum size. The minimum  
-%               | ROI size can be specified by arguments ROIMinWidthProportion and   
-%               | ROIMinHeightProportion. 
-%               |
-%               | If argument ROIMinWidthProportion or ROIMinHeightProportion is not supplied as an
-%               | input, function FacePulseRate samples frames across the video and takes face
-%               | detections from these frames. Proportions corresponding to approximately the
-%               | median size of the detections taken are then specified for these arguments.
-%               |
-%               | The automatic setting of the arguments (as noted above) should work reasonably
-%               | well, but manually setting the arguments can be advantageous. Manually setting 
-%               | the arguments can avoid instances where the minimum ROI is set too small, which 
-%               | lessens the advantages of a minimum ROI, or too large, in which case valid ROIs 
-%               | may be filtered out. An example of how to set these arguments follows.
-%               | 
-%               | First, review the video(s) planned for processing. Out of these, choose a part of   
-%               | a video where the face is the smallest. Note that it may not be advisable to use    
-%               | a frame where, assuming no zoom, the distance between the camera and face is not 
-%               | greater than a few feet. Measure the width and height of this face in pixels, and 
-%               | then convert these into proportions. Proportions are used because their effect
-%               | remains the same across videos of different frame sizes (e.g., 1920 x 1080 and
-%               | 1280 x 720).
-%               | 
-%               | (1) Extract image at frame
-%               | 
-%               |     v = VideoReader(Video_InputFile); 
-%               |     v.CurrentTime = 7.00; %set time
-%               |     frame = readFrame(v); %extract frame to image
-%               | 
-%               | (2) Measure width and height of face in pixels
-%               | 
-%               |     Use function imtool to display the frame. Use the ruler tool on the   
-%               |     interactive display to take measurements.
-%               | 
-%               |     imtool(frame); %display image
-%               |     width = 161;  
-%               |     height = 215;
-%               | 
-%               | (3) Reduce the measurements by about 1/3 to ensure some valid detections are not  
-%               |     ruled out.
-%               | 
-%               |     width = width - width / 3;
-%               |     height = height - height / 3;
-%               |  
-%               | (4) Convert the width and height to a proportion out of the total width and total  
-%               |     height, respectively. 
-%               | 
-%               |     These proportions will be the arguments specifying the minimum proportions  
-%               |     that the face should occupy while scanning a face in the input video during  
-%               |     the function.
-%               | 
-%               |     Width proportion 
-%               |     ROIMinWidthProportion = width / v.Width; %reduced width / total width
-%               | 
-%               |     Height proportion
-%               |     ROIMinHeightProportion = height / v.Height; %reduced height / total height          
+%                _________________________________________________________________________________
+%               | Tutorial to set optional arguments ROIMinWidthProportion and                    |
+%               | ROIMinHeightProportion                                                          |
+%               |                                                                                 |
+%               | Before a set of videos is to be processed, setting a minimum ROI (face) size    |  
+%               | can help the function filter out false-positive face ROI detections. Specifying |   
+%               | a minimum size can also reduce processing time because the face-detection       |
+%               | algorithm limits it scanning to areas larger than the minimum size. The minimum |  
+%               | ROI size can be specified by arguments ROIMinWidthProportion and                |
+%               | ROIMinHeightProportion.                                                         |
+%               |                                                                                 |
+%               | If argument ROIMinWidthProportion or ROIMinHeightProportion is not supplied as  | 
+%               | an input, function FacePulseRate samples frames across the video and takes face |
+%               | detections from these frames. Proportions corresponding to approximately the    |
+%               | median size of the detections taken are then specified for these arguments.     |
+%               |                                                                                 |
+%               | The automatic setting of the arguments (as noted above) should work reasonably  |
+%               | well, but manually setting the arguments can be advantageous. Manually setting  |
+%               | the arguments can avoid instances where the minimum ROI is set too small, which | 
+%               | lessens the advantages of a minimum ROI, or too large, in which case valid ROIs | 
+%               | may be filtered out. An example of how to set these arguments follows.          |
+%               |                                                                                 |
+%               | First, review the video(s) planned for processing. Out of these, choose a part  |   
+%               | of a video where the face is the smallest. Note that it may not be advisable to |    
+%               | use a frame where, assuming no zoom, the distance between the camera and face   |  
+%               | not greater than a few feet. Measure the width and height of this face in       | 
+%               | is pixels, and then convert these into proportions. Proportions are used        | 
+%               | because their effect remains the same across videos of different frame sizes    |  
+%               | (e.g., 1920 x 1080 and 1280 x 720).                                             |
+%               |                                                                                 |
+%               | (1) Extract image at frame                                                      |
+%               |                                                                                 |
+%               |     v = VideoReader(Video_InputFile);                                           |
+%               |     v.CurrentTime = 7.00; %set time                                             |
+%               |     frame = readFrame(v); %extract frame to image                               |
+%               |                                                                                 | 
+%               | (2) Measure width and height of face in pixels                                  |
+%               |                                                                                 | 
+%               |     Use function imtool to display the frame. Use the ruler tool on the         |   
+%               |     interactive display to take measurements.                                   |
+%               |                                                                                 | 
+%               |     imtool(frame); %display image                                               |
+%               |     width = 161;                                                                | 
+%               |     height = 215;                                                               |
+%               |                                                                                 |                                                                                 | 
+%               | (3) Reduce the measurements by about 1/3 to ensure some valid detections are    |   
+%               |     not ruled out.                                                              |
+%               |                                                                                 | 
+%               |     width = width - width / 3;                                                  |
+%               |     height = height - height / 3;                                               |
+%               |                                                                                 |  
+%               | (4) Convert the width and height to a proportion out of the total width and     | 
+%               |     total height, respectively.                                                 |
+%               |                                                                                 | 
+%               |     These proportions will be the arguments specifying the minimum proportions  |  
+%               |     that the face should occupy while scanning a face in the input video during |  
+%               |     the function.                                                               |
+%               |                                                                                 | 
+%               |     Width proportion                                                            |
+%               |     ROIMinWidthProportion = width / v.Width; %reduced width / total width       |
+%               |                                                                                 | 
+%               |     Height proportion                                                           |
+%               |     ROIMinHeightProportion = height / v.Height; %reduced height / total height  |         
 %                __________________________________________________________________________________
 %
 %               It may be useful to resize the final ROIs to maximum the portion of the ROI that
@@ -360,13 +471,13 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %               Poh, McDuff, and Picard (2011) used ROIs of full height but 60% width. In 
 %               FacePulseRate, the defaults are 120% height and 90% width.
 %
-%               ROIWidthResizeFactor        = Adjust the final widths of the ROIs by this factor.
-%                                             Default = .9.
-%                                             Numeric scalar.
+%               ROIWidthResizeFactor          = Adjust the final widths of the ROIs by this factor.
+%                                               Default = .9.
+%                                               Numeric scalar.
 %
-%               ROIHeightResizeFactor       = Adjust the final heights of the ROIs by this factor.
-%                                             Default = 1.2.
-%                                             Numeric scalar.
+%               ROIHeightResizeFactor         = Adjust the final heights of the ROIs by this factor.
+%                                               Default = 1.2.
+%                                               Numeric scalar.
 %
 %               ProfileFaceDetectorTF         = Whether the profile face detector is enabled. By 
 %                                               default, the face detector is enabled. The profile 
@@ -425,7 +536,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                                               severity.
 %                                               DetectVerifyPercentilesYCbCrH = [6, 94];
 %
-%               DetectVerifyPercentilesS    =   See description for argument
+%               DetectVerifyPercentilesS      = See description for argument
 %                                               DetectVerifyPercentilesYCbCrH.
 %                                                 
 %                                               Default:
@@ -443,31 +554,39 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %           -- Skin-Segmentation Settings --
 %
-%               Another feature of ROIs to inspect is the appropriate degree of skin segmentation. 
+%               Note: the text in this section is copied from file Example_Script.mlx. However, 
+%               unlike Examples_Correct_ROIs_and_Skin_Segmentation.mlx, code examples of arguments    
+%               used to make corrections to skin segmentation are not included. See 
+%               Examples_Correct_ROIs_and_Skin_Segmentation.mlx for these examples. Portions of 
+%               this text are also present in function WriteFaceVideo.
+%
+%               Purpose of skin-segmentation:
+% 
+%               As determining the appropriate level of skin segmentation is not necessarily 
+%               straitfoward, the following summary describes the author's view on the goals of  
+%               skin segmentation for the purpose of pulse-rate analysis.
+%
 %               Skin segmentation refers to excluding pixels that are classified as non-skin by the 
-%               skin-segmentation algorithm. The purpose of skin segmentation is to make the face  
-%               and skin measurments more robust to environmental changes across the video.  
-%               Specifically, anything that changes in the environment could be interpreted as a 
-%               change in skin coloration if not excluded. Environmental features that remain 
-%               constant and are consistently included in each ROI are not of concern as these 
-%               features will not produces changes in skin coloration across frames. Increasing the 
-%               exclusion of environmental features within the ROI may have the side effect of   
-%               increasing the exclusion of skin areas. Excluding skin areas may become detrimental  
-%               if it results in the location of the face from which measurements are taken  
-%               changing across frames. It can also be detrimental if the number of pixels from  
-%               which measurements are taken changes across frames. These two events will be  
-%               detrimental if they lead to changes to measurements that are not due solely to  
-%               changes in skin coloration due to blood oxygenation levels. Therefore, the extent 
-%               of excluding environmental features should be balanced with the exclusion of skin 
-%               areas.
+%               skin-segmentation algorithm. The purpose of skin segmentation is to make the face 
+%               and skin measurments more robust to change across frames of areas that do not 
+%               correspond to skin, e.g., moving objects, blinking, and mouth movement. Changes in 
+%               coloration across frames, rather than the coloration in any given frame, is the 
+%               concern because the pulse rate is calculated as a function of change in coloration 
+%               across frames. Specifically, anything that changes other than skin will be 
+%               erroneously considered as change in skin coloration, and, hence, pulse rate, if not 
+%               excluded. Areas that have constant coloration across frames, even if they are 
+%               non-skin areas, are of least concern because they will not affect the pulse rate 
+%               calculation.
 %
-%               Some alterations can be made to the skin-segmentation properties to change the  
-%               extent of skin segmentation, although the defaults are considered robust under most 
-%               circumstances.
+%               As mentioned previously, increasing the exclusion of non-skin areas is not 
+%               necessarily the goal of skin segmentation. In fact, increasing the severity of skin 
+%               segmentation across frames may actually have the side effect of making skin 
+%               classification less stable across frames. For example, a high severity of skin 
+%               segmentation may result in the nose being classified back and forth as skin and 
+%               non-skin across frames. This instability may distort the pulse rate calculations as 
+%               changes other than skin coloration are changing across frames.
 %
-%               One adjustment that can be made is the range of pixels values accepted as skin from  
-%               the YCbCr and HSV colorspaces. Widening the range will decrease the extent of skin  
-%               segmentation. 
+%               The combined used of the YCbCr and HSV colorspaces:
 %
 %               The combined used of the YCbCr and HSV colorspaces is based on ...
 %               (1) Dahmani et al. (2020), who found that using both improved skin classification
@@ -480,6 +599,61 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                   be segmented out; for example, the Cr-minimum at this level permits pixel 
 %                   values from overhead lamps. Applying the HSV thresholds in addition to the 
 %                   YCbCr thresholds segmented out these extraneous objects.
+%
+%               Adjustments to default values:
+%
+%               Three courses of action can be taken to correct the extent of skin segmentation. 
+%               The first course of action (No. 1) is the most straightforward. The other courses 
+%               of action are less likely to be needed but are included in case the first course 
+%               does not result in satisfactory skin segmentation. These courses of action involve 
+%               changing an input argument to function FacePulseRate and rerunning FacePulseRate to 
+%               actuate the change. Code examples are provided in a code section that follows.
+%
+%               (1) General severity factor.  Increasing this value generally results in more 
+%                   severe skin segmentation and vice versa. Note that this factor cannot remove 
+%                   segmentation enforced by the permanent thresholds (see course of action No. 2). 
+%                   However, segmentation is determined by several factors in addition to the 
+%                   permanent thresholds, so differences in segmentation should generally be 
+%                   expected when adjusting this factor. Adjust the factor by argument 
+%                   SkinSegmentSeverityFactor.
+%
+%               (2) Permanent thresholds. The permanent thresholds are hard limitiations on which 
+%                   pixel colors are considered skin. Consider changing these if over- or 
+%                   under-segmentation may be due to environmental conditions. For example, if the 
+%                   face is in a shadow, it may be necessary to allow pixels that are darker than 
+%                   the default permanent thresholds permit (i.e., reduce the Y channel minimum 
+%                   treshold to its minimum, which is 16). Note that FacePulseRate checks whether 
+%                   the ROIs appear to be in a shadow and makes a corresponding correction; 
+%                   however, this check is somewhat conservative, so manually changing the 
+%                   permanent thresholds may still be necessary in the case of ROIs with low 
+%                   illumination. Another case where permanent thresholds may need to be changed is 
+%                   the case of an unusual tint across frames. That is, sometimes the coloration, 
+%                   white balance, etc., of a video may not be compatible with the default 
+%                   permanent thresholds; however, this is expected to be uncommon. Change the 
+%                   range of permanent thesholds by adjusting arguments 
+%                   SkinSegmentThresholdsGenericYCbCr and SkinSegmentThresholdsGenericHSV. The left 
+%                   value of these arguments indiates the minimum of the range, and the right value 
+%                   indicates the maximum of the range.  Widening the range reduces the severity of 
+%                   skin segmentation.
+%                   
+%               (3) Oversegmentation adjustments. By default, the presence of oversegmentation is 
+%                   checked. If oversegmentation is determined to be present, some 
+%                   skin-segmentation settings will be made less severe. The purpose of the 
+%                   oversegmentation check is to automatically adjust the severity of skin 
+%                   segmentation without the need to modify the arguments noted in this section. 
+%                   However, sometimes oversegmentation will be detected when it doesn't exist. For 
+%                   example, the presense of hair occluding part of the face (e.g., the presence of 
+%                   long bangs) can sometimes lead the oversegmentation check to determine that too 
+%                   much of the face was segmented; in this case, the large extent of face 
+%                   segmentation is appropriate rather than being an indication of 
+%                   oversegmentation, but the segmentation check is not aware of this subtle 
+%                   difference. If the oversegmentation check erroneously detects oversegmentation 
+%                   and subsequently reduces the severity of skin segmentation, the resulting skin 
+%                   segmentation may not be satisfactory (note that low segmentation is not 
+%                   necessarily undesirable; see section "Skin Segmentation Overview" above). If 
+%                   the oversegmentation check reduced the severity, the legend text will indicate 
+%                   "Oversegmentation Adjustments: true". The oversegmentation adjustments can be 
+%                   disabled by specifying argument OversegmentationCheckTF as false.
 %
 %               SkinSegmentThresholdsGenericYCbCr = Optionally specify the minimum and maximum    
 %                                                   values of pixels to be classified as skin in 
@@ -861,7 +1035,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %   Version History
 %   ---------------
 %
-%       1.0: 8 October 2020. 
+%       1.0: 11 October 2020. 
 %           Initial release.
 %           Developed on Matlab 2020b for Windows.
 %           Lines of Matlab code, excluding blank lines and comments: 9809.
@@ -874,7 +1048,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       For commercial licensing, please contact the author.
 %
-%       Note: the author claims no affilation with iPhys Toolbox, which is the property of its 
+%       Note: the author is not affilation with iPhys Toolbox, which is the property of its 
 %       respective owners.
 % 
 %       -- GNU General Public License, Version 2 --
@@ -905,9 +1079,10 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %   Third-Party Copyright Notices
 %   -----------------------------
 %
-%       FacePulseRate Toolbox uses programs from other authors. These programs are listed here.  
-%       Third-party copyrights are property of their respective owners.
-%
+%       FacePulseRate is only possible through the use of third-party open-source software. The 
+%       author is grateful for its use.
+%       
+%       Note: portions of the following text are included in License.txt.
 %
 %       -- Pulse-Rate Algorithms --
 %
@@ -953,7 +1128,6 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       K. E. (2018). Noncontact measurement of emotional and physiological changes in heart rate  
 %       from a webcam. Psychophysiology, 55(4), e13005.    
 %
-%
 %       -- Viola-Jones Face Detection --
 %
 %       The following Viola-Jones face-detection files were accessed from OpenCV (Open Source  
@@ -979,7 +1153,6 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %           and facial feature detectors based on the Viola–Jones general object detection 
 %           framework. Machine Vision and Applications, 22(3), 481-494. 
 %
-%
 %       -- Skin Region Classification -- 
 %
 %       SkinDetect_RGBProbSkinTrain.m and SkinDetect_RGBProbSkin.m are files modified for use in 
@@ -999,7 +1172,6 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       RGB_External.txt and RGB_External_Rand.txt contain data from data.txt, listed above, with  
 %       additional data copyright (c) Douglas Magill, June, 2020.
 %
-%
 %       -- Skin Segmentation -- 
 %
 %       SkinSegmentMask_Threshold.m. The use of fixed minimum and maximum YCbCr values is adapted  
@@ -1009,7 +1181,6 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       Blackford, E. (2019). iphys: An open non-contact imaging-based physiological measurement       
 %       toolbox. In 2019 Annual International Conference of the IEEE Engineering in Medicine and 
 %       Biology Society (EMBC), pp. 6521-6524. 
-%
 %
 %       -- Video Reading and Writing -- 
 %

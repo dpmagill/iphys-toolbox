@@ -39,7 +39,8 @@ function WriteFaceVideo(VideoReadConfig, ROI, HasROI_TF, ROIDiagnostic, SkinSegm
 %       Note: the text in this section is copied from file Example_Script.mlx. However, unlike
 %       Examples_Correct_ROIs_and_Skin_Segmentation.mlx, code examples of arguments used to make 
 %       corrections to ROI placement are not included. See 
-%       Examples_Correct_ROIs_and_Skin_Segmentation.mlx for these examples.      
+%       Examples_Correct_ROIs_and_Skin_Segmentation.mlx for these examples. Portions of this text
+%       are also present in function FacePulseRate.
 % 
 %       Eight courses of action can be taken to correct ROI placement. It is expected that only one 
 %       course of action will be needed for a given video. The courses of action involve changing 
@@ -124,7 +125,8 @@ function WriteFaceVideo(VideoReadConfig, ROI, HasROI_TF, ROIDiagnostic, SkinSegm
 %       Note: the text in this section is copied from file Example_Script.mlx. However, unlike
 %       Examples_Correct_ROIs_and_Skin_Segmentation.mlx, code examples of arguments used to make   
 %       corrections to skin segmentation are not included. See 
-%       Examples_Correct_ROIs_and_Skin_Segmentation.mlx for these examples.
+%       Examples_Correct_ROIs_and_Skin_Segmentation.mlx for these examples. Portions of this text
+%       are also present in function FacePulseRate.
 %
 %       The courses of action described in this section can be used to modify the extent of skin 
 %       segmentation.

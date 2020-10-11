@@ -1,17 +1,23 @@
 
-# FacePulseRate: A Suite of Features to Use with iPhys Toolbox
+# FacePulseRate: A Suite of Features to Facilitate the Use of iPhys Toolbox
 
-Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). Additionally, FacePulseRate ...
+Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. This toolbox accepts pre-recorded video rather than video streams. The benefit of pre-recorded video is that some operations can be aware of the future (they can look ahead in the video), which improves the accuracy of ROI placement.      
 
-* Breaks down pulse rate into windows, permitting pulse rate to vary across time.
-* Automically positions a face ROI for each frame.
-* Provides enhanced skin segmentation.
-* Provides separate versions of each of the four algorithms while controlled for variation in luminance across frames (see Madan et al., 2018). This is in addition to providing the four versions without controlling for luminance.
-* Provides verification of ROI placement and skin-segmentation by providing an annotated output video. Arguments are available to make adjustments to ROI placement and skin-segmentation based upon inspection of the output video.
+FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the pulse rate of an interval (termed a window here) is calculated by conducting a fast Fourier transform (FFT) to select the greatest peak. 
 
-## Treatment of Pulse Rate Variations Across Time
+## Purpose
 
-The method in iPhys Toolbox for deriving pulse rate derives BVP from a span of time, the limitation of which is that changes in pulse rate across this span are not calculated.  Although methods exist to derive a continuous measure of pulse rate from BVP as calculated from a sensor attached directly to the body, these methods do not appear to be appropriate for BVP captured from a video because of the additional noise present in the video. To provide a somewhat continuous measure of pulse rate while retaining the method used in iPhys Toolbox, the current function breaks the video into windows (the duration of which can be specified by PulseRateWindowDurationSec) and applies the method used in iPhys Toolbox to each.
+The first purpose of FacePulseRate is to break down time into numerous windows (each 1.5 minutes) to allow pulse rate to vary across time. An argument can be used to change the window duration according to preference. It is unclear whether this approach has been used previously, so developing the duration according to comparison with objective PPG data may provide guidance.
+
+The second purpose is to provide features to make the collection of data from the videos convenient, accurate, diagnosable, and correctable. These features do not alter the pulse rate algorithms from iPhys Toolbox, but rather concentrate on obtaining data for input into the algorithms. Good data should facilitate the accuracy of the pulse-rate algorithms. The features include ...
+
+* Automatically positioning a face ROI for each frame using OpenCV (Viola-Jones) face detection and a novel skin-detection method.
+
+* Providing a novel method of skin segmentation where thresholds are tailored from skin-color samples from the video.
+
+* An argument that enables controlling for variation in luminance across frames (see Madan et al., 2018). 
+
+* Providing verification of ROI placement and skin-segmentation by providing an annotated output video. Arguments are available to make adjustments to ROI placement and skin-segmentation based upon inspection of the output video. For a description of how the annotations on the output video can inform modifications to the arguments, see the description in function WriteFaceVideo.
 
 ## Input
 
