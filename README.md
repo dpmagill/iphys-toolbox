@@ -21,11 +21,9 @@ Supported file extensions include ...
 * .mp4
 * .avi
 
-Other file extensions may be supported. Use Matlab function VideoReader.getFileFormats() to return a list of supported file extensions. 
+Other file extensions may be supported. 
 
-Note that videos with these file extensions may not be supported depending on the specific format (encoding) of the video.    
-
-Whether a format is supported depends upon two factors. The first factor is the Matlab release as FacePulseRate uses Matlab video readers. Format support from the Matlab video readers may change between releases. The second factor is the availability of codecs installed on a particular computer. FacePulseRate will verify whether a video is supported when the function is run. FacePulseRate uses the Matlab video readers to check the support of the video readers and to check whether the appropriate codecs are available on a particular computer.   
+For additional discussion and recommendations, see "Video and Recording Environment Recommendations.pdf".
 
 ## Output
 
@@ -76,10 +74,6 @@ Matlab's path, entering the following line in Matlab is all that is needed to re
 - Optimization Toolbox 
 
 3. Download the folder that contains the functions for FacePulseRate. This folder is named 'FacePulseRate'. As of October 2020, FacePulseRate can be found on Github.com under the username 'dpmagill' as a fork to McDuff and Blackford's (2019) iPhys Toolbox. 
-
-### Recommendations on the Input Video and Physical Environment
-
-See "Video and Recording Environment Recommendations.pdf".
 
 ### General Instructions
 
