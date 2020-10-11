@@ -11,10 +11,10 @@
 
 /* Include files */
 #include "SkinSegmentMask_Threshold_Colors.h"
-#include "SkinSegmentMask_Ops.h"
 #include "SkinSegmentMask_Ops_emxutil.h"
-#include "mwmathutil.h"
+#include "SkinSegmentMask_Ops_types.h"
 #include "rt_nonfinite.h"
+#include "mwmathutil.h"
 
 /* Function Definitions */
 void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
@@ -29,36 +29,36 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
   HSThresholds_Tailored[3], boolean_T UseLinIdxTF, int32_T XOffset, int32_T
   YOffset, emxArray_boolean_T *IsSkinMask)
 {
-  real32_T YMin;
-  real32_T YMax;
-  real32_T CbMin;
-  real32_T CbMax;
-  real32_T CrMin;
-  real32_T CrMax;
-  real32_T CbCrRatioMin;
-  real32_T CbCrRatioMax;
-  real32_T HMax;
-  real32_T SMin;
-  real32_T SMax;
-  int32_T i;
-  int32_T b_i;
-  uint16_T OutIdxX;
-  boolean_T IsSkinMask_ith;
-  uint16_T OutIdxY;
-  real32_T CbCrRatio_ith;
-  int32_T i1;
-  int32_T j;
-  int32_T c1;
-  int32_T YAdjust;
   int32_T XAdjust;
+  int32_T YAdjust;
+  int32_T b_i;
+  int32_T c1;
   int32_T c2;
   int32_T c3;
-  real32_T cb;
-  int32_T v;
-  real32_T cr;
+  int32_T i;
+  int32_T i1;
+  int32_T j;
   int32_T l;
+  int32_T v;
+  real32_T CbCrRatioMax;
+  real32_T CbCrRatioMin;
+  real32_T CbCrRatio_ith;
+  real32_T CbMax;
+  real32_T CbMin;
+  real32_T CrMax;
+  real32_T CrMin;
+  real32_T HMax;
+  real32_T SMax;
+  real32_T SMin;
+  real32_T YMax;
+  real32_T YMin;
+  real32_T cb;
+  real32_T cr;
   real32_T out;
   real32_T s;
+  uint16_T OutIdxX;
+  uint16_T OutIdxY;
+  boolean_T IsSkinMask_ith;
 
   /* SkinSegmentMask_Threshold_Colors   Return a skin-segmentation mask by comparing channels of the     */
   /*                                    YCbCr and HSV colorspaces of the input image to specified  */
@@ -185,8 +185,9 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
   /*     Copyright */
   /*     --------- */
   /*  */
-  /*     Copyright (c) Douglas Magill (dpmdpm@vt.edu), August, 2020. Licensed under the MIT License and   */
-  /*     the Responsible AI License (RAIL). */
+  /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+  /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+  /*     licensing, please contact the author. */
   /* %%%%% Code-generation settings %%%%%% */
   /* Inline function */
   /* %%%%% Operations if all color channels used in skin segmentation are provided as input %%%%%% */
@@ -233,8 +234,9 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
     /*     Copyright */
     /*     --------- */
     /*  */
-    /*     Copyright (c) Douglas Magill (dpmdpm@vt.edu), August, 2020. Licensed under the MIT License and   */
-    /*     the Responsible AI License (RAIL). */
+    /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+    /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+    /*     licensing, please contact the author.  */
     /* %%%%% Code-generation settings %%%%%% */
     /* Inline function */
     /* %%%%% Prepare for operations %%%%%% */
@@ -356,15 +358,15 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
             /* Convert from subscript indices to a linear index for more efficient indexing */
             /* Note: In compiled C code, the faster indexing outweighs the cost of this  */
             /* conversion. */
-            c1 = (j + (b_i - 1) * YBounded_Single->size[0]) - 1;
+            c2 = (j + (b_i - 1) * YBounded_Single->size[0]) - 1;
 
             /* Extract the ith y, cb, and cr values */
             /* Scalars; type single. */
             /* Classify pixels within all thresholds as skin (true)        */
-            if ((YBounded_Single->data[c1] > YMin) && (CbBounded_Single->data[c1]
-                 > CbMin) && (CbBounded_Single->data[c1] < CbMax) &&
-                (CrBounded_Single->data[c1] > CrMin) && (CrBounded_Single->
-                 data[c1] < CrMax)) {
+            if ((YBounded_Single->data[c2] > YMin) && (CbBounded_Single->data[c2]
+                 > CbMin) && (CbBounded_Single->data[c2] < CbMax) &&
+                (CrBounded_Single->data[c2] > CrMin) && (CrBounded_Single->
+                 data[c2] < CrMax)) {
               IsSkinMask_ith = true;
             } else {
               IsSkinMask_ith = false;
@@ -385,8 +387,8 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
             if (IsSkinMask_ith) {
               /* Calculate Cb-to-Cr ratio */
               /* Type single to permit division to return fractions. */
-              CbCrRatio_ith = CbBounded_Single->data[c1] /
-                CrBounded_Single->data[c1];
+              CbCrRatio_ith = CbBounded_Single->data[c2] /
+                CrBounded_Single->data[c2];
               if ((!(CbCrRatio_ith > CbCrRatioMin)) || (!(CbCrRatio_ith <
                     CbCrRatioMax))) {
                 IsSkinMask_ith = false;
@@ -474,49 +476,51 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
             /* Convert from subscript indices to a linear index for more efficient indexing */
             /* Note: In compiled C code, the faster indexing outweighs the cost of this  */
             /* conversion. */
-            c1 = (j + (b_i - 1) * YBounded_Single->size[0]) - 1;
+            c2 = (j + (b_i - 1) * YBounded_Single->size[0]) - 1;
 
             /* Extract the ith h and s values */
             /* Scalars; type single. */
             /* Classify pixels within all thresholds as skin (true)  */
-            if ((HBounded_Single->data[c1] < HMax) && (SBounded_Single->data[c1]
-                 > SMin) && (SBounded_Single->data[c1] < SMax)) {
+            if ((HBounded_Single->data[c2] < HMax) && (SBounded_Single->data[c2]
+                 > SMin) && (SBounded_Single->data[c2] < SMax)) {
               IsSkinMask_ith = true;
             } else {
               IsSkinMask_ith = false;
             }
 
-            c2 = OutIdxY - 1;
-            c3 = OutIdxX - 1;
-            IsSkinMask->data[c2 + IsSkinMask->size[0] * c3] = IsSkinMask_ith;
+            IsSkinMask->data[(OutIdxY + IsSkinMask->size[0] * (OutIdxX - 1)) - 1]
+              = IsSkinMask_ith;
             if (IsSkinMask_ith) {
               /* Extract the ith y, cb, and cr values */
               /* Scalars; type single. */
               /* Note: for efficiency, the output replaces somes variable previously  */
               /* assigned.    */
-              if ((YBounded_Single->data[c1] > YMin) && (YBounded_Single->
-                   data[c1] < YMax) && (CbBounded_Single->data[c1] > CbMin) &&
-                  (CbBounded_Single->data[c1] < CbMax) &&
-                  (CrBounded_Single->data[c1] > CrMin) &&
-                  (CrBounded_Single->data[c1] < CrMax)) {
+              if ((YBounded_Single->data[c2] > YMin) && (YBounded_Single->
+                   data[c2] < YMax) && (CbBounded_Single->data[c2] > CbMin) &&
+                  (CbBounded_Single->data[c2] < CbMax) &&
+                  (CrBounded_Single->data[c2] > CrMin) &&
+                  (CrBounded_Single->data[c2] < CrMax)) {
                 IsSkinMask_ith = true;
               } else {
                 IsSkinMask_ith = false;
               }
 
-              IsSkinMask->data[c2 + IsSkinMask->size[0] * c3] = IsSkinMask_ith;
+              IsSkinMask->data[(OutIdxY + IsSkinMask->size[0] * (OutIdxX - 1)) -
+                1] = IsSkinMask_ith;
               if (IsSkinMask_ith) {
                 /* Calculate Cb-to-Cr ratio */
                 /* Type single to permit division to return fractions. */
                 /* Note: for efficiency, the output replaces a variable previously   */
                 /* assigned. */
-                CbCrRatio_ith = CbBounded_Single->data[c1] /
-                  CrBounded_Single->data[c1];
+                CbCrRatio_ith = CbBounded_Single->data[c2] /
+                  CrBounded_Single->data[c2];
                 if ((CbCrRatio_ith > CbCrRatioMin) && (CbCrRatio_ith <
                      CbCrRatioMax)) {
-                  IsSkinMask->data[c2 + IsSkinMask->size[0] * c3] = true;
+                  IsSkinMask->data[(OutIdxY + IsSkinMask->size[0] * (OutIdxX - 1))
+                    - 1] = true;
                 } else {
-                  IsSkinMask->data[c2 + IsSkinMask->size[0] * c3] = false;
+                  IsSkinMask->data[(OutIdxY + IsSkinMask->size[0] * (OutIdxX - 1))
+                    - 1] = false;
                 }
               }
             }
@@ -531,14 +535,57 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
     /* As these channels were provided as input, they are not provided back as output.        */
     YBounded_Single->size[0] = 0;
     YBounded_Single->size[1] = 0;
-    CbBounded_Single->size[0] = 0;
-    CbBounded_Single->size[1] = 0;
-    CrBounded_Single->size[0] = 0;
-    CrBounded_Single->size[1] = 0;
-    HBounded_Single->size[0] = 0;
-    HBounded_Single->size[1] = 0;
-    SBounded_Single->size[0] = 0;
-    SBounded_Single->size[1] = 0;
+    i = CbBounded_Single->size[0] * CbBounded_Single->size[1];
+    CbBounded_Single->size[0] = YBounded_Single->size[0];
+    CbBounded_Single->size[1] = YBounded_Single->size[1];
+    emxEnsureCapacity_real32_T(CbBounded_Single, i);
+    c2 = YBounded_Single->size[1];
+    for (i = 0; i < c2; i++) {
+      c1 = YBounded_Single->size[0];
+      for (i1 = 0; i1 < c1; i1++) {
+        CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i] =
+          YBounded_Single->data[i1 + YBounded_Single->size[0] * i];
+      }
+    }
+
+    i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+    CrBounded_Single->size[0] = YBounded_Single->size[0];
+    CrBounded_Single->size[1] = YBounded_Single->size[1];
+    emxEnsureCapacity_real32_T(CrBounded_Single, i);
+    c2 = YBounded_Single->size[1];
+    for (i = 0; i < c2; i++) {
+      c1 = YBounded_Single->size[0];
+      for (i1 = 0; i1 < c1; i1++) {
+        CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+          YBounded_Single->data[i1 + YBounded_Single->size[0] * i];
+      }
+    }
+
+    i = HBounded_Single->size[0] * HBounded_Single->size[1];
+    HBounded_Single->size[0] = YBounded_Single->size[0];
+    HBounded_Single->size[1] = YBounded_Single->size[1];
+    emxEnsureCapacity_real32_T(HBounded_Single, i);
+    c2 = YBounded_Single->size[1];
+    for (i = 0; i < c2; i++) {
+      c1 = YBounded_Single->size[0];
+      for (i1 = 0; i1 < c1; i1++) {
+        HBounded_Single->data[i1 + HBounded_Single->size[0] * i] =
+          YBounded_Single->data[i1 + YBounded_Single->size[0] * i];
+      }
+    }
+
+    i = SBounded_Single->size[0] * SBounded_Single->size[1];
+    SBounded_Single->size[0] = YBounded_Single->size[0];
+    SBounded_Single->size[1] = YBounded_Single->size[1];
+    emxEnsureCapacity_real32_T(SBounded_Single, i);
+    c2 = YBounded_Single->size[1];
+    for (i = 0; i < c2; i++) {
+      c1 = YBounded_Single->size[0];
+      for (i1 = 0; i1 < c1; i1++) {
+        SBounded_Single->data[i1 + SBounded_Single->size[0] * i] =
+          YBounded_Single->data[i1 + YBounded_Single->size[0] * i];
+      }
+    }
 
     /* %%%%% Operations if color channels used in skin segmentation need to be produced %%%%%% */
   } else {
@@ -581,8 +628,9 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
     /*     Copyright */
     /*     --------- */
     /*  */
-    /*     Copyright (c) Douglas Magill (dpmdpm@vt.edu), August, 2020. Licensed under the MIT License and   */
-    /*     the Responsible AI License (RAIL). */
+    /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+    /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+    /*     licensing, please contact the author.  */
     /* %%%%% Code-generation settings %%%%%% */
     /* Inline function */
     /* Declare variables: */
@@ -641,8 +689,18 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
     if (!ReturnHSTF) {
       HBounded_Single->size[0] = 0;
       HBounded_Single->size[1] = 0;
-      SBounded_Single->size[0] = 0;
-      SBounded_Single->size[1] = 0;
+      i = SBounded_Single->size[0] * SBounded_Single->size[1];
+      SBounded_Single->size[0] = HBounded_Single->size[0];
+      SBounded_Single->size[1] = HBounded_Single->size[1];
+      emxEnsureCapacity_real32_T(SBounded_Single, i);
+      c2 = HBounded_Single->size[1];
+      for (i = 0; i < c2; i++) {
+        c1 = HBounded_Single->size[0];
+        for (i1 = 0; i1 < c1; i1++) {
+          SBounded_Single->data[i1 + SBounded_Single->size[0] * i] =
+            HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+        }
+      }
 
       /* Do not use tailored thresholds */
       if ((!TailoredThresholdsTF) || DontUseTailoredTF) {
@@ -652,12 +710,44 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
         /*  - Do not return matrices of the Y, Cb, or Cr channels.        */
         if ((!ReturnCbCrTF) && (!ReturnYTF)) {
           /* M x N matrices; type single. */
-          YBounded_Single->size[0] = 0;
-          YBounded_Single->size[1] = 0;
-          CbBounded_Single->size[0] = 0;
-          CbBounded_Single->size[1] = 0;
-          CrBounded_Single->size[0] = 0;
-          CrBounded_Single->size[1] = 0;
+          i = YBounded_Single->size[0] * YBounded_Single->size[1];
+          YBounded_Single->size[0] = HBounded_Single->size[0];
+          YBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(YBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              YBounded_Single->data[i1 + YBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
+
+          i = CbBounded_Single->size[0] * CbBounded_Single->size[1];
+          CbBounded_Single->size[0] = HBounded_Single->size[0];
+          CbBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CbBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
+
+          i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+          CrBounded_Single->size[0] = HBounded_Single->size[0];
+          CrBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CrBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
 
           /* Index using a linear index */
           if (UseLinIdxTF) {
@@ -1026,10 +1116,31 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
           YBounded_Single->size[0] = NRows_Matrix;
           YBounded_Single->size[1] = NCols_Matrix;
           emxEnsureCapacity_real32_T(YBounded_Single, i);
-          CbBounded_Single->size[0] = 0;
-          CbBounded_Single->size[1] = 0;
-          CrBounded_Single->size[0] = 0;
-          CrBounded_Single->size[1] = 0;
+          i = CbBounded_Single->size[0] * CbBounded_Single->size[1];
+          CbBounded_Single->size[0] = HBounded_Single->size[0];
+          CbBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CbBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
+
+          i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+          CrBounded_Single->size[0] = HBounded_Single->size[0];
+          CrBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CrBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
 
           /* Index using a linear index */
           if (UseLinIdxTF) {
@@ -1813,12 +1924,44 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
         /*  - Do not return YCbCr matrices.             */
         if ((!ReturnCbCrTF) && (!ReturnYTF)) {
           /* M x N matrix; type single. */
-          YBounded_Single->size[0] = 0;
-          YBounded_Single->size[1] = 0;
-          CbBounded_Single->size[0] = 0;
-          CbBounded_Single->size[1] = 0;
-          CrBounded_Single->size[0] = 0;
-          CrBounded_Single->size[1] = 0;
+          i = YBounded_Single->size[0] * YBounded_Single->size[1];
+          YBounded_Single->size[0] = HBounded_Single->size[0];
+          YBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(YBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              YBounded_Single->data[i1 + YBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
+
+          i = CbBounded_Single->size[0] * CbBounded_Single->size[1];
+          CbBounded_Single->size[0] = HBounded_Single->size[0];
+          CbBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CbBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
+
+          i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+          CrBounded_Single->size[0] = HBounded_Single->size[0];
+          CrBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CrBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
 
           /* Index using a linear index */
           if (UseLinIdxTF) {
@@ -2344,10 +2487,31 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
           YBounded_Single->size[0] = NRows_Matrix;
           YBounded_Single->size[1] = NCols_Matrix;
           emxEnsureCapacity_real32_T(YBounded_Single, i);
-          CbBounded_Single->size[0] = 0;
-          CbBounded_Single->size[1] = 0;
-          CrBounded_Single->size[0] = 0;
-          CrBounded_Single->size[1] = 0;
+          i = CbBounded_Single->size[0] * CbBounded_Single->size[1];
+          CbBounded_Single->size[0] = HBounded_Single->size[0];
+          CbBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CbBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
+
+          i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+          CrBounded_Single->size[0] = HBounded_Single->size[0];
+          CrBounded_Single->size[1] = HBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CrBounded_Single, i);
+          c2 = HBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = HBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+                HBounded_Single->data[i1 + HBounded_Single->size[0] * i];
+            }
+          }
 
           /* Index using a linear index */
           if (UseLinIdxTF) {
@@ -3363,10 +3527,31 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
           /* M x N matrices; type single. */
           YBounded_Single->size[0] = 0;
           YBounded_Single->size[1] = 0;
-          CbBounded_Single->size[0] = 0;
-          CbBounded_Single->size[1] = 0;
-          CrBounded_Single->size[0] = 0;
-          CrBounded_Single->size[1] = 0;
+          i = CbBounded_Single->size[0] * CbBounded_Single->size[1];
+          CbBounded_Single->size[0] = YBounded_Single->size[0];
+          CbBounded_Single->size[1] = YBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CbBounded_Single, i);
+          c2 = YBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = YBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i] =
+                YBounded_Single->data[i1 + YBounded_Single->size[0] * i];
+            }
+          }
+
+          i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+          CrBounded_Single->size[0] = YBounded_Single->size[0];
+          CrBounded_Single->size[1] = YBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CrBounded_Single, i);
+          c2 = YBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = YBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+                YBounded_Single->data[i1 + YBounded_Single->size[0] * i];
+            }
+          }
 
           /* Index using a linear index */
           if (UseLinIdxTF) {
@@ -3752,8 +3937,18 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
           emxEnsureCapacity_real32_T(YBounded_Single, i);
           CbBounded_Single->size[0] = 0;
           CbBounded_Single->size[1] = 0;
-          CrBounded_Single->size[0] = 0;
-          CrBounded_Single->size[1] = 0;
+          i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+          CrBounded_Single->size[0] = CbBounded_Single->size[0];
+          CrBounded_Single->size[1] = CbBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CrBounded_Single, i);
+          c2 = CbBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = CbBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+                CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i];
+            }
+          }
 
           /* Index using a linear index */
           if (UseLinIdxTF) {
@@ -4559,10 +4754,31 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
           /* M x N matrix; type single. */
           YBounded_Single->size[0] = 0;
           YBounded_Single->size[1] = 0;
-          CbBounded_Single->size[0] = 0;
-          CbBounded_Single->size[1] = 0;
-          CrBounded_Single->size[0] = 0;
-          CrBounded_Single->size[1] = 0;
+          i = CbBounded_Single->size[0] * CbBounded_Single->size[1];
+          CbBounded_Single->size[0] = YBounded_Single->size[0];
+          CbBounded_Single->size[1] = YBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CbBounded_Single, i);
+          c2 = YBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = YBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i] =
+                YBounded_Single->data[i1 + YBounded_Single->size[0] * i];
+            }
+          }
+
+          i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+          CrBounded_Single->size[0] = YBounded_Single->size[0];
+          CrBounded_Single->size[1] = YBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CrBounded_Single, i);
+          c2 = YBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = YBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+                YBounded_Single->data[i1 + YBounded_Single->size[0] * i];
+            }
+          }
 
           /* Index using a linear index */
           if (UseLinIdxTF) {
@@ -4949,8 +5165,18 @@ void c_SkinSegmentMask_Threshold_Col(const emxArray_uint8_T *RBounded_Uint8,
           emxEnsureCapacity_real32_T(YBounded_Single, i);
           CbBounded_Single->size[0] = 0;
           CbBounded_Single->size[1] = 0;
-          CrBounded_Single->size[0] = 0;
-          CrBounded_Single->size[1] = 0;
+          i = CrBounded_Single->size[0] * CrBounded_Single->size[1];
+          CrBounded_Single->size[0] = CbBounded_Single->size[0];
+          CrBounded_Single->size[1] = CbBounded_Single->size[1];
+          emxEnsureCapacity_real32_T(CrBounded_Single, i);
+          c2 = CbBounded_Single->size[1];
+          for (i = 0; i < c2; i++) {
+            c1 = CbBounded_Single->size[0];
+            for (i1 = 0; i1 < c1; i1++) {
+              CrBounded_Single->data[i1 + CrBounded_Single->size[0] * i] =
+                CbBounded_Single->data[i1 + CbBounded_Single->size[0] * i];
+            }
+          }
 
           /* Index using a linear index */
           if (UseLinIdxTF) {

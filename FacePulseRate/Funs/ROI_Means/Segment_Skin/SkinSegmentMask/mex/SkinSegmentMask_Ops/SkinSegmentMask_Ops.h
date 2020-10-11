@@ -12,15 +12,15 @@
 #pragma once
 
 /* Include files */
+#include "SkinSegmentMask_Ops_types.h"
+#include "rtwtypes.h"
+#include "emlrt.h"
+#include "mex.h"
+#include "omp.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "rtwtypes.h"
-#include "omp.h"
-#include "SkinSegmentMask_Ops_types.h"
 
 /* Function Declarations */
 void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
@@ -36,5 +36,8 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   TrueCount_size[1], emxArray_real32_T *YBounded_Single, emxArray_real32_T
   *CbBounded_Single, emxArray_real32_T *CrBounded_Single, emxArray_real32_T
   *HBounded_Single, emxArray_real32_T *SBounded_Single);
+emlrtCTX emlrtGetRootTLSGlobal(void);
+void emlrtLockerFunction(EmlrtLockeeFunction aLockee, const emlrtConstCTX aTLS,
+  void *aData);
 
 /* End of code generation (SkinSegmentMask_Ops.h) */

@@ -11,72 +11,16 @@
 
 /* Include files */
 #include "SkinSegmentMask_Ops_emxutil.h"
-#include "SkinSegmentMask_Ops.h"
 #include "SkinSegmentMask_Ops_data.h"
+#include "SkinSegmentMask_Ops_types.h"
 #include "rt_nonfinite.h"
 #include <string.h>
 
-/* Function Declarations */
-static void emxFreeMatrix_cell_wrap_1(cell_wrap_1 pMatrix[5]);
-static void emxFreeStruct_cell_wrap_1(cell_wrap_1 *pStruct);
-static void emxFreeStruct_cell_wrap_2(cell_wrap_2 *pStruct);
-static void emxFreeStruct_cell_wrap_3(cell_wrap_3 *pStruct);
-static void emxInitMatrix_cell_wrap_1(cell_wrap_1 pMatrix[5], boolean_T doPush);
-static void emxInitStruct_cell_wrap_1(cell_wrap_1 *pStruct, boolean_T doPush);
-static void emxInitStruct_cell_wrap_2(cell_wrap_2 *pStruct, boolean_T doPush);
-static void emxInitStruct_cell_wrap_3(cell_wrap_3 *pStruct, boolean_T doPush);
-
 /* Function Definitions */
-static void emxFreeMatrix_cell_wrap_1(cell_wrap_1 pMatrix[5])
-{
-  int32_T i;
-  for (i = 0; i < 5; i++) {
-    emxFreeStruct_cell_wrap_1(&pMatrix[i]);
-  }
-}
-
-static void emxFreeStruct_cell_wrap_1(cell_wrap_1 *pStruct)
-{
-  emxFree_real32_T(&pStruct->f1);
-}
-
-static void emxFreeStruct_cell_wrap_2(cell_wrap_2 *pStruct)
-{
-  emxFreeMatrix_cell_wrap_1(pStruct->f1);
-}
-
-static void emxFreeStruct_cell_wrap_3(cell_wrap_3 *pStruct)
-{
-  emxFree_boolean_T(&pStruct->f1);
-}
-
-static void emxInitMatrix_cell_wrap_1(cell_wrap_1 pMatrix[5], boolean_T doPush)
-{
-  int32_T i;
-  for (i = 0; i < 5; i++) {
-    emxInitStruct_cell_wrap_1(&pMatrix[i], doPush);
-  }
-}
-
-static void emxInitStruct_cell_wrap_1(cell_wrap_1 *pStruct, boolean_T doPush)
-{
-  emxInit_real32_T(&pStruct->f1, 2, doPush);
-}
-
-static void emxInitStruct_cell_wrap_2(cell_wrap_2 *pStruct, boolean_T doPush)
-{
-  emxInitMatrix_cell_wrap_1(pStruct->f1, doPush);
-}
-
-static void emxInitStruct_cell_wrap_3(cell_wrap_3 *pStruct, boolean_T doPush)
-{
-  emxInit_boolean_T(&pStruct->f1, 2, doPush);
-}
-
 void emxEnsureCapacity_boolean_T(emxArray_boolean_T *emxArray, int32_T oldNumel)
 {
-  int32_T newNumel;
   int32_T i;
+  int32_T newNumel;
   void *newData;
   if (oldNumel < 0) {
     oldNumel = 0;
@@ -117,8 +61,8 @@ void emxEnsureCapacity_boolean_T(emxArray_boolean_T *emxArray, int32_T oldNumel)
 
 void emxEnsureCapacity_real32_T(emxArray_real32_T *emxArray, int32_T oldNumel)
 {
-  int32_T newNumel;
   int32_T i;
+  int32_T newNumel;
   void *newData;
   if (oldNumel < 0) {
     oldNumel = 0;
@@ -159,8 +103,8 @@ void emxEnsureCapacity_real32_T(emxArray_real32_T *emxArray, int32_T oldNumel)
 
 void emxEnsureCapacity_real_T(emxArray_real_T *emxArray, int32_T oldNumel)
 {
-  int32_T newNumel;
   int32_T i;
+  int32_T newNumel;
   void *newData;
   if (oldNumel < 0) {
     oldNumel = 0;
@@ -201,8 +145,8 @@ void emxEnsureCapacity_real_T(emxArray_real_T *emxArray, int32_T oldNumel)
 
 void emxEnsureCapacity_uint32_T(emxArray_uint32_T *emxArray, int32_T oldNumel)
 {
-  int32_T newNumel;
   int32_T i;
+  int32_T newNumel;
   void *newData;
   if (oldNumel < 0) {
     oldNumel = 0;
@@ -243,8 +187,8 @@ void emxEnsureCapacity_uint32_T(emxArray_uint32_T *emxArray, int32_T oldNumel)
 
 void emxEnsureCapacity_uint8_T(emxArray_uint8_T *emxArray, int32_T oldNumel)
 {
-  int32_T newNumel;
   int32_T i;
+  int32_T newNumel;
   void *newData;
   if (oldNumel < 0) {
     oldNumel = 0;
@@ -283,6 +227,14 @@ void emxEnsureCapacity_uint8_T(emxArray_uint8_T *emxArray, int32_T oldNumel)
   }
 }
 
+void emxFreeMatrix_cell_wrap_1(cell_wrap_1 pMatrix[5])
+{
+  int32_T i;
+  for (i = 0; i < 5; i++) {
+    emxFreeStruct_cell_wrap_1(&pMatrix[i]);
+  }
+}
+
 void emxFreeMatrix_cell_wrap_2(cell_wrap_2 pMatrix[2])
 {
   int32_T i;
@@ -297,6 +249,21 @@ void emxFreeMatrix_cell_wrap_3(cell_wrap_3 pMatrix[2])
   for (i = 0; i < 2; i++) {
     emxFreeStruct_cell_wrap_3(&pMatrix[i]);
   }
+}
+
+void emxFreeStruct_cell_wrap_1(cell_wrap_1 *pStruct)
+{
+  emxFree_real32_T(&pStruct->f1);
+}
+
+void emxFreeStruct_cell_wrap_2(cell_wrap_2 *pStruct)
+{
+  emxFreeMatrix_cell_wrap_1(pStruct->f1);
+}
+
+void emxFreeStruct_cell_wrap_3(cell_wrap_3 *pStruct)
+{
+  emxFree_boolean_T(&pStruct->f1);
 }
 
 void emxFree_boolean_T(emxArray_boolean_T **pEmxArray)
@@ -365,6 +332,14 @@ void emxFree_uint8_T(emxArray_uint8_T **pEmxArray)
   }
 }
 
+void emxInitMatrix_cell_wrap_1(cell_wrap_1 pMatrix[5], boolean_T doPush)
+{
+  int32_T i;
+  for (i = 0; i < 5; i++) {
+    emxInitStruct_cell_wrap_1(&pMatrix[i], doPush);
+  }
+}
+
 void emxInitMatrix_cell_wrap_2(cell_wrap_2 pMatrix[2], boolean_T doPush)
 {
   int32_T i;
@@ -379,6 +354,21 @@ void emxInitMatrix_cell_wrap_3(cell_wrap_3 pMatrix[2], boolean_T doPush)
   for (i = 0; i < 2; i++) {
     emxInitStruct_cell_wrap_3(&pMatrix[i], doPush);
   }
+}
+
+void emxInitStruct_cell_wrap_1(cell_wrap_1 *pStruct, boolean_T doPush)
+{
+  emxInit_real32_T(&pStruct->f1, 2, doPush);
+}
+
+void emxInitStruct_cell_wrap_2(cell_wrap_2 *pStruct, boolean_T doPush)
+{
+  emxInitMatrix_cell_wrap_1(pStruct->f1, doPush);
+}
+
+void emxInitStruct_cell_wrap_3(cell_wrap_3 *pStruct, boolean_T doPush)
+{
+  emxInit_boolean_T(&pStruct->f1, 2, doPush);
 }
 
 void emxInit_boolean_T(emxArray_boolean_T **pEmxArray, int32_T numDimensions,

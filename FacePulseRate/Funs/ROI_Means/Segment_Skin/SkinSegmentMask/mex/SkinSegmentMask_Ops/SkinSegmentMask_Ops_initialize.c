@@ -12,7 +12,6 @@
 /* Include files */
 #include "SkinSegmentMask_Ops_initialize.h"
 #include "SkinSegmentMask_MorphClose.h"
-#include "SkinSegmentMask_Ops.h"
 #include "SkinSegmentMask_Ops_data.h"
 #include "SkinSegmentMask_Threshold.h"
 #include "_coder_SkinSegmentMask_Ops_mex.h"
@@ -26,10 +25,14 @@ static void SkinSegmentMask_Ops_once(void)
 {
   mex_InitInfAndNan();
   SkinSegmentMask_Threshold_init();
-  ErodeAndDilate_SEWidth22_init();
-  ErodeAndDilate_SEWidth50_init();
-  ErodeAndDilate_SERadius6_init();
-  ErodeAndDilate_SERadius14_init();
+  ErodeAndDilate_SESquare12_init();
+  ErodeAndDilate_SESquare22_init();
+  ErodeAndDilate_SESquare32_init();
+  ErodeAndDilate_SESquare50_init();
+  ErodeAndDilate_SEDisk4_init();
+  ErodeAndDilate_SEDisk6_init();
+  ErodeAndDilate_SEDisk10_init();
+  ErodeAndDilate_SEDisk14_init();
 }
 
 void SkinSegmentMask_Ops_initialize(void)
@@ -37,7 +40,7 @@ void SkinSegmentMask_Ops_initialize(void)
   mexFunctionCreateRootTLS();
   emlrtClearAllocCountR2012b(emlrtRootTLSGlobal, false, 0U, 0);
   emlrtEnterRtStackR2012b(emlrtRootTLSGlobal);
-  emlrtLicenseCheckR2012b(emlrtRootTLSGlobal, "Image_Toolbox", 2);
+  emlrtLicenseCheckR2012b(emlrtRootTLSGlobal, "image_toolbox", 2);
   if (emlrtFirstTimeR2012b(emlrtRootTLSGlobal)) {
     SkinSegmentMask_Ops_once();
   }

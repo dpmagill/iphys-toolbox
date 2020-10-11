@@ -91,20 +91,20 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %   -- How-To Guides --
 %
-%   The text in this function is rather detailed. It may be more useful to review the How-To 
-%   guides.
+%       The text in this function is rather detailed. It may be more useful to review the How-To 
+%       guides:
 %
-%   For an overview of FacePulseRate, see README.pdf.
+%       - For an overview of FacePulseRate, see README.pdf.
 %
-%   For recommendations on the input video and the physical enviroment in which it is recorded, see
-%   Video and Recording Environment Recommendations.pdf.
+%       - For recommendations on the input video and the physical enviroment in which it is  
+%         recorded, see Video and Recording Environment Recommendations.pdf.
 %
-%   For setting up FacePulseRate (downloading the tools), see README.pdf.
+%       - For setting up FacePulseRate (downloading the tools), see README.pdf.
 %
-%   For general instructions, see Examples_General_Instructions.mlx.
+%       - For general instructions, see Examples_General_Instructions.mlx.
 %
-%   For making corrections to ROI placement or skin segmentation, see 
-%   Examples_Correct_ROIs_and_Skin_Segmentation.mlx.
+%       - For making corrections to ROI placement or skin segmentation, see 
+%         Examples_Correct_ROIs_and_Skin_Segmentation.mlx.
 %
 %   -- Overview -- 
 %

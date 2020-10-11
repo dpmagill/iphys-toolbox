@@ -14,16 +14,12 @@
 #include "SkinSegmentMask_Ops.h"
 #include "SkinSegmentMask_Ops_data.h"
 #include "SkinSegmentMask_Ops_initialize.h"
-#include "SkinSegmentMask_Ops_mexutil.h"
 #include "SkinSegmentMask_Ops_terminate.h"
 #include "_coder_SkinSegmentMask_Ops_api.h"
+#include "rt_nonfinite.h"
 
 /* Variable Definitions */
 static jmp_buf emlrtJBEnviron;
-
-/* Function Declarations */
-MEXFUNCTION_LINKAGE void SkinSegmentMask_Ops_mexFunction(int32_T nlhs, mxArray
-  *plhs[8], int32_T nrhs, const mxArray *prhs[21]);
 
 /* Function Definitions */
 void SkinSegmentMask_Ops_mexFunction(int32_T nlhs, mxArray *plhs[8], int32_T

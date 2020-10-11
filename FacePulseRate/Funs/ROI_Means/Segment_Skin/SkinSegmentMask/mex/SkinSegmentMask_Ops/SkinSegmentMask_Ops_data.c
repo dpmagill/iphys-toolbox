@@ -11,7 +11,6 @@
 
 /* Include files */
 #include "SkinSegmentMask_Ops_data.h"
-#include "SkinSegmentMask_Ops.h"
 #include "rt_nonfinite.h"
 
 /* Variable Definitions */
@@ -20,26 +19,26 @@ omp_lock_t emlrtLockGlobal;
 omp_nest_lock_t emlrtNestLockGlobal;
 emlrtContext emlrtContextGlobal = { true,/* bFirstTime */
   false,                               /* bInitialized */
-  131594U,                             /* fVersionInfo */
+  131595U,                             /* fVersionInfo */
   NULL,                                /* fErrorFunction */
   "SkinSegmentMask_Ops",               /* fFunctionName */
   NULL,                                /* fRTCallStack */
   false,                               /* bDebugMode */
-  { 1858410525U, 2505464270U, 328108647U, 1256672073U },/* fSigWrd */
+  { 3334497894U, 1318968193U, 3466680636U, 2802620837U },/* fSigWrd */
   NULL                                 /* fSigMem */
 };
 
-const boolean_T bv[15] = { true, false, false, false, false, false, false, true,
-  false, false, false, false, false, false, true };
-
-const boolean_T bv1[9] = { true, false, false, false, true, false, false, false,
+const boolean_T bv[9] = { true, false, false, false, true, false, false, false,
   true };
 
-const boolean_T bv2[15] = { false, false, true, false, false, false, false, true,
-  false, false, false, false, true, false, false };
-
-const boolean_T bv3[9] = { false, false, true, false, true, false, true, false,
+const boolean_T bv1[9] = { false, false, true, false, true, false, true, false,
   false };
+
+const boolean_T bv2[15] = { true, false, false, false, false, false, false, true,
+  false, false, false, false, false, false, true };
+
+const boolean_T bv3[15] = { false, false, true, false, false, false, false, true,
+  false, false, false, false, true, false, false };
 
 const boolean_T bv4[15] = { false, false, false, false, true, false, false, true,
   false, false, true, false, false, false, false };

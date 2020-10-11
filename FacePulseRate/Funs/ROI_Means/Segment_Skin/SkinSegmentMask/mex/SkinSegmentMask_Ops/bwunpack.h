@@ -3,15 +3,16 @@
  * course requirements at degree granting institutions only.  Not for
  * government, commercial, or other organizational use.
  *
- * SkinSegmentMask_Ops_initialize.h
+ * bwunpack.h
  *
- * Code generation for function 'SkinSegmentMask_Ops_initialize'
+ * Code generation for function 'bwunpack'
  *
  */
 
 #pragma once
 
 /* Include files */
+#include "SkinSegmentMask_Ops_types.h"
 #include "rtwtypes.h"
 #include "emlrt.h"
 #include "mex.h"
@@ -22,6 +23,7 @@
 #include <string.h>
 
 /* Function Declarations */
-void SkinSegmentMask_Ops_initialize(void);
+void bwunpack(const emxArray_uint32_T *varargin_1, real_T varargin_2,
+              emxArray_boolean_T *BW);
 
-/* End of code generation (SkinSegmentMask_Ops_initialize.h) */
+/* End of code generation (bwunpack.h) */

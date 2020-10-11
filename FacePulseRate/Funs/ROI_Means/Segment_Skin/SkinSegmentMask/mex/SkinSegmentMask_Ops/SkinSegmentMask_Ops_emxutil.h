@@ -12,15 +12,15 @@
 #pragma once
 
 /* Include files */
+#include "SkinSegmentMask_Ops_types.h"
+#include "rtwtypes.h"
+#include "emlrt.h"
+#include "mex.h"
+#include "omp.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "rtwtypes.h"
-#include "omp.h"
-#include "SkinSegmentMask_Ops_types.h"
 
 /* Function Declarations */
 void emxEnsureCapacity_boolean_T(emxArray_boolean_T *emxArray, int32_T oldNumel);
@@ -28,15 +28,23 @@ void emxEnsureCapacity_real32_T(emxArray_real32_T *emxArray, int32_T oldNumel);
 void emxEnsureCapacity_real_T(emxArray_real_T *emxArray, int32_T oldNumel);
 void emxEnsureCapacity_uint32_T(emxArray_uint32_T *emxArray, int32_T oldNumel);
 void emxEnsureCapacity_uint8_T(emxArray_uint8_T *emxArray, int32_T oldNumel);
+void emxFreeMatrix_cell_wrap_1(cell_wrap_1 pMatrix[5]);
 void emxFreeMatrix_cell_wrap_2(cell_wrap_2 pMatrix[2]);
 void emxFreeMatrix_cell_wrap_3(cell_wrap_3 pMatrix[2]);
+void emxFreeStruct_cell_wrap_1(cell_wrap_1 *pStruct);
+void emxFreeStruct_cell_wrap_2(cell_wrap_2 *pStruct);
+void emxFreeStruct_cell_wrap_3(cell_wrap_3 *pStruct);
 void emxFree_boolean_T(emxArray_boolean_T **pEmxArray);
 void emxFree_real32_T(emxArray_real32_T **pEmxArray);
 void emxFree_real_T(emxArray_real_T **pEmxArray);
 void emxFree_uint32_T(emxArray_uint32_T **pEmxArray);
 void emxFree_uint8_T(emxArray_uint8_T **pEmxArray);
+void emxInitMatrix_cell_wrap_1(cell_wrap_1 pMatrix[5], boolean_T doPush);
 void emxInitMatrix_cell_wrap_2(cell_wrap_2 pMatrix[2], boolean_T doPush);
 void emxInitMatrix_cell_wrap_3(cell_wrap_3 pMatrix[2], boolean_T doPush);
+void emxInitStruct_cell_wrap_1(cell_wrap_1 *pStruct, boolean_T doPush);
+void emxInitStruct_cell_wrap_2(cell_wrap_2 *pStruct, boolean_T doPush);
+void emxInitStruct_cell_wrap_3(cell_wrap_3 *pStruct, boolean_T doPush);
 void emxInit_boolean_T(emxArray_boolean_T **pEmxArray, int32_T numDimensions,
   boolean_T doPush);
 void emxInit_real32_T(emxArray_real32_T **pEmxArray, int32_T numDimensions,

@@ -11,11 +11,11 @@
 
 /* Include files */
 #include "SkinSegmentMask_Threshold.h"
-#include "SkinSegmentMask_Ops.h"
 #include "SkinSegmentMask_Ops_emxutil.h"
+#include "SkinSegmentMask_Ops_types.h"
 #include "SkinSegmentMask_Threshold_Colors.h"
-#include "libmwmorphop_ipp.h"
 #include "rt_nonfinite.h"
+#include "libmwmorphop_ipp.h"
 
 /* Variable Definitions */
 static boolean_T SE3_not_empty;
@@ -35,24 +35,24 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
   int32_T XOffset, int32_T YOffset, int32_T NRows_Matrix, int32_T NCols_Matrix,
   emxArray_boolean_T *IsSkinMask_Range)
 {
+  emxArray_uint8_T *Apadpack;
   emxArray_uint8_T *B;
-  int32_T i;
+  emxArray_uint8_T *b_B;
+  real_T asize[2];
+  real_T nsize[2];
   int32_T b_i;
+  int32_T b_loop_ub;
+  int32_T i;
   int32_T i1;
   int32_T i2;
   int32_T loop_ub;
-  int32_T b_loop_ub;
   int16_T Diff3;
   int16_T Diff5;
   int16_T Diff7;
-  emxArray_uint8_T *Apadpack;
-  emxArray_uint8_T *b_B;
-  boolean_T guard1 = false;
-  real_T asize[2];
-  boolean_T nhood[5];
-  boolean_T b_nhood[7];
   boolean_T c_nhood[9];
-  real_T nsize[2];
+  boolean_T b_nhood[7];
+  boolean_T nhood[5];
+  boolean_T guard1 = false;
   emlrtHeapReferenceStackEnterFcnR2012b(aTLS);
 
   /* end main function */
@@ -151,8 +151,9 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
   /*     Copyright */
   /*     --------- */
   /*  */
-  /*     Copyright (c) Douglas Magill (dpmdpm@vt.edu), August, 2020. Licensed under the MIT License and   */
-  /*     the Responsible AI License (RAIL). */
+  /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+  /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+  /*     licensing, please contact the author. */
   /* %%%%% Code-generation settings %%%%%% */
   /* %%%%% Parse inputs %%%%%% */
   /* Because the structuring element object (SE3, SE5, SE7, or SE9) must be a compile-time constant,   */
@@ -238,7 +239,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 3.0;
     asize[1] = RBounded_Uint8->size[1];
     nsize[1] = 3.0;
-    dilate_uint8_ipp(&RBounded_Uint8->data[0], asize, c_nhood, nsize, &B->data[0]);
+    dilate_uint8_ipp(&RBounded_Uint8->data[0], &asize[0], &c_nhood[0], &nsize[0],
+                     &B->data[0]);
 
     /* Erode */
     /* M x N matrix; type uint8. */
@@ -256,8 +258,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 3.0;
     asize[1] = RBounded_Uint8->size[1];
     nsize[1] = 3.0;
-    erode_uint8_ipp(&RBounded_Uint8->data[0], asize, c_nhood, nsize, &b_B->data
-                    [0]);
+    erode_uint8_ipp(&RBounded_Uint8->data[0], &asize[0], &c_nhood[0], &nsize[0],
+                    &b_B->data[0]);
 
     /* one channel */
     /* Local range of square neighborhood with width of 5 pixels */
@@ -284,7 +286,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 5.0;
     asize[1] = RBounded_Uint8->size[1];
     nsize[1] = 1.0;
-    dilate_uint8_ipp(&RBounded_Uint8->data[0], asize, nhood, nsize, &B->data[0]);
+    dilate_uint8_ipp(&RBounded_Uint8->data[0], &asize[0], &nhood[0], &nsize[0],
+                     &B->data[0]);
     i = Apadpack->size[0] * Apadpack->size[1];
     Apadpack->size[0] = B->size[0];
     Apadpack->size[1] = B->size[1];
@@ -306,7 +309,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 1.0;
     asize[1] = Apadpack->size[1];
     nsize[1] = 5.0;
-    dilate_uint8_ipp(&Apadpack->data[0], asize, nhood, nsize, &B->data[0]);
+    dilate_uint8_ipp(&Apadpack->data[0], &asize[0], &nhood[0], &nsize[0],
+                     &B->data[0]);
 
     /* Erode */
     /* M x N matrix; type uint8. */
@@ -324,7 +328,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 5.0;
     asize[1] = RBounded_Uint8->size[1];
     nsize[1] = 1.0;
-    erode_uint8_ipp(&RBounded_Uint8->data[0], asize, nhood, nsize, &b_B->data[0]);
+    erode_uint8_ipp(&RBounded_Uint8->data[0], &asize[0], &nhood[0], &nsize[0],
+                    &b_B->data[0]);
     i = Apadpack->size[0] * Apadpack->size[1];
     Apadpack->size[0] = b_B->size[0];
     Apadpack->size[1] = b_B->size[1];
@@ -346,7 +351,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 1.0;
     asize[1] = Apadpack->size[1];
     nsize[1] = 5.0;
-    erode_uint8_ipp(&Apadpack->data[0], asize, nhood, nsize, &b_B->data[0]);
+    erode_uint8_ipp(&Apadpack->data[0], &asize[0], &nhood[0], &nsize[0],
+                    &b_B->data[0]);
 
     /* one channel */
     /* Local range of square neighborhood with width of 7 pixels */
@@ -373,7 +379,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 7.0;
     asize[1] = RBounded_Uint8->size[1];
     nsize[1] = 1.0;
-    dilate_uint8_ipp(&RBounded_Uint8->data[0], asize, b_nhood, nsize, &B->data[0]);
+    dilate_uint8_ipp(&RBounded_Uint8->data[0], &asize[0], &b_nhood[0], &nsize[0],
+                     &B->data[0]);
     i = Apadpack->size[0] * Apadpack->size[1];
     Apadpack->size[0] = B->size[0];
     Apadpack->size[1] = B->size[1];
@@ -395,7 +402,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 1.0;
     asize[1] = Apadpack->size[1];
     nsize[1] = 7.0;
-    dilate_uint8_ipp(&Apadpack->data[0], asize, b_nhood, nsize, &B->data[0]);
+    dilate_uint8_ipp(&Apadpack->data[0], &asize[0], &b_nhood[0], &nsize[0],
+                     &B->data[0]);
 
     /* Erode */
     /* M x N matrix; type uint8. */
@@ -413,8 +421,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 7.0;
     asize[1] = RBounded_Uint8->size[1];
     nsize[1] = 1.0;
-    erode_uint8_ipp(&RBounded_Uint8->data[0], asize, b_nhood, nsize, &b_B->data
-                    [0]);
+    erode_uint8_ipp(&RBounded_Uint8->data[0], &asize[0], &b_nhood[0], &nsize[0],
+                    &b_B->data[0]);
     i = Apadpack->size[0] * Apadpack->size[1];
     Apadpack->size[0] = b_B->size[0];
     Apadpack->size[1] = b_B->size[1];
@@ -436,7 +444,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 1.0;
     asize[1] = Apadpack->size[1];
     nsize[1] = 7.0;
-    erode_uint8_ipp(&Apadpack->data[0], asize, b_nhood, nsize, &b_B->data[0]);
+    erode_uint8_ipp(&Apadpack->data[0], &asize[0], &b_nhood[0], &nsize[0],
+                    &b_B->data[0]);
 
     /* one channel */
     /* Local range of square neighborhood with width of 9 pixels */
@@ -463,7 +472,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 9.0;
     asize[1] = RBounded_Uint8->size[1];
     nsize[1] = 1.0;
-    dilate_uint8_ipp(&RBounded_Uint8->data[0], asize, c_nhood, nsize, &B->data[0]);
+    dilate_uint8_ipp(&RBounded_Uint8->data[0], &asize[0], &c_nhood[0], &nsize[0],
+                     &B->data[0]);
     i = Apadpack->size[0] * Apadpack->size[1];
     Apadpack->size[0] = B->size[0];
     Apadpack->size[1] = B->size[1];
@@ -485,7 +495,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 1.0;
     asize[1] = Apadpack->size[1];
     nsize[1] = 9.0;
-    dilate_uint8_ipp(&Apadpack->data[0], asize, c_nhood, nsize, &B->data[0]);
+    dilate_uint8_ipp(&Apadpack->data[0], &asize[0], &c_nhood[0], &nsize[0],
+                     &B->data[0]);
 
     /* Erode */
     /* M x N matrix; type uint8. */
@@ -503,8 +514,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 9.0;
     asize[1] = RBounded_Uint8->size[1];
     nsize[1] = 1.0;
-    erode_uint8_ipp(&RBounded_Uint8->data[0], asize, c_nhood, nsize, &b_B->data
-                    [0]);
+    erode_uint8_ipp(&RBounded_Uint8->data[0], &asize[0], &c_nhood[0], &nsize[0],
+                    &b_B->data[0]);
     i = Apadpack->size[0] * Apadpack->size[1];
     Apadpack->size[0] = b_B->size[0];
     Apadpack->size[1] = b_B->size[1];
@@ -526,7 +537,8 @@ static void ApplyRangeThreshold(emlrtCTX aTLS, emxArray_uint8_T *RBounded_Uint8,
     nsize[0] = 1.0;
     asize[1] = Apadpack->size[1];
     nsize[1] = 9.0;
-    erode_uint8_ipp(&Apadpack->data[0], asize, c_nhood, nsize, &b_B->data[0]);
+    erode_uint8_ipp(&Apadpack->data[0], &asize[0], &c_nhood[0], &nsize[0],
+                    &b_B->data[0]);
 
     /* end local function */
     /* one channel */
@@ -618,22 +630,22 @@ void SkinSegmentMask_Threshold(emlrtCTX aTLS, const emxArray_uint8_T
   RangeNeighborhoodWidth, uint8_T RangeThreshold, int32_T XOffset, int32_T
   YOffset, emxArray_boolean_T *IsSkinMask)
 {
-  boolean_T UseLinIdxTF;
-  boolean_T XOffsetSpecifiedTF;
-  boolean_T YOffsetSpecifiedTF;
+  jmp_buf emlrtJBEnviron;
+  jmp_buf * volatile emlrtJBStack;
   cell_wrap_2 ParCell1[2];
   cell_wrap_3 ParCell2[2];
-  int32_T loop_ub;
-  int32_T i;
   emxArray_uint8_T *b_RBounded_Uint8;
   int32_T b_i;
   int32_T b_loop_ub;
+  int32_T c_loop_ub;
+  int32_T i;
   int32_T i1;
   int32_T i2;
-  int32_T c_loop_ub;
-  jmp_buf * volatile emlrtJBStack;
+  int32_T loop_ub;
+  boolean_T UseLinIdxTF;
+  boolean_T XOffsetSpecifiedTF;
+  boolean_T YOffsetSpecifiedTF;
   boolean_T emlrtHadParallelError = false;
-  jmp_buf emlrtJBEnviron;
   emlrtHeapReferenceStackEnterFcnR2012b(aTLS);
 
   /* SkinSegmentMask_Threshold   Classify pixels as skin or non-skin based upon the color values, the    */
@@ -692,8 +704,9 @@ void SkinSegmentMask_Threshold(emlrtCTX aTLS, const emxArray_uint8_T
   /*     Copyright */
   /*     --------- */
   /*  */
-  /*     Copyright (c) Douglas Magill (dpmdpm@vt.edu), August, 2020. Licensed under the MIT License and   */
-  /*     the Responsible AI License (RAIL). */
+  /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+  /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+  /*     licensing, please contact the author.  */
   /* %%%%% Code-generation settings %%%%%% */
   /* Declare variables: */
   /*                                    Upp. Bounds    Var. Size (T/F) */

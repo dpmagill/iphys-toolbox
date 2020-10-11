@@ -11,6 +11,8 @@
 
 #pragma once
 
+/* Include files */
+#include "rtwtypes.h"
 #include "tmwtypes.h"
 
 extern real_T mex_rtInf;

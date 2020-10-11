@@ -5,7 +5,7 @@
  *
  * _coder_SkinSegmentMask_Ops_info.h
  *
- * Code generation for function '_coder_SkinSegmentMask_Ops_info'
+ * Code generation for function 'SkinSegmentMask_Ops'
  *
  */
 

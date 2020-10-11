@@ -12,7 +12,7 @@ function [IsSkinMask, TrueCount, YBounded_Single, CbBounded_Single, CrBounded_Si
 %    Within function FacePulseRate, called by function SkinSegmentMask.
 %
 %
-%    Code generation
+%    Code Generation
 %    ---------------
 %
 %    Can be called as a Matlab function or used for C-language code generation.

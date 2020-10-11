@@ -13,15 +13,16 @@
 #include "SkinSegmentMask_Ops.h"
 #include "SkinSegmentMask_Ops_data.h"
 #include "SkinSegmentMask_Ops_emxutil.h"
+#include "SkinSegmentMask_Ops_types.h"
 #include "SkinSegmentMask_Threshold.h"
+#include "bwunpack.h"
 #include "imdilate.h"
 #include "imerode.h"
-#include "libmwbwpackctbb.h"
-#include "libmwbwunpackctbb.h"
-#include "libmwmorphop_packed.h"
-#include "mwmathutil.h"
 #include "rt_nonfinite.h"
 #include "setPackedFillBits.h"
+#include "libmwbwpackctbb.h"
+#include "libmwmorphop_packed.h"
+#include "mwmathutil.h"
 
 /* Function Definitions */
 void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
@@ -38,27 +39,32 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   *CbBounded_Single, emxArray_real32_T *CrBounded_Single, emxArray_real32_T
   *HBounded_Single, emxArray_real32_T *SBounded_Single)
 {
-  int32_T i;
-  real32_T YCbCrThresholds_Generic[7];
-  real32_T HSThresholds_Generic[2];
-  real32_T YCbCrThresholds_Tailored[8];
-  real32_T HSThresholds_Tailored[3];
-  int16_T MorphCloseNeighborhoodRadius;
-  int32_T NElements_Matrix;
-  int32_T loop_ub;
-  emxArray_uint32_T *IsSkinMask_PixelColorPacked;
-  real_T nsizeT[2];
-  real_T asizeT[2];
-  emxArray_uint32_T *c_IsSkinMask_PixelColor_DilateP;
-  emxArray_uint32_T *d_IsSkinMask_PixelColor_DilateP;
-  emxArray_uint32_T *c_IsSkinMask_PixelColor_ErodePa;
   emxArray_uint32_T *B;
-  emxArray_uint32_T *A;
-  boolean_T guard1 = false;
+  emxArray_uint32_T *IsSkinMask_PixelColorPacked;
+  emxArray_uint32_T *c_IsSkinMask_PixelColor_DilateP;
+  emxArray_uint32_T *c_IsSkinMask_PixelColor_ErodePa;
+  emxArray_uint32_T *d_IsSkinMask_PixelColor_DilateP;
+  emxArray_uint32_T *d_IsSkinMask_PixelColor_ErodePa;
+  emxArray_uint32_T *r;
+  real_T bwSize[2];
+  real_T bwpSize[2];
+  int32_T NElements_Matrix;
   int32_T b_i;
-  boolean_T nhood[50];
-  boolean_T b_nhood[22];
-  uint32_T mask_value;
+  int32_T i;
+  int32_T loop_ub;
+  real32_T YCbCrThresholds_Tailored[8];
+  real32_T YCbCrThresholds_Generic[7];
+  real32_T HSThresholds_Tailored[3];
+  real32_T HSThresholds_Generic[2];
+  int16_T Diff10;
+  int16_T Diff22;
+  int16_T Diff4;
+  int16_T MorphCloseNeighborhoodRadius;
+  int16_T functionWidthToUse;
+  boolean_T c_nhood[50];
+  boolean_T b_nhood[32];
+  boolean_T nhood[22];
+  boolean_T d_nhood[12];
   emlrtHeapReferenceStackEnterFcnR2012b(emlrtRootTLSGlobal);
 
   /* SkinSegmentMask_Ops   Return logical matrix, or skin-segmentation mask, where pixels classified as   */
@@ -68,7 +74,7 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*     Within function FacePulseRate, called by function SkinSegmentMask. */
   /*  */
   /*  */
-  /*     Code generation */
+  /*     Code Generation */
   /*     --------------- */
   /*  */
   /*     Can be called as a Matlab function or used for C-language code generation. */
@@ -79,6 +85,19 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*  */
   /*     Description */
   /*     ----------- */
+  /*  */
+  /*     -- Combined Use of YCbCr and HSV Colorspaces for Pixel-Color Thresholds -- */
+  /*  */
+  /*     The combined used of the YCbCr and HSV colorspaces is based on ... */
+  /*     (1) Dahmani et al. (2020), who found that using both improved skin classification compared to */
+  /*         the use of either alone. */
+  /*     (2) The observation that using only the YCbCr colorspace did not permit enough diversity of */
+  /*         individual differences in skin color. Specifically, Y-minimum and Cr-minimum must be at  */
+  /*         least as low as the defaults to avoid oversegmentation in individuals with darker average */
+  /*         skin colors when ambient illumination is rather low. However, these defaults also permit  */
+  /*         pixel values from objects that should be segmented out; for example, the Cr-minimum at  */
+  /*         this level permits pixel values from overhead lamps. Applying the HSV thresholds in  */
+  /*         addition to the YCbCr thresholds segmented out these extraneous objects. */
   /*  */
   /*     -- YCbCr Pixel-Color Thresholds --  */
   /*  */
@@ -216,9 +235,6 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*  */
   /*     Apply color thresholds to individual pixels from the hue (H) and saturation (S) channels of   */
   /*     the HSV colorspace. */
-  /*  */
-  /*     The concomitant use of tresholds from the YCbCr and HSV colorspaces also is based on Dahmani  */
-  /*     et al. (2020). */
   /*      */
   /*     Use either the generic HSV color thresholds or tailored HSV color thresholds. The use of */
   /*     tailored thresholds is specified by argument TailoredThresholdsTF. However, generic  */
@@ -377,108 +393,187 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*     Copyright */
   /*     --------- */
   /*  */
-  /*     Copyright (c) Douglas Magill (dpmdpm@vt.edu), August, 2020. Licensed under the MIT License and   */
-  /*     the Responsible AI License (RAIL). */
+  /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+  /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+  /*     licensing, please contact the author. */
   /* %%%%% Code generation specifications %%%%%% */
   /* Inline function */
   /* Declare variables: */
   /*                               Upp. Bounds    Var. Size (T/F) */
   /* %%%%% Parse input arguments %%%%%% */
-  /*  - Structuring element width for calculating local range for a given pixel */
+  /* Note: SkinSegmentMask_ParseArgs is a custom function located within folder FacePulseRate. */
+  /* SkinSegmentMask_ParseArgs   Parse imput arguments to function SkinSegmentMask_Ops.  */
+  /*                                                */
+  /*     Helper function to function FacePulseRate.  */
+  /*     Within function FacePulseRate, called by function SkinSegmentMask_Ops. */
+  /*  */
+  /*  */
+  /*     Code Generation */
+  /*     --------------- */
+  /*  */
+  /*     Can be called as a Matlab function or used for C-language code generation.     */
+  /*  */
+  /*  */
+  /*     Description */
+  /*     ----------- */
+  /*  */
+  /*     Parse imput arguments to function SkinSegmentMask_Ops. */
+  /*  */
+  /*     -- Adjustment to thresholds -- */
+  /*  */
+  /*     Function SkinSegmentMask_Threshold_Colors will only use < and > for efficiency rather than <=     */
+  /*     and >=, although <= and >= are more appropriate as the thresholds are intended to accept    */
+  /*     values equal to them. To use < and > while also allowing equality, the thresholds are  */
+  /*     modified.  */
+  /*  */
+  /*     Note that for the thresholds of floating-point type, even if <= and >= were used, the     */
+  /*     thresholds would still need to be modified to allow a tolerance for floating-point equality. */
+  /*  */
+  /*  */
+  /*     Copyright */
+  /*     --------- */
+  /*  */
+  /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+  /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+  /*     licensing, please contact the author.  */
+  /* Inline function */
+  /* %%%%% Local range %%%%%% */
+  /* Structuring element width for calculating local range for a given pixel: */
   /* Value assigned in function SkinSegment_ConfigSetup. */
-  /*  - Individual pixel local color range threshold  */
+  /* Individual pixel local color range threshold:  */
   /* Value assigned in function SkinSegment_ConfigSetup. */
   /* Should be type uint8 for fastest evaluation.  */
-  /*  - Individual pixel YCbCr colorspace skin-segmentation generic thresholds */
+  /* Type uint8. */
+  /* Adjust maximum */
+  /* %%%%% Color thresholds %%%%%% */
+  /* The Cb-to-Cr ratio, H, and S thresholds use a smaller adjustment because the intervals between */
+  /* colors are smaller. */
+  /* %%%%% --- Generic thresholds %%%%%% */
   /* Values assigned in function SkinSegment_ConfigSetup.   */
   /* Note: these should be in type single for fastest evaluation. */
-  for (i = 0; i < 7; i++) {
-    YCbCrThresholds_Generic[i] = SkinSegmentArgs->YCbCrThresholdsGeneric[i];
-  }
-
-  /* Function SkinSegmentMask_Threshold_Colors will only use < and > rather than <= and >=, so these  */
-  /* values are adjusted so that < and > are equivalent to <= and >=, respectively. */
-  YCbCrThresholds_Generic[0] = SkinSegmentArgs->YCbCrThresholdsGeneric[0] - 1.0F;
+  /* YCbCr thresholds */
+  /* Type single. */
+  /* HSV thresholds */
+  /* Type single. */
+  /* Adjust minimums */
+  YCbCrThresholds_Generic[0] = SkinSegmentArgs->YCbCrThresholdsGeneric[0] - 0.1F;
 
   /* Y min */
-  YCbCrThresholds_Generic[1] = SkinSegmentArgs->YCbCrThresholdsGeneric[1] - 1.0F;
+  YCbCrThresholds_Generic[1] = SkinSegmentArgs->YCbCrThresholdsGeneric[1] - 0.1F;
 
   /* Cb min */
+  YCbCrThresholds_Generic[3] = SkinSegmentArgs->YCbCrThresholdsGeneric[3] - 0.1F;
+
   /* Cr min */
-  YCbCrThresholds_Generic[5] = SkinSegmentArgs->YCbCrThresholdsGeneric[5] - 0.1F;
+  YCbCrThresholds_Generic[5] = SkinSegmentArgs->YCbCrThresholdsGeneric[5] -
+    0.01F;
 
   /* Cb-to-Cr ratio min */
-  YCbCrThresholds_Generic[2] = SkinSegmentArgs->YCbCrThresholdsGeneric[2] + 1.0F;
-
-  /* Cb max */
-  YCbCrThresholds_Generic[4] = SkinSegmentArgs->YCbCrThresholdsGeneric[4] + 1.0F;
-
-  /* Cr max */
-  YCbCrThresholds_Generic[3] = (SkinSegmentArgs->YCbCrThresholdsGeneric[3] -
-    1.0F) + 0.1F;
-
-  /* Cb-to-Cr ratio max */
-  /*  - Individual pixel HSV colorspace skin-segmentation generic thresholds */
-  /* Values assigned in function SkinSegment_ConfigSetup.   */
-  /* Note: these should be in type single for fastest evaluation. */
-  /* Function SkinSegmentMask_Threshold_Colors will only use < and > rather than <= and >=, so these  */
-  /* values are adjusted so that < and > are equivalent to <= and >=, respectively. */
-  HSThresholds_Generic[1] = SkinSegmentArgs->HSThresholdsGeneric[1] - 0.1F;
+  HSThresholds_Generic[1] = SkinSegmentArgs->HSThresholdsGeneric[1] - 0.01F;
 
   /* S min */
-  HSThresholds_Generic[0] = SkinSegmentArgs->HSThresholdsGeneric[0] + 0.1F;
+  /* Adjust maximums */
+  YCbCrThresholds_Generic[2] = SkinSegmentArgs->YCbCrThresholdsGeneric[2] + 0.1F;
+
+  /* Cb max */
+  YCbCrThresholds_Generic[4] = SkinSegmentArgs->YCbCrThresholdsGeneric[4] + 0.1F;
+
+  /* Cr max */
+  YCbCrThresholds_Generic[6] = SkinSegmentArgs->YCbCrThresholdsGeneric[6] +
+    0.01F;
+
+  /* Cb-to-Cr ratio max */
+  HSThresholds_Generic[0] = SkinSegmentArgs->HSThresholdsGeneric[0] + 0.01F;
 
   /* H max */
-  /*  - Individual pixel YCbCr and HSV colorspaces skin-segmentation tailored thresholds */
+  /* %%%%% --- Tailored thresholds %%%%%% */
   /* Values assigned in function SkinSegment_SetThresholds. */
   /* Note: a threshold is not used for the value (V) channel of the HSV colorspace.  */
   /* Note: these should be in type single for fastest evaluation.  */
-  /*    - Low-severity tailored thresholds */
+  /* Low-severity tailored thresholds */
   if (!TailoredThresholdsSevereTF) {
-    /* YCbCr channels */
+    /* YCbCr thresholds */
+    /* Type single. */
     for (i = 0; i < 8; i++) {
       YCbCrThresholds_Tailored[i] = SkinSegmentArgs->YCbCrThresholdsTailored[i];
     }
 
-    /* H and S channels */
+    /* HSV thresholds */
+    /* Type single. */
     HSThresholds_Tailored[0] = SkinSegmentArgs->HSThresholdsTailored[0];
     HSThresholds_Tailored[1] = SkinSegmentArgs->HSThresholdsTailored[1];
     HSThresholds_Tailored[2] = SkinSegmentArgs->HSThresholdsTailored[2];
 
-    /*    - High-severity tailored thresholds     */
+    /* High-severity tailored thresholds    */
   } else {
-    /* YCbCr channels */
+    /* YCbCr thresholds */
+    /* Type single. */
     for (i = 0; i < 8; i++) {
       YCbCrThresholds_Tailored[i] = SkinSegmentArgs->
         YCbCrThresholdsTailored_Sev[i];
     }
 
-    /* H and S channels */
+    /* HSV thresholds */
+    /* Type single. */
     HSThresholds_Tailored[0] = SkinSegmentArgs->HSThresholdsTailored_Sev[0];
     HSThresholds_Tailored[1] = SkinSegmentArgs->HSThresholdsTailored_Sev[1];
     HSThresholds_Tailored[2] = SkinSegmentArgs->HSThresholdsTailored_Sev[2];
   }
 
-  /*  - Flag not to use tailored thresholds */
+  /* Adjust minimums */
+  YCbCrThresholds_Tailored[0] -= 0.1F;
+
+  /* Y min */
+  YCbCrThresholds_Tailored[2] -= 0.1F;
+
+  /* Cb min */
+  YCbCrThresholds_Tailored[4] -= 0.1F;
+
+  /* Cr min */
+  YCbCrThresholds_Tailored[6] -= 0.01F;
+
+  /* Cb-to-Cr ratio min */
+  HSThresholds_Tailored[1] -= 0.01F;
+
+  /* S min */
+  /* Adjust maximums */
+  YCbCrThresholds_Tailored[1] -= 0.1F;
+
+  /* Y min */
+  YCbCrThresholds_Tailored[3] += 0.1F;
+
+  /* Cb max */
+  YCbCrThresholds_Tailored[5] += 0.1F;
+
+  /* Cr max */
+  YCbCrThresholds_Tailored[7] += 0.01F;
+
+  /* Cb-to-Cr ratio max */
+  HSThresholds_Tailored[0] += 0.01F;
+
+  /* H max */
+  /* Flag not to use tailored thresholds: */
   /* Whether a sufficient number of skin-color samples was collected to activate tailored skin */
   /* segmentation. For details on the collection skin-color samples, see function */
   /* ROIMeans_FirstRead_CollectSkinColorSamples. */
   /* Value assigned by function SkinSegment_SetThresholds. */
-  /*  - Severity of morphological close */
-  /*    - High severity of morphological close operation */
+  /* %%%%% Morphological close %%%%%% */
+  /* High severity of morphological close operation */
   if (MorphCloseSevereTF) {
     MorphCloseNeighborhoodRadius = SkinSegmentArgs->MorphCloseSELargeWidth_Tuned;
 
-    /*    - Low severity of morphological close operation */
+    /* Low severity of morphological close operation */
   } else {
     MorphCloseNeighborhoodRadius =
       SkinSegmentArgs->MorphCloseSEMediumWidth_Tuned;
   }
 
+  /* %%%%% Number of elements in input matrices %%%%%% */
   /* Number of elements of a given matrix */
   /* Scalar; type int32. */
   NElements_Matrix = NRows_Matrix * NCols_Matrix;
 
+  /* end function */
   /* %%%%% Apply pixel-color and pixel-color local range thresholds %%%%%% */
   /* Apply individual pixel-color and pixel-color local range thresholds to assign a skin-segmentation  */
   /* mask. */
@@ -534,8 +629,8 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
     NCols_Matrix, NElements_Matrix, YCbCrThresholds_Generic,
     TailoredThresholdsTF, !SkinSegmentArgs->c_SkinColorSamples_NThresholdPa,
     YCbCrThresholds_Tailored, ReturnYTF, ReturnCbCrTF, HSThresholds_Generic,
-    HSThresholds_Tailored, ReturnHSTF, SkinSegmentArgs->RangeSEWidth,
-    SkinSegmentArgs->RangeThreshold, XOffset, YOffset, IsSkinMask);
+    HSThresholds_Tailored, ReturnHSTF, SkinSegmentArgs->RangeSEWidth, (uint8_T)
+    (SkinSegmentArgs->RangeThreshold + 1U), XOffset, YOffset, IsSkinMask);
 
   /* %%%%% Morphologically close skin-segmentation mask regions with patchy classifications %%%%%% */
   /* Note: SkinSegmentMask_MorphClose is a custom function located within folder FacePulseRate. */
@@ -546,9 +641,15 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*     Helper function to function FacePulseRate. */
   /*     Within function FacePulseRate, called by function SkinSegmentMask_Ops. */
   /*  */
-  /*     Code generation: Can be called as a Matlab function or used for C-language code generation. */
   /*  */
-  /*     Description: */
+  /*     Code Generation */
+  /*     --------------- */
+  /*  */
+  /*     Can be called as a Matlab function or used for C-language code generation. */
+  /*  */
+  /*  */
+  /*     Description */
+  /*     ----------- */
   /*  */
   /*     For a description of the assumptions behind the use of a morphological close to classify */
   /*     pixels as skin, see function SkinSegmentMask_Ops.   */
@@ -568,7 +669,7 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*     For a description of the choice of structuring element used in the morphological close, see  */
   /*     the description below in section "Assign structuring element".   */
   /*  */
-  /*     Structuring element specifications: */
+  /*     -- Structuring Element Specifications -- */
   /*  */
   /*     - Severity == high: */
   /*  */
@@ -593,7 +694,7 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*     these ROIs may already be expected to have benefited from adjustment based upon avoidance of   */
   /*     non-skin pixels. */
   /*  */
-  /*     Notes:  */
+  /*     -- Notes --  */
   /*  */
   /*     By default, Matlab's morphological operations act on true values, not false values, although */
   /*     false values (non-skin) are the target. */
@@ -602,8 +703,13 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*     topic "Detect Cell Using Edge Detection and Morphology"  */
   /*     (https://www.mathworks.com/help/images/detecting-a-cell-using-image-segmentation.html). */
   /*  */
-  /*     Copyright (c) Douglas Magill (dpmdpm@vt.edu), August, 2020. Licensed under the MIT License and   */
-  /*     the Responsible AI License (RAIL). */
+  /*  */
+  /*     Copyright */
+  /*     --------- */
+  /*  */
+  /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+  /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+  /*     licensing, please contact the author. */
   /* %%%%% Code-generation settings %%%%%% */
   /* Inline function */
   /* %%%%% Binary Packing %%%%%% */
@@ -628,18 +734,18 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
     IsSkinMask_PixelColorPacked->size[0] = loop_ub;
     IsSkinMask_PixelColorPacked->size[1] = IsSkinMask->size[1];
     emxEnsureCapacity_uint32_T(IsSkinMask_PixelColorPacked, i);
-    nsizeT[0] = IsSkinMask->size[0];
-    nsizeT[1] = IsSkinMask->size[1];
-    asizeT[0] = loop_ub;
-    asizeT[1] = IsSkinMask->size[1];
-    bwPackingtbb(&IsSkinMask->data[0], nsizeT,
-                 &IsSkinMask_PixelColorPacked->data[0], asizeT, true);
+    bwSize[0] = IsSkinMask->size[0];
+    bwSize[1] = IsSkinMask->size[1];
+    bwpSize[0] = loop_ub;
+    bwpSize[1] = IsSkinMask->size[1];
+    bwPackingtbb(&IsSkinMask->data[0], &bwSize[0],
+                 &IsSkinMask_PixelColorPacked->data[0], &bwpSize[0], true);
   }
 
   /* %%%%% Assign structuring element %%%%%% */
-  /* Because structuring element objects are compile-time constants, only four structuring element  */
-  /* objects are made available, each of which has a corresponding function. The function with the  */
-  /* structuring element closest in size to the specified structuring element size is used.   */
+  /* Because structuring element objects are compile-time constants, a fixed number of structuring   */
+  /* element objects are made available, each of which has a corresponding function. The function   */
+  /* with the structuring element closest in size to the specified structuring element size is used.   */
   /* Select function from available functions */
   /* Select the function with the SE width most similar to the specified SE width. */
   /* Local function. */
@@ -649,52 +755,123 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /* Local functions  */
   /* ============================================================================================= */
   /* ============================================================================================= */
-  /* SelectFunction   Select the function with the SE width most similar to  */
-  /*                  MorphCloseNeighborhoodWidth.    */
+  /* SelectFunction    Select the function with the SE width most similar to  */
+  /*                   MorphCloseNeighborhoodWidth.    */
+  /*  */
+  /*     Description: */
+  /*  */
+  /*     Select the size of the structuring element to use. The size is partly determined according to */
+  /*     MorphCloseSevereTF.  */
   /* Inline function */
-  /* High severity */
+  /* %%%%% High severity %%%%%% */
   if (MorphCloseSevereTF) {
-    if ((int16_T)(22 - MorphCloseNeighborhoodRadius) < 0) {
-      i = (int16_T)(MorphCloseNeighborhoodRadius - 22);
+    /* Scalars; type int16. */
+    if ((int16_T)(12 - MorphCloseNeighborhoodRadius) < 0) {
+      Diff4 = (int16_T)(MorphCloseNeighborhoodRadius - 12);
     } else {
-      i = (int16_T)(22 - MorphCloseNeighborhoodRadius);
+      Diff4 = (int16_T)(12 - MorphCloseNeighborhoodRadius);
+    }
+
+    if ((int16_T)(22 - MorphCloseNeighborhoodRadius) < 0) {
+      Diff22 = (int16_T)(MorphCloseNeighborhoodRadius - 22);
+    } else {
+      Diff22 = (int16_T)(22 - MorphCloseNeighborhoodRadius);
+    }
+
+    if ((int16_T)(32 - MorphCloseNeighborhoodRadius) < 0) {
+      Diff10 = (int16_T)(MorphCloseNeighborhoodRadius - 32);
+    } else {
+      Diff10 = (int16_T)(32 - MorphCloseNeighborhoodRadius);
+    }
+
+    if (Diff4 < Diff22) {
+      functionWidthToUse = 12;
+      Diff22 = Diff4;
+    } else {
+      functionWidthToUse = 22;
+    }
+
+    if (Diff10 < Diff22) {
+      functionWidthToUse = 32;
+      Diff22 = Diff10;
     }
 
     if ((int16_T)(50 - MorphCloseNeighborhoodRadius) < 0) {
-      loop_ub = (int16_T)(MorphCloseNeighborhoodRadius - 50);
+      i = (int16_T)(MorphCloseNeighborhoodRadius - 50);
     } else {
-      loop_ub = (int16_T)(50 - MorphCloseNeighborhoodRadius);
+      i = (int16_T)(50 - MorphCloseNeighborhoodRadius);
     }
 
-    if (i < loop_ub) {
-      MorphCloseNeighborhoodRadius = 22;
-    } else {
-      MorphCloseNeighborhoodRadius = 50;
+    if (i < Diff22) {
+      functionWidthToUse = 50;
     }
 
-    /* Low severity     */
+    /* Note: Use this pattern for adding additional SEs */
+    /*     %{ */
+    /*     if DiffX < Diff */
+    /*  */
+    /*         functionWidthToUse = int16(X); */
+    /*      */
+    /*         Diff = DiffX; %include this line if this is not the last condition */
+    /*     end */
+    /*     %} */
+    /* %%%%% Low severity %%%%%% */
   } else {
     /* As low severity uses a structuring element specified by radius, divide width by 2 */
     /* Optimize division by two by bitwise operation. */
     /* Scalar; type int16. */
     MorphCloseNeighborhoodRadius >>= 1;
-    if (6 - MorphCloseNeighborhoodRadius < 0) {
-      i = MorphCloseNeighborhoodRadius - 6;
+
+    /* Scalars; type int16. */
+    if (4 - MorphCloseNeighborhoodRadius < 0) {
+      Diff4 = (int16_T)(MorphCloseNeighborhoodRadius - 4);
     } else {
-      i = 6 - MorphCloseNeighborhoodRadius;
+      Diff4 = (int16_T)(4 - MorphCloseNeighborhoodRadius);
+    }
+
+    if (6 - MorphCloseNeighborhoodRadius < 0) {
+      Diff22 = (int16_T)(MorphCloseNeighborhoodRadius - 6);
+    } else {
+      Diff22 = (int16_T)(6 - MorphCloseNeighborhoodRadius);
+    }
+
+    if (10 - MorphCloseNeighborhoodRadius < 0) {
+      Diff10 = (int16_T)(MorphCloseNeighborhoodRadius - 10);
+    } else {
+      Diff10 = (int16_T)(10 - MorphCloseNeighborhoodRadius);
+    }
+
+    if (Diff4 < Diff22) {
+      functionWidthToUse = 4;
+      Diff22 = Diff4;
+    } else {
+      functionWidthToUse = 6;
+    }
+
+    if (Diff10 < Diff22) {
+      functionWidthToUse = 10;
+      Diff22 = Diff10;
     }
 
     if (14 - MorphCloseNeighborhoodRadius < 0) {
-      loop_ub = MorphCloseNeighborhoodRadius - 14;
+      i = MorphCloseNeighborhoodRadius - 14;
     } else {
-      loop_ub = 14 - MorphCloseNeighborhoodRadius;
+      i = 14 - MorphCloseNeighborhoodRadius;
     }
 
-    if (i < loop_ub) {
-      MorphCloseNeighborhoodRadius = 6;
-    } else {
-      MorphCloseNeighborhoodRadius = 14;
+    if (i < Diff22) {
+      functionWidthToUse = 14;
     }
+
+    /* Note: Use this pattern for adding additional SEs */
+    /*     %{ */
+    /*     if DiffX < Diff */
+    /*  */
+    /*         functionWidthToUse = int16(X); */
+    /*      */
+    /*         Diff = DiffX; %include this line if this is not the last condition */
+    /*     end */
+    /*     %} */
   }
 
   /* %%%%% Erosion followed by dilation %%%%%% */
@@ -704,20 +881,170 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   emxInit_uint32_T(&c_IsSkinMask_PixelColor_DilateP, 2, true);
   emxInit_uint32_T(&d_IsSkinMask_PixelColor_DilateP, 2, true);
   emxInit_uint32_T(&c_IsSkinMask_PixelColor_ErodePa, 2, true);
+  emxInit_uint32_T(&d_IsSkinMask_PixelColor_ErodePa, 2, true);
   emxInit_uint32_T(&B, 2, true);
-  emxInit_uint32_T(&A, 2, true);
-  guard1 = false;
+  emxInit_uint32_T(&r, 2, true);
   if (MorphCloseSevereTF) {
     /* Use function corresponding to closest SE width */
-    switch (MorphCloseNeighborhoodRadius) {
-     case 22:
-      /* Square structuring element with width of 22 pixels     */
+    switch (functionWidthToUse) {
+     case 12:
+      /* Square structuring element with width of 12 pixels     */
       /* Packed binary image */
       /* Local function. */
       /* Type uint32. */
       /* end local function */
       /* ============================================================================================= */
-      /* ErodeAndDilate_SEWidth22    Erode and dilate with square structuring element of width 22. */
+      /* ErodeAndDilate_SESquare12    Erode and dilate with square structuring element of width 12. */
+      /* Inline function */
+      /* Erode pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
+      /* Type uint32. */
+      /*  eroded logical image */
+      /*  logical image */
+      /*  structuring element */
+      /*  flag for packed image */
+      /*  number of rows in unpacked image */
+      setPackedFillBits(IsSkinMask_PixelColorPacked, NRows_Matrix);
+      i = B->size[0] * B->size[1];
+      B->size[0] = IsSkinMask_PixelColorPacked->size[0];
+      B->size[1] = IsSkinMask_PixelColorPacked->size[1];
+      emxEnsureCapacity_uint32_T(B, i);
+      for (b_i = 0; b_i < 12; b_i++) {
+        d_nhood[b_i] = true;
+      }
+
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 12.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 1.0;
+      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0], 2.0,
+                          &d_nhood[0], &bwpSize[0], 2.0, (real_T)NRows_Matrix,
+                          &B->data[0], true);
+      i = IsSkinMask_PixelColorPacked->size[0] *
+        IsSkinMask_PixelColorPacked->size[1];
+      IsSkinMask_PixelColorPacked->size[0] = B->size[0];
+      IsSkinMask_PixelColorPacked->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(IsSkinMask_PixelColorPacked, i);
+      loop_ub = B->size[0] * B->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        IsSkinMask_PixelColorPacked->data[i] = B->data[i];
+      }
+
+      i = B->size[0] * B->size[1];
+      B->size[0] = IsSkinMask_PixelColorPacked->size[0];
+      B->size[1] = IsSkinMask_PixelColorPacked->size[1];
+      emxEnsureCapacity_uint32_T(B, i);
+      for (b_i = 0; b_i < 12; b_i++) {
+        d_nhood[b_i] = true;
+      }
+
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 1.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 12.0;
+      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0], 2.0,
+                          &d_nhood[0], &bwpSize[0], 2.0, (real_T)NRows_Matrix,
+                          &B->data[0], true);
+
+      /* Dilate pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
+      /* Type uint32. */
+      /*  dilated logical image */
+      /*  structuring element */
+      /*  flag for packed image */
+      i = r->size[0] * r->size[1];
+      r->size[0] = B->size[0];
+      r->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(r, i);
+      loop_ub = B->size[0] * B->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        r->data[i] = B->data[i];
+      }
+
+      b_setPackedFillBits(r);
+      i = B->size[0] * B->size[1];
+      B->size[0] = r->size[0];
+      B->size[1] = r->size[1];
+      emxEnsureCapacity_uint32_T(B, i);
+      loop_ub = r->size[0] * r->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        B->data[i] = r->data[i];
+      }
+
+      i = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      d_IsSkinMask_PixelColor_ErodePa->size[0] = B->size[0];
+      d_IsSkinMask_PixelColor_ErodePa->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(d_IsSkinMask_PixelColor_ErodePa, i);
+      for (b_i = 0; b_i < 12; b_i++) {
+        d_nhood[b_i] = true;
+      }
+
+      bwSize[0] = B->size[0];
+      bwpSize[0] = 12.0;
+      bwSize[1] = B->size[1];
+      bwpSize[1] = 1.0;
+      dilate_packed_uint32(&B->data[0], &bwSize[0], 2.0, &d_nhood[0], &bwpSize[0],
+                           2.0, &d_IsSkinMask_PixelColor_ErodePa->data[0], true);
+      i = IsSkinMask_PixelColorPacked->size[0] *
+        IsSkinMask_PixelColorPacked->size[1];
+      IsSkinMask_PixelColorPacked->size[0] =
+        d_IsSkinMask_PixelColor_ErodePa->size[0];
+      IsSkinMask_PixelColorPacked->size[1] =
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      emxEnsureCapacity_uint32_T(IsSkinMask_PixelColorPacked, i);
+      loop_ub = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        IsSkinMask_PixelColorPacked->data[i] =
+          d_IsSkinMask_PixelColor_ErodePa->data[i];
+      }
+
+      i = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      d_IsSkinMask_PixelColor_ErodePa->size[0] =
+        IsSkinMask_PixelColorPacked->size[0];
+      d_IsSkinMask_PixelColor_ErodePa->size[1] =
+        IsSkinMask_PixelColorPacked->size[1];
+      emxEnsureCapacity_uint32_T(d_IsSkinMask_PixelColor_ErodePa, i);
+      for (b_i = 0; b_i < 12; b_i++) {
+        d_nhood[b_i] = true;
+      }
+
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 1.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 12.0;
+      dilate_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0],
+                           2.0, &d_nhood[0], &bwpSize[0], 2.0,
+                           &d_IsSkinMask_PixelColor_ErodePa->data[0], true);
+      i = c_IsSkinMask_PixelColor_DilateP->size[0] *
+        c_IsSkinMask_PixelColor_DilateP->size[1];
+      c_IsSkinMask_PixelColor_DilateP->size[0] =
+        d_IsSkinMask_PixelColor_ErodePa->size[0];
+      c_IsSkinMask_PixelColor_DilateP->size[1] =
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      emxEnsureCapacity_uint32_T(c_IsSkinMask_PixelColor_DilateP, i);
+      loop_ub = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        c_IsSkinMask_PixelColor_DilateP->data[i] =
+          d_IsSkinMask_PixelColor_ErodePa->data[i];
+      }
+
+      /* Square structuring element with width of 22 pixels     */
+      /* %%%%% --- Low severity erosion and dilation %%%%%%    */
+      /* %%%%% --- Unpack %%%%%%    */
+      /* Unpack packed binary image */
+      /* M x N matrix; type logical. */
+      bwunpack(c_IsSkinMask_PixelColor_DilateP, NRows_Matrix, IsSkinMask);
+      break;
+
+     case 22:
+      /* Packed binary image */
+      /* Local function. */
+      /* Type uint32. */
+      /* end local function */
+      /* ============================================================================================= */
+      /* ErodeAndDilate_SESquare22    Erode and dilate with square structuring element of width 22. */
       /* Inline function */
       /* Erode pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
       /* Type uint32. */
@@ -732,16 +1059,16 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       B->size[1] = IsSkinMask_PixelColorPacked->size[1];
       emxEnsureCapacity_uint32_T(B, i);
       for (b_i = 0; b_i < 22; b_i++) {
-        b_nhood[b_i] = true;
+        nhood[b_i] = true;
       }
 
-      asizeT[0] = IsSkinMask_PixelColorPacked->size[0];
-      nsizeT[0] = 22.0;
-      asizeT[1] = IsSkinMask_PixelColorPacked->size[1];
-      nsizeT[1] = 1.0;
-      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], asizeT, 2.0,
-                          b_nhood, nsizeT, 2.0, (real_T)NRows_Matrix, &B->data[0],
-                          true);
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 22.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 1.0;
+      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0], 2.0,
+                          &nhood[0], &bwpSize[0], 2.0, (real_T)NRows_Matrix,
+                          &B->data[0], true);
       i = IsSkinMask_PixelColorPacked->size[0] *
         IsSkinMask_PixelColorPacked->size[1];
       IsSkinMask_PixelColorPacked->size[0] = B->size[0];
@@ -757,58 +1084,141 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       B->size[1] = IsSkinMask_PixelColorPacked->size[1];
       emxEnsureCapacity_uint32_T(B, i);
       for (b_i = 0; b_i < 22; b_i++) {
-        b_nhood[b_i] = true;
+        nhood[b_i] = true;
       }
 
-      asizeT[0] = IsSkinMask_PixelColorPacked->size[0];
-      nsizeT[0] = 1.0;
-      asizeT[1] = IsSkinMask_PixelColorPacked->size[1];
-      nsizeT[1] = 22.0;
-      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], asizeT, 2.0,
-                          b_nhood, nsizeT, 2.0, (real_T)NRows_Matrix, &B->data[0],
-                          true);
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 1.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 22.0;
+      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0], 2.0,
+                          &nhood[0], &bwpSize[0], 2.0, (real_T)NRows_Matrix,
+                          &B->data[0], true);
 
       /* Dilate pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
       /* Type uint32. */
       /*  dilated logical image */
       /*  structuring element */
       /*  flag for packed image */
-      i = A->size[0] * A->size[1];
-      A->size[0] = B->size[0];
-      A->size[1] = B->size[1];
-      emxEnsureCapacity_uint32_T(A, i);
+      i = r->size[0] * r->size[1];
+      r->size[0] = B->size[0];
+      r->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(r, i);
       loop_ub = B->size[0] * B->size[1];
       for (i = 0; i < loop_ub; i++) {
-        A->data[i] = B->data[i];
+        r->data[i] = B->data[i];
       }
 
-      if ((B->size[0] != 0) && (B->size[1] != 0)) {
-        mask_value = 0U;
-        for (loop_ub = 0; loop_ub < 31; loop_ub++) {
-          mask_value |= 1U << loop_ub;
-        }
-
-        loop_ub = B->size[1];
-        for (i = 0; i < loop_ub; i++) {
-          A->data[(B->size[0] + A->size[0] * i) - 1] = B->data[(B->size[0] +
-            B->size[0] * i) - 1] & mask_value;
-        }
-      }
-
+      b_setPackedFillBits(r);
       i = B->size[0] * B->size[1];
-      B->size[0] = A->size[0];
-      B->size[1] = A->size[1];
+      B->size[0] = r->size[0];
+      B->size[1] = r->size[1];
       emxEnsureCapacity_uint32_T(B, i);
+      loop_ub = r->size[0] * r->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        B->data[i] = r->data[i];
+      }
+
+      i = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      d_IsSkinMask_PixelColor_ErodePa->size[0] = B->size[0];
+      d_IsSkinMask_PixelColor_ErodePa->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(d_IsSkinMask_PixelColor_ErodePa, i);
       for (b_i = 0; b_i < 22; b_i++) {
+        nhood[b_i] = true;
+      }
+
+      bwSize[0] = B->size[0];
+      bwpSize[0] = 22.0;
+      bwSize[1] = B->size[1];
+      bwpSize[1] = 1.0;
+      dilate_packed_uint32(&B->data[0], &bwSize[0], 2.0, &nhood[0], &bwpSize[0],
+                           2.0, &d_IsSkinMask_PixelColor_ErodePa->data[0], true);
+      i = IsSkinMask_PixelColorPacked->size[0] *
+        IsSkinMask_PixelColorPacked->size[1];
+      IsSkinMask_PixelColorPacked->size[0] =
+        d_IsSkinMask_PixelColor_ErodePa->size[0];
+      IsSkinMask_PixelColorPacked->size[1] =
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      emxEnsureCapacity_uint32_T(IsSkinMask_PixelColorPacked, i);
+      loop_ub = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        IsSkinMask_PixelColorPacked->data[i] =
+          d_IsSkinMask_PixelColor_ErodePa->data[i];
+      }
+
+      i = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      d_IsSkinMask_PixelColor_ErodePa->size[0] =
+        IsSkinMask_PixelColorPacked->size[0];
+      d_IsSkinMask_PixelColor_ErodePa->size[1] =
+        IsSkinMask_PixelColorPacked->size[1];
+      emxEnsureCapacity_uint32_T(d_IsSkinMask_PixelColor_ErodePa, i);
+      for (b_i = 0; b_i < 22; b_i++) {
+        nhood[b_i] = true;
+      }
+
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 1.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 22.0;
+      dilate_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0],
+                           2.0, &nhood[0], &bwpSize[0], 2.0,
+                           &d_IsSkinMask_PixelColor_ErodePa->data[0], true);
+      i = c_IsSkinMask_PixelColor_DilateP->size[0] *
+        c_IsSkinMask_PixelColor_DilateP->size[1];
+      c_IsSkinMask_PixelColor_DilateP->size[0] =
+        d_IsSkinMask_PixelColor_ErodePa->size[0];
+      c_IsSkinMask_PixelColor_DilateP->size[1] =
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      emxEnsureCapacity_uint32_T(c_IsSkinMask_PixelColor_DilateP, i);
+      loop_ub = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        c_IsSkinMask_PixelColor_DilateP->data[i] =
+          d_IsSkinMask_PixelColor_ErodePa->data[i];
+      }
+
+      /* Square structuring element with width of 32 pixels     */
+      /* %%%%% --- Low severity erosion and dilation %%%%%%    */
+      /* %%%%% --- Unpack %%%%%%    */
+      /* Unpack packed binary image */
+      /* M x N matrix; type logical. */
+      bwunpack(c_IsSkinMask_PixelColor_DilateP, NRows_Matrix, IsSkinMask);
+      break;
+
+     case 32:
+      /* Packed binary image */
+      /* Local function. */
+      /* Type uint32. */
+      /* end local function */
+      /* ============================================================================================= */
+      /* ErodeAndDilate_SESquare32    Erode and dilate with square structuring element of width 32. */
+      /* Inline function */
+      /* Erode pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
+      /* Type uint32. */
+      /*  eroded logical image */
+      /*  logical image */
+      /*  structuring element */
+      /*  flag for packed image */
+      /*  number of rows in unpacked image */
+      setPackedFillBits(IsSkinMask_PixelColorPacked, NRows_Matrix);
+      i = B->size[0] * B->size[1];
+      B->size[0] = IsSkinMask_PixelColorPacked->size[0];
+      B->size[1] = IsSkinMask_PixelColorPacked->size[1];
+      emxEnsureCapacity_uint32_T(B, i);
+      for (b_i = 0; b_i < 32; b_i++) {
         b_nhood[b_i] = true;
       }
 
-      asizeT[0] = A->size[0];
-      nsizeT[0] = 22.0;
-      asizeT[1] = A->size[1];
-      nsizeT[1] = 1.0;
-      dilate_packed_uint32(&A->data[0], asizeT, 2.0, b_nhood, nsizeT, 2.0,
-                           &B->data[0], true);
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 32.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 1.0;
+      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0], 2.0,
+                          &b_nhood[0], &bwpSize[0], 2.0, (real_T)NRows_Matrix,
+                          &B->data[0], true);
       i = IsSkinMask_PixelColorPacked->size[0] *
         IsSkinMask_PixelColorPacked->size[1];
       IsSkinMask_PixelColorPacked->size[0] = B->size[0];
@@ -823,29 +1233,109 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       B->size[0] = IsSkinMask_PixelColorPacked->size[0];
       B->size[1] = IsSkinMask_PixelColorPacked->size[1];
       emxEnsureCapacity_uint32_T(B, i);
-      for (b_i = 0; b_i < 22; b_i++) {
+      for (b_i = 0; b_i < 32; b_i++) {
         b_nhood[b_i] = true;
       }
 
-      asizeT[0] = IsSkinMask_PixelColorPacked->size[0];
-      nsizeT[0] = 1.0;
-      asizeT[1] = IsSkinMask_PixelColorPacked->size[1];
-      nsizeT[1] = 22.0;
-      dilate_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], asizeT, 2.0,
-                           b_nhood, nsizeT, 2.0, &B->data[0], true);
-      i = c_IsSkinMask_PixelColor_DilateP->size[0] *
-        c_IsSkinMask_PixelColor_DilateP->size[1];
-      c_IsSkinMask_PixelColor_DilateP->size[0] = B->size[0];
-      c_IsSkinMask_PixelColor_DilateP->size[1] = B->size[1];
-      emxEnsureCapacity_uint32_T(c_IsSkinMask_PixelColor_DilateP, i);
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 1.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 32.0;
+      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0], 2.0,
+                          &b_nhood[0], &bwpSize[0], 2.0, (real_T)NRows_Matrix,
+                          &B->data[0], true);
+
+      /* Dilate pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
+      /* Type uint32. */
+      /*  dilated logical image */
+      /*  structuring element */
+      /*  flag for packed image */
+      i = r->size[0] * r->size[1];
+      r->size[0] = B->size[0];
+      r->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(r, i);
       loop_ub = B->size[0] * B->size[1];
       for (i = 0; i < loop_ub; i++) {
-        c_IsSkinMask_PixelColor_DilateP->data[i] = B->data[i];
+        r->data[i] = B->data[i];
+      }
+
+      b_setPackedFillBits(r);
+      i = B->size[0] * B->size[1];
+      B->size[0] = r->size[0];
+      B->size[1] = r->size[1];
+      emxEnsureCapacity_uint32_T(B, i);
+      loop_ub = r->size[0] * r->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        B->data[i] = r->data[i];
+      }
+
+      i = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      d_IsSkinMask_PixelColor_ErodePa->size[0] = B->size[0];
+      d_IsSkinMask_PixelColor_ErodePa->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(d_IsSkinMask_PixelColor_ErodePa, i);
+      for (b_i = 0; b_i < 32; b_i++) {
+        b_nhood[b_i] = true;
+      }
+
+      bwSize[0] = B->size[0];
+      bwpSize[0] = 32.0;
+      bwSize[1] = B->size[1];
+      bwpSize[1] = 1.0;
+      dilate_packed_uint32(&B->data[0], &bwSize[0], 2.0, &b_nhood[0], &bwpSize[0],
+                           2.0, &d_IsSkinMask_PixelColor_ErodePa->data[0], true);
+      i = IsSkinMask_PixelColorPacked->size[0] *
+        IsSkinMask_PixelColorPacked->size[1];
+      IsSkinMask_PixelColorPacked->size[0] =
+        d_IsSkinMask_PixelColor_ErodePa->size[0];
+      IsSkinMask_PixelColorPacked->size[1] =
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      emxEnsureCapacity_uint32_T(IsSkinMask_PixelColorPacked, i);
+      loop_ub = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        IsSkinMask_PixelColorPacked->data[i] =
+          d_IsSkinMask_PixelColor_ErodePa->data[i];
+      }
+
+      i = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      d_IsSkinMask_PixelColor_ErodePa->size[0] =
+        IsSkinMask_PixelColorPacked->size[0];
+      d_IsSkinMask_PixelColor_ErodePa->size[1] =
+        IsSkinMask_PixelColorPacked->size[1];
+      emxEnsureCapacity_uint32_T(d_IsSkinMask_PixelColor_ErodePa, i);
+      for (b_i = 0; b_i < 32; b_i++) {
+        b_nhood[b_i] = true;
+      }
+
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 1.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 32.0;
+      dilate_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0],
+                           2.0, &b_nhood[0], &bwpSize[0], 2.0,
+                           &d_IsSkinMask_PixelColor_ErodePa->data[0], true);
+      i = c_IsSkinMask_PixelColor_DilateP->size[0] *
+        c_IsSkinMask_PixelColor_DilateP->size[1];
+      c_IsSkinMask_PixelColor_DilateP->size[0] =
+        d_IsSkinMask_PixelColor_ErodePa->size[0];
+      c_IsSkinMask_PixelColor_DilateP->size[1] =
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      emxEnsureCapacity_uint32_T(c_IsSkinMask_PixelColor_DilateP, i);
+      loop_ub = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        c_IsSkinMask_PixelColor_DilateP->data[i] =
+          d_IsSkinMask_PixelColor_ErodePa->data[i];
       }
 
       /* Square structuring element with width of 50 pixels     */
       /* %%%%% --- Low severity erosion and dilation %%%%%%    */
-      guard1 = true;
+      /* %%%%% --- Unpack %%%%%%    */
+      /* Unpack packed binary image */
+      /* M x N matrix; type logical. */
+      bwunpack(c_IsSkinMask_PixelColor_DilateP, NRows_Matrix, IsSkinMask);
       break;
 
      case 50:
@@ -854,7 +1344,7 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       /* Type uint32. */
       /* end local function */
       /* ============================================================================================= */
-      /* ErodeAndDilate_SEWidth50    Erode and dilate with square structuring element of width 50. */
+      /* ErodeAndDilate_SESquare50    Erode and dilate with square structuring element of width 50. */
       /* Inline function */
       /* Erode pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
       /* Type uint32. */
@@ -869,16 +1359,16 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       B->size[1] = IsSkinMask_PixelColorPacked->size[1];
       emxEnsureCapacity_uint32_T(B, i);
       for (b_i = 0; b_i < 50; b_i++) {
-        nhood[b_i] = true;
+        c_nhood[b_i] = true;
       }
 
-      asizeT[0] = IsSkinMask_PixelColorPacked->size[0];
-      nsizeT[0] = 50.0;
-      asizeT[1] = IsSkinMask_PixelColorPacked->size[1];
-      nsizeT[1] = 1.0;
-      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], asizeT, 2.0,
-                          nhood, nsizeT, 2.0, (real_T)NRows_Matrix, &B->data[0],
-                          true);
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 50.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 1.0;
+      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0], 2.0,
+                          &c_nhood[0], &bwpSize[0], 2.0, (real_T)NRows_Matrix,
+                          &B->data[0], true);
       i = IsSkinMask_PixelColorPacked->size[0] *
         IsSkinMask_PixelColorPacked->size[1];
       IsSkinMask_PixelColorPacked->size[0] = B->size[0];
@@ -894,16 +1384,16 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       B->size[1] = IsSkinMask_PixelColorPacked->size[1];
       emxEnsureCapacity_uint32_T(B, i);
       for (b_i = 0; b_i < 50; b_i++) {
-        nhood[b_i] = true;
+        c_nhood[b_i] = true;
       }
 
-      asizeT[0] = IsSkinMask_PixelColorPacked->size[0];
-      nsizeT[0] = 1.0;
-      asizeT[1] = IsSkinMask_PixelColorPacked->size[1];
-      nsizeT[1] = 50.0;
-      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], asizeT, 2.0,
-                          nhood, nsizeT, 2.0, (real_T)NRows_Matrix, &B->data[0],
-                          true);
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 1.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 50.0;
+      erode_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0], 2.0,
+                          &c_nhood[0], &bwpSize[0], 2.0, (real_T)NRows_Matrix,
+                          &B->data[0], true);
 
       /* Dilate pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
       /* Type uint32. */
@@ -911,92 +1401,105 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       /*  packed logical image */
       /*  structuring element */
       /*  flag for packed image */
-      i = A->size[0] * A->size[1];
-      A->size[0] = B->size[0];
-      A->size[1] = B->size[1];
-      emxEnsureCapacity_uint32_T(A, i);
+      i = r->size[0] * r->size[1];
+      r->size[0] = B->size[0];
+      r->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(r, i);
       loop_ub = B->size[0] * B->size[1];
       for (i = 0; i < loop_ub; i++) {
-        A->data[i] = B->data[i];
+        r->data[i] = B->data[i];
       }
 
-      if ((B->size[0] != 0) && (B->size[1] != 0)) {
-        mask_value = 0U;
-        for (loop_ub = 0; loop_ub < 31; loop_ub++) {
-          mask_value |= 1U << loop_ub;
-        }
-
-        loop_ub = B->size[1];
-        for (i = 0; i < loop_ub; i++) {
-          A->data[(B->size[0] + A->size[0] * i) - 1] = B->data[(B->size[0] +
-            B->size[0] * i) - 1] & mask_value;
-        }
-      }
-
+      b_setPackedFillBits(r);
       i = B->size[0] * B->size[1];
-      B->size[0] = A->size[0];
-      B->size[1] = A->size[1];
+      B->size[0] = r->size[0];
+      B->size[1] = r->size[1];
       emxEnsureCapacity_uint32_T(B, i);
-      for (b_i = 0; b_i < 50; b_i++) {
-        nhood[b_i] = true;
+      loop_ub = r->size[0] * r->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        B->data[i] = r->data[i];
       }
 
-      asizeT[0] = A->size[0];
-      nsizeT[0] = 50.0;
-      asizeT[1] = A->size[1];
-      nsizeT[1] = 1.0;
-      dilate_packed_uint32(&A->data[0], asizeT, 2.0, nhood, nsizeT, 2.0,
-                           &B->data[0], true);
+      i = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      d_IsSkinMask_PixelColor_ErodePa->size[0] = B->size[0];
+      d_IsSkinMask_PixelColor_ErodePa->size[1] = B->size[1];
+      emxEnsureCapacity_uint32_T(d_IsSkinMask_PixelColor_ErodePa, i);
+      for (b_i = 0; b_i < 50; b_i++) {
+        c_nhood[b_i] = true;
+      }
+
+      bwSize[0] = B->size[0];
+      bwpSize[0] = 50.0;
+      bwSize[1] = B->size[1];
+      bwpSize[1] = 1.0;
+      dilate_packed_uint32(&B->data[0], &bwSize[0], 2.0, &c_nhood[0], &bwpSize[0],
+                           2.0, &d_IsSkinMask_PixelColor_ErodePa->data[0], true);
       i = IsSkinMask_PixelColorPacked->size[0] *
         IsSkinMask_PixelColorPacked->size[1];
-      IsSkinMask_PixelColorPacked->size[0] = B->size[0];
-      IsSkinMask_PixelColorPacked->size[1] = B->size[1];
+      IsSkinMask_PixelColorPacked->size[0] =
+        d_IsSkinMask_PixelColor_ErodePa->size[0];
+      IsSkinMask_PixelColorPacked->size[1] =
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
       emxEnsureCapacity_uint32_T(IsSkinMask_PixelColorPacked, i);
-      loop_ub = B->size[0] * B->size[1];
+      loop_ub = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
       for (i = 0; i < loop_ub; i++) {
-        IsSkinMask_PixelColorPacked->data[i] = B->data[i];
+        IsSkinMask_PixelColorPacked->data[i] =
+          d_IsSkinMask_PixelColor_ErodePa->data[i];
       }
 
-      i = B->size[0] * B->size[1];
-      B->size[0] = IsSkinMask_PixelColorPacked->size[0];
-      B->size[1] = IsSkinMask_PixelColorPacked->size[1];
-      emxEnsureCapacity_uint32_T(B, i);
+      i = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
+      d_IsSkinMask_PixelColor_ErodePa->size[0] =
+        IsSkinMask_PixelColorPacked->size[0];
+      d_IsSkinMask_PixelColor_ErodePa->size[1] =
+        IsSkinMask_PixelColorPacked->size[1];
+      emxEnsureCapacity_uint32_T(d_IsSkinMask_PixelColor_ErodePa, i);
       for (b_i = 0; b_i < 50; b_i++) {
-        nhood[b_i] = true;
+        c_nhood[b_i] = true;
       }
 
-      asizeT[0] = IsSkinMask_PixelColorPacked->size[0];
-      nsizeT[0] = 1.0;
-      asizeT[1] = IsSkinMask_PixelColorPacked->size[1];
-      nsizeT[1] = 50.0;
-      dilate_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], asizeT, 2.0,
-                           nhood, nsizeT, 2.0, &B->data[0], true);
+      bwSize[0] = IsSkinMask_PixelColorPacked->size[0];
+      bwpSize[0] = 1.0;
+      bwSize[1] = IsSkinMask_PixelColorPacked->size[1];
+      bwpSize[1] = 50.0;
+      dilate_packed_uint32(&IsSkinMask_PixelColorPacked->data[0], &bwSize[0],
+                           2.0, &c_nhood[0], &bwpSize[0], 2.0,
+                           &d_IsSkinMask_PixelColor_ErodePa->data[0], true);
       i = c_IsSkinMask_PixelColor_DilateP->size[0] *
         c_IsSkinMask_PixelColor_DilateP->size[1];
-      c_IsSkinMask_PixelColor_DilateP->size[0] = B->size[0];
-      c_IsSkinMask_PixelColor_DilateP->size[1] = B->size[1];
+      c_IsSkinMask_PixelColor_DilateP->size[0] =
+        d_IsSkinMask_PixelColor_ErodePa->size[0];
+      c_IsSkinMask_PixelColor_DilateP->size[1] =
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
       emxEnsureCapacity_uint32_T(c_IsSkinMask_PixelColor_DilateP, i);
-      loop_ub = B->size[0] * B->size[1];
+      loop_ub = d_IsSkinMask_PixelColor_ErodePa->size[0] *
+        d_IsSkinMask_PixelColor_ErodePa->size[1];
       for (i = 0; i < loop_ub; i++) {
-        c_IsSkinMask_PixelColor_DilateP->data[i] = B->data[i];
+        c_IsSkinMask_PixelColor_DilateP->data[i] =
+          d_IsSkinMask_PixelColor_ErodePa->data[i];
       }
 
       /* (Required for code generation)     */
       /* %%%%% --- Low severity erosion and dilation %%%%%%    */
-      guard1 = true;
+      /* %%%%% --- Unpack %%%%%%    */
+      /* Unpack packed binary image */
+      /* M x N matrix; type logical. */
+      bwunpack(c_IsSkinMask_PixelColor_DilateP, NRows_Matrix, IsSkinMask);
       break;
     }
   } else {
     /* Use function corresponding to closest SE radius */
-    switch (MorphCloseNeighborhoodRadius) {
-     case 6:
-      /* Disk-shaped structuring element with radius of 6 pixels     */
+    switch (functionWidthToUse) {
+     case 4:
+      /* Disk-shaped structuring element with radius of 4 pixels     */
       /* Packed binary image */
       /* Local function. */
       /* Type uint32. */
       /* end local function */
       /* ============================================================================================= */
-      /* ErodeAndDilate_SERadius6    Erode and dilate with disk-shaped structuring element of radius 6. */
+      /* ErodeAndDilate_SEDisk4    Erode and dilate with disk-shaped structuring element of radius 4. */
       /* Inline function */
       /* Erode pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
       /* Type uint32. */
@@ -1006,7 +1509,7 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       /*  flag for packed image */
       /*  number of rows in unpacked image */
       imerode(IsSkinMask_PixelColorPacked, NRows_Matrix,
-              c_IsSkinMask_PixelColor_ErodePa);
+              d_IsSkinMask_PixelColor_ErodePa);
 
       /* Dilate pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
       /* Type uint32. */
@@ -1014,32 +1517,35 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       /*  packed logical image */
       /*  structuring element */
       /*  flag for packed image */
-      imdilate(c_IsSkinMask_PixelColor_ErodePa, d_IsSkinMask_PixelColor_DilateP);
+      imdilate(d_IsSkinMask_PixelColor_ErodePa, IsSkinMask_PixelColorPacked);
       i = c_IsSkinMask_PixelColor_DilateP->size[0] *
         c_IsSkinMask_PixelColor_DilateP->size[1];
       c_IsSkinMask_PixelColor_DilateP->size[0] =
-        d_IsSkinMask_PixelColor_DilateP->size[0];
+        IsSkinMask_PixelColorPacked->size[0];
       c_IsSkinMask_PixelColor_DilateP->size[1] =
-        d_IsSkinMask_PixelColor_DilateP->size[1];
+        IsSkinMask_PixelColorPacked->size[1];
       emxEnsureCapacity_uint32_T(c_IsSkinMask_PixelColor_DilateP, i);
-      loop_ub = d_IsSkinMask_PixelColor_DilateP->size[0] *
-        d_IsSkinMask_PixelColor_DilateP->size[1];
+      loop_ub = IsSkinMask_PixelColorPacked->size[0] *
+        IsSkinMask_PixelColorPacked->size[1];
       for (i = 0; i < loop_ub; i++) {
         c_IsSkinMask_PixelColor_DilateP->data[i] =
-          d_IsSkinMask_PixelColor_DilateP->data[i];
+          IsSkinMask_PixelColorPacked->data[i];
       }
 
-      /* Disk-shaped structuring element with radius of 14 pixels     */
-      guard1 = true;
+      /* Disk-shaped structuring element with radius of 6 pixels     */
+      /* %%%%% --- Unpack %%%%%%    */
+      /* Unpack packed binary image */
+      /* M x N matrix; type logical. */
+      bwunpack(c_IsSkinMask_PixelColor_DilateP, NRows_Matrix, IsSkinMask);
       break;
 
-     case 14:
+     case 6:
       /* Packed binary image */
       /* Local function. */
       /* Type uint32. */
       /* end local function */
       /* ============================================================================================= */
-      /* ErodeAndDilate_SERadius14    Erode and dilate with disk-shaped structuring element of radius 14. */
+      /* ErodeAndDilate_SEDisk6    Erode and dilate with disk-shaped structuring element of radius 6. */
       /* Inline function */
       /* Erode pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
       /* Type uint32. */
@@ -1059,6 +1565,100 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       /*  flag for packed image */
       b_imdilate(c_IsSkinMask_PixelColor_ErodePa,
                  d_IsSkinMask_PixelColor_DilateP);
+      i = c_IsSkinMask_PixelColor_DilateP->size[0] *
+        c_IsSkinMask_PixelColor_DilateP->size[1];
+      c_IsSkinMask_PixelColor_DilateP->size[0] =
+        d_IsSkinMask_PixelColor_DilateP->size[0];
+      c_IsSkinMask_PixelColor_DilateP->size[1] =
+        d_IsSkinMask_PixelColor_DilateP->size[1];
+      emxEnsureCapacity_uint32_T(c_IsSkinMask_PixelColor_DilateP, i);
+      loop_ub = d_IsSkinMask_PixelColor_DilateP->size[0] *
+        d_IsSkinMask_PixelColor_DilateP->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        c_IsSkinMask_PixelColor_DilateP->data[i] =
+          d_IsSkinMask_PixelColor_DilateP->data[i];
+      }
+
+      /* Disk-shaped structuring element with radius of 10 pixels     */
+      /* %%%%% --- Unpack %%%%%%    */
+      /* Unpack packed binary image */
+      /* M x N matrix; type logical. */
+      bwunpack(c_IsSkinMask_PixelColor_DilateP, NRows_Matrix, IsSkinMask);
+      break;
+
+     case 10:
+      /* Packed binary image */
+      /* Local function. */
+      /* Type uint32. */
+      /* end local function */
+      /* ============================================================================================= */
+      /* ErodeAndDilate_SEDisk10    Erode and dilate with disk-shaped structuring element of radius 10. */
+      /* Inline function */
+      /* Erode pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
+      /* Type uint32. */
+      /*  eroded packed logical image */
+      /*  packed logical image */
+      /*  structuring element */
+      /*  flag for packed image */
+      /*  number of rows in unpacked image */
+      c_imerode(IsSkinMask_PixelColorPacked, NRows_Matrix,
+                c_IsSkinMask_PixelColor_ErodePa);
+
+      /* Dilate pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
+      /* Type uint32. */
+      /*  dilated packed logical image */
+      /*  packed logical image */
+      /*  structuring element */
+      /*  flag for packed image */
+      c_imdilate(c_IsSkinMask_PixelColor_ErodePa,
+                 d_IsSkinMask_PixelColor_DilateP);
+      i = c_IsSkinMask_PixelColor_DilateP->size[0] *
+        c_IsSkinMask_PixelColor_DilateP->size[1];
+      c_IsSkinMask_PixelColor_DilateP->size[0] =
+        d_IsSkinMask_PixelColor_DilateP->size[0];
+      c_IsSkinMask_PixelColor_DilateP->size[1] =
+        d_IsSkinMask_PixelColor_DilateP->size[1];
+      emxEnsureCapacity_uint32_T(c_IsSkinMask_PixelColor_DilateP, i);
+      loop_ub = d_IsSkinMask_PixelColor_DilateP->size[0] *
+        d_IsSkinMask_PixelColor_DilateP->size[1];
+      for (i = 0; i < loop_ub; i++) {
+        c_IsSkinMask_PixelColor_DilateP->data[i] =
+          d_IsSkinMask_PixelColor_DilateP->data[i];
+      }
+
+      /* Disk-shaped structuring element with radius of 14 pixels     */
+      /* %%%%% --- Unpack %%%%%%    */
+      /* Unpack packed binary image */
+      /* M x N matrix; type logical. */
+      bwunpack(c_IsSkinMask_PixelColor_DilateP, NRows_Matrix, IsSkinMask);
+      break;
+
+     case 14:
+      /* Packed binary image */
+      /* Local function. */
+      /* Type uint32. */
+      /* end local function */
+      /* ============================================================================================= */
+      /* ErodeAndDilate_SEDisk14    Erode and dilate with disk-shaped structuring element of radius 14. */
+      /* Inline function */
+      /* Erode pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
+      /* Type uint32. */
+      /*  eroded packed logical image */
+      /*  packed logical image */
+      /*  structuring element */
+      /*  flag for packed image */
+      /*  number of rows in unpacked image */
+      d_imerode(IsSkinMask_PixelColorPacked, NRows_Matrix,
+                c_IsSkinMask_PixelColor_ErodePa);
+
+      /* Dilate pixels that equal true, which is equivalent to dilating pixels that equal false (non-skin) */
+      /* Type uint32. */
+      /*  dilated packed logical image */
+      /*  packed logical image */
+      /*  structuring element */
+      /*  flag for packed image */
+      d_imdilate(c_IsSkinMask_PixelColor_ErodePa,
+                 d_IsSkinMask_PixelColor_DilateP);
 
       /* end local function */
       i = c_IsSkinMask_PixelColor_DilateP->size[0] *
@@ -1076,41 +1676,17 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
       }
 
       /* (Required for code generation)     */
-      guard1 = true;
+      /* %%%%% --- Unpack %%%%%%    */
+      /* Unpack packed binary image */
+      /* M x N matrix; type logical. */
+      bwunpack(c_IsSkinMask_PixelColor_DilateP, NRows_Matrix, IsSkinMask);
       break;
     }
   }
 
-  if (guard1) {
-    /* %%%%% --- Unpack %%%%%%    */
-    /* Unpack packed binary image */
-    /* M x N matrix; type logical. */
-    if ((c_IsSkinMask_PixelColor_DilateP->size[0] == 0) ||
-        (c_IsSkinMask_PixelColor_DilateP->size[1] == 0)) {
-      i = IsSkinMask->size[0] * IsSkinMask->size[1];
-      IsSkinMask->size[0] = NRows_Matrix;
-      IsSkinMask->size[1] = c_IsSkinMask_PixelColor_DilateP->size[1];
-      emxEnsureCapacity_boolean_T(IsSkinMask, i);
-      loop_ub = NRows_Matrix * c_IsSkinMask_PixelColor_DilateP->size[1];
-      for (i = 0; i < loop_ub; i++) {
-        IsSkinMask->data[i] = false;
-      }
-    } else {
-      i = IsSkinMask->size[0] * IsSkinMask->size[1];
-      IsSkinMask->size[0] = NRows_Matrix;
-      IsSkinMask->size[1] = c_IsSkinMask_PixelColor_DilateP->size[1];
-      emxEnsureCapacity_boolean_T(IsSkinMask, i);
-      asizeT[0] = c_IsSkinMask_PixelColor_DilateP->size[0];
-      nsizeT[0] = NRows_Matrix;
-      asizeT[1] = c_IsSkinMask_PixelColor_DilateP->size[1];
-      nsizeT[1] = c_IsSkinMask_PixelColor_DilateP->size[1];
-      bwUnpackingtbb(&c_IsSkinMask_PixelColor_DilateP->data[0], asizeT,
-                     &IsSkinMask->data[0], nsizeT, true);
-    }
-  }
-
-  emxFree_uint32_T(&A);
+  emxFree_uint32_T(&r);
   emxFree_uint32_T(&B);
+  emxFree_uint32_T(&d_IsSkinMask_PixelColor_ErodePa);
   emxFree_uint32_T(&c_IsSkinMask_PixelColor_ErodePa);
   emxFree_uint32_T(&d_IsSkinMask_PixelColor_DilateP);
   emxFree_uint32_T(&c_IsSkinMask_PixelColor_DilateP);
@@ -1172,7 +1748,7 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /* CrSingleCode                  = coder.typeof( zeros(500, 500, 'single'),   [inf, inf],  [1, 1] );        %single */
   /* HSingleCode                   = coder.typeof( zeros(500, 500, 'single'),   [inf, inf],  [1, 1] );        %single                                  */
   /* SSingleCode                   = coder.typeof( zeros(500, 500, 'single'),   [inf, inf],  [1, 1] );        %single  */
-  /* IsSkinMask_RangeCode          = coder.typeof( false(500, 500         ),    [inf, inf],  [1, 1] );        %logical            */
+  /* IsSkinMask_RangeCode          = coder.typeof( false(500, 500),             [inf, inf],  [1, 1] );        %logical            */
   /*                   */
   /*                      */
   /* %%%%% Specify fixed-size input arguments %%%%%% */
@@ -1257,6 +1833,19 @@ void SkinSegmentMask_Ops(const emxArray_uint8_T *RBounded_Uint8, const
   /*               */
   /* } */
   emlrtHeapReferenceStackLeaveFcnR2012b(emlrtRootTLSGlobal);
+}
+
+emlrtCTX emlrtGetRootTLSGlobal(void)
+{
+  return emlrtRootTLSGlobal;
+}
+
+void emlrtLockerFunction(EmlrtLockeeFunction aLockee, const emlrtConstCTX aTLS,
+  void *aData)
+{
+  omp_set_lock(&emlrtLockGlobal);
+  emlrtCallLockeeFunction(aLockee, aTLS, aData);
+  omp_unset_lock(&emlrtLockGlobal);
 }
 
 /* End of code generation (SkinSegmentMask_Ops.c) */

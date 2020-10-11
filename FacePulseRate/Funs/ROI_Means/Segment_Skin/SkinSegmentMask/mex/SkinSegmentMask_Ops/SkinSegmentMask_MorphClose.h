@@ -12,24 +12,31 @@
 #pragma once
 
 /* Include files */
+#include "rtwtypes.h"
+#include "emlrt.h"
+#include "mex.h"
+#include "omp.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "rtwtypes.h"
-#include "omp.h"
-#include "SkinSegmentMask_Ops_types.h"
 
 /* Function Declarations */
-void ErodeAndDilate_SERadius14_free(void);
-void ErodeAndDilate_SERadius14_init(void);
-void ErodeAndDilate_SERadius6_free(void);
-void ErodeAndDilate_SERadius6_init(void);
-void ErodeAndDilate_SEWidth22_free(void);
-void ErodeAndDilate_SEWidth22_init(void);
-void ErodeAndDilate_SEWidth50_free(void);
-void ErodeAndDilate_SEWidth50_init(void);
+void ErodeAndDilate_SEDisk10_free(void);
+void ErodeAndDilate_SEDisk10_init(void);
+void ErodeAndDilate_SEDisk14_free(void);
+void ErodeAndDilate_SEDisk14_init(void);
+void ErodeAndDilate_SEDisk4_free(void);
+void ErodeAndDilate_SEDisk4_init(void);
+void ErodeAndDilate_SEDisk6_free(void);
+void ErodeAndDilate_SEDisk6_init(void);
+void ErodeAndDilate_SESquare12_free(void);
+void ErodeAndDilate_SESquare12_init(void);
+void ErodeAndDilate_SESquare22_free(void);
+void ErodeAndDilate_SESquare22_init(void);
+void ErodeAndDilate_SESquare32_free(void);
+void ErodeAndDilate_SESquare32_init(void);
+void ErodeAndDilate_SESquare50_free(void);
+void ErodeAndDilate_SESquare50_init(void);
 
 /* End of code generation (SkinSegmentMask_MorphClose.h) */

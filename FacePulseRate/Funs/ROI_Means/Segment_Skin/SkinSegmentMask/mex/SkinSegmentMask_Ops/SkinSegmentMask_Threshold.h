@@ -12,15 +12,15 @@
 #pragma once
 
 /* Include files */
+#include "SkinSegmentMask_Ops_types.h"
+#include "rtwtypes.h"
+#include "emlrt.h"
+#include "mex.h"
+#include "omp.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mex.h"
-#include "emlrt.h"
-#include "rtwtypes.h"
-#include "omp.h"
-#include "SkinSegmentMask_Ops_types.h"
 
 /* Function Declarations */
 void SkinSegmentMask_Threshold(emlrtCTX aTLS, const emxArray_uint8_T
