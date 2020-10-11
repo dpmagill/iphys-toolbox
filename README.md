@@ -27,7 +27,7 @@ For additional discussion and recommendations, see "Video and Recording Environm
 
 ## Output
 
-The BVP and pulse rate results are provided, along with addition information, as output tables. Included among the additional information are the input video timestamps and means from the red, green, and blue color channels of an ROI from each frame; these two components of the data are the basis for the BVP.  These tables are also written to CSV files. As previously mentioned, an output video is provided to facilitate corrections to ROI placement and skin segmentation. Examples of corrections are provided in file Example_Script.mlx.
+The BVP and pulse rate results are provided, along with additional information, as output tables. Included among the additional information are the input video timestamps and means from the red, green, and blue color channels of an ROI from each frame; these two components of the data are the basis for the BVP.  These tables are also written to CSV files. As previously mentioned, an output video is provided to facilitate corrections to ROI placement and skin segmentation. Examples of corrections are provided in file Example_Script.mlx.
 
 ## Use of Pretests
 
