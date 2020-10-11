@@ -7,7 +7,7 @@ FacePulseRate is designed to return output from the four (as of November, 2019) 
 
 ## Purpose
 
-The first purpose of FacePulseRate is to break down time into numerous windows (each 1.5 minutes) to allow pulse rate to vary across time. An argument can be used to change the window duration according to preference. It is unclear whether this approach has been used previously, so developing the duration according to comparison with objective PPG data may provide guidance.
+The first purpose of FacePulseRate is to break down time into numerous windows (each 1.5 minutes) to allow pulse rate to vary across time. An argument can be used to change the window duration according to preference. It is unclear whether this approach has been used previously, so developing the duration according to comparison with objective data (e.g., PPG, ECG) may provide guidance.
 
 The second purpose is to provide features to make the collection of data from the videos convenient, accurate, diagnosable, and correctable. These features do not alter the pulse rate algorithms from iPhys Toolbox, but rather concentrate on obtaining data for input into the algorithms. Good data should facilitate the accuracy of the pulse-rate algorithms. The features include ...
 
@@ -29,7 +29,7 @@ Supported file extensions include ...
 
 Other file extensions may be supported. 
 
-For additional discussion and recommendations, see "Video and Recording Environment Recommendations.pdf".
+For additional discussion and recommendations, see "Video_and_Recording_Environment_Recommendations.pdf".
 
 ## Output
 
@@ -79,12 +79,7 @@ Experience has indicated at least two steps of preparation should be undertaken 
 
 1. Optimize the video recording environment. See Video_and_Recording_Environment_Recommendations.pdf.
 
-2. Conduct pretests to verify the accuracy of the pulse-rate algorithms against traditional methods (e.g., PPG, ECG). 
-It has been observed (and discussed in the literature) that the accuracy of the pulse-rate algorithms is largely a function of head movement,
-where less head movement results in greater accuracy. Because accuracy is dependent on head movement, it is recommended to conduct pretests
-in the same environment in which the non-contact methods will be used. During pretests, collect data from both video and
-a traditional method. Because the traditional methods typically provide data by millisecond or second, the output from the traditional method
-should be averaged within each the window used in FacePulseRate (by default, these occur in 1.5 minute intervals).   
+2. Conduct pretests. See Pretesting.pdf.
 
 ### Setup
 
@@ -100,7 +95,7 @@ should be averaged within each the window used in FacePulseRate (by default, the
 
 3. Download the folder that contains the functions for FacePulseRate. This folder is named 'FacePulseRate'. As of October 2020, FacePulseRate can be found on Github.com under the username 'dpmagill' as a fork to McDuff and Blackford's (2019) iPhys Toolbox. 
 
-### General Instructions
+### General Use
 
 See file "Examples_General_Instructions.mlx". 
 
