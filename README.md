@@ -1,9 +1,9 @@
 
 # FacePulseRate: A Suite of Features to Facilitate the Use of iPhys Toolbox
 
-Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. This toolbox accepts pre-recorded video rather than video streams. The benefit of pre-recorded video is that some operations can be aware of the future (they can look ahead in the video), which improves the accuracy of ROI placement.      
+FacePulseRate returns frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. This toolbox accepts pre-recorded video rather than video streams. The benefit of pre-recorded video is that some operations can be aware of the future (they can look ahead in the video), which improves the accuracy of ROI placement.      
 
-FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the pulse rate of an interval (termed a window here) is calculated by conducting a fast Fourier transform (FFT) to select the greatest peak. 
+FacePulseRate is designed to return output from the four (as of November, 2019) pulse-rate algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the pulse rate of an interval (termed a window here) is calculated by conducting a fast Fourier transform (FFT) to select the greatest peak. 
 
 ## Purpose
 
@@ -17,7 +17,7 @@ The second purpose is to provide features to make the collection of data from th
 
 * An argument that enables controlling for variation in luminance across frames (see Madan et al., 2018). 
 
-* Providing verification of ROI placement and skin-segmentation by providing an annotated output video. Arguments are available to make adjustments to ROI placement and skin-segmentation based upon inspection of the output video. For a description of how the annotations on the output video can inform modifications to the arguments, see the description in function WriteFaceVideo.
+* Providing verification of ROI placement and skin-segmentation by providing an annotated output video. Arguments are available to make adjustments to ROI placement and skin-segmentation based upon inspection of the output video.
 
 ## Input
 
@@ -33,12 +33,18 @@ For additional discussion and recommendations, see "Video and Recording Environm
 
 ## Output
 
-The BVP and pulse rate results are provided, along with additional information, as output tables. Included among the additional information are the input video timestamps and means from the red, green, and blue color channels of an ROI from each frame; these two components of the data are the basis for the BVP.  These tables are also written to CSV files. As previously mentioned, an output video is provided to facilitate corrections to ROI placement and skin segmentation. Examples of corrections are provided in file Example_Script.mlx.
+The BVP and pulse rate results are provided, along with additional information, as output tables. Included among the additional information are the input video timestamps and means from the red, green, and blue color channels of an ROI from each frame; these two components of the data are the basis for the BVP.  These tables are also written to CSV files. As previously mentioned, an output video is provided to facilitate corrections to ROI placement and skin segmentation. Code examples of corrections are provided in file Examples_Correct_ROIs_and_Skin_Segmentation.mlx.
 
-## Use of Pretests
+In sum, ...
+* Frame-by-frame BVP as Matlab table variable
+* Frame-by-frame BVP as csv file 
+* Window-by-window pulse rate as Matlab table variable
+* Window-by-window pulse rate as csv file
+* Annotated output video 
 
-When planning a study, pretests should be conducted where video as well as traditional measures of pulse rate (e.g., PPG, ECG) are recorded. The traditional measures of pulse rate should be used to validate the use of video-derived pulse rate for expected behavioral tendencies. This is because the accuracy of video-derived pulse rate is highly dependent on the degree of facial movement, where greater movement tends to result in video-derived pulse rate that is less accurate. The four pulse-rate algorithms may vary in accuracy depending on the degree of movement. The pulse-rate algorithm with greatest accuracy in a given context should be used.
-For a detailed discussion of the key features and technical implementation, see the description in function FacePulseRate.
+## Interface
+
+* Matlab (see software requirements below)
 
 ## System Requirements
 
@@ -66,6 +72,19 @@ under default options. For example, once the required toolboxes have been instal
 Matlab's path, entering the following line in Matlab is all that is needed to return results:
 
     FacePulseRate(<\...\MyInputVideo.mp4>);
+
+### Study Preparation
+
+Experience has indicated at least two steps of preparation should be undertaken before data collection:
+
+1. Optimize the video recording environment. See Video_and_Recording_Environment_Recommendations.pdf.
+
+2. Conduct pretests to verify the accuracy of the pulse-rate algorithms against traditional methods (e.g., PPG, ECG). 
+It has been observed (and discussed in the literature) that the accuracy of the pulse-rate algorithms is largely a function of head movement,
+where less head movement results in greater accuracy. Because accuracy is dependent on head movement, it is recommended to conduct pretests
+in the same environment in which the non-contact methods will be used. During pretests, collect data from both video and
+a traditional method. Because the traditional methods typically provide data by millisecond or second, the output from the traditional method
+should be averaged within each the window used in FacePulseRate (by default, these occur in 1.5 minute intervals).   
 
 ### Setup
 

@@ -80,13 +80,14 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       -- How-To Guides --
 %
-%       The descriptive text that follows in this function is rather detailed. To begin using  
-%       FacePulseRate right away, move directly to the How-To guides:
+%       The descriptive text in the current function is rather detailed. As an alternative to 
+%       following the description here, you might consider using the How-To guides listed below to 
+%       get started:
 %
 %       - For an overview of FacePulseRate, see README.pdf.
 %
 %       - For recommendations on the input video and the physical enviroment in which it is  
-%         recorded, see Video and Recording Environment Recommendations.pdf.
+%         recorded, see Video_and_Recording_Environment_Recommendations.pdf.
 %
 %       - For setting up FacePulseRate (downloading the tools), see README.pdf.
 %
