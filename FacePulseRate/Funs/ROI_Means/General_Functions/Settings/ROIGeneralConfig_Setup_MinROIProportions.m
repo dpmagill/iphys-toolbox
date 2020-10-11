@@ -103,9 +103,12 @@ if ROIMinWidthProportion == -1 || ROIMinHeightProportion == -1
         %Assign frame indices at which to take samples
         for i = 1 : 4
 
-            BeginIdx = EndIdx + 1;
+            BeginIdx = int32(EndIdx + 1);
 
-            EndIdx = min( EndIdx + FrameIdxQuartile, VideoReadConfig.FrameIdx(end) );
+            EndIdx = ...
+                int32( ...
+                    min( EndIdx + FrameIdxQuartile, VideoReadConfig.FrameIdx(end) ) ...
+                );
 
             BeginIdxSample = EndIdxSample + 1;
 
