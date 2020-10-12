@@ -3,7 +3,7 @@
 
 FacePulseRate returns frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. This toolbox accepts pre-recorded video rather than video streams. The benefit of pre-recorded video is that some operations can be aware of the future (they can look ahead in the video), which improves the accuracy of ROI placement.      
 
-FacePulseRate is designed to return output from the four (as of November, 2019) pulse-rate algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the pulse rate of an interval (termed a window here) is calculated by conducting a fast Fourier transform (FFT) to select the greatest peak. 
+FacePulseRate is designed to return output from the four (as of November, 2019) blood volume pulse (BVP) algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the pulse rate of an interval of time (termed a window here) is calculated from BVP by conducting a fast Fourier transform (FFT) to select the greatest peak. 
 
 ## Purpose
 
