@@ -50,6 +50,7 @@ In sum, ...
 | 1           | .125          | 0         | -.004     | 68              | 65              |        
 | 2           | .167          | -3.40E-06 |  .134     | 68              | 65              | 
 | 3           | .208          | -2.61E-06 |  .274     | 68              | 65              |
+
 *Frame-by-Frame Table.*
 A few lines from the first window. Only a small selection of columns is shown.
 
@@ -58,6 +59,7 @@ A few lines from the first window. Only a small selection of columns is shown.
 | :---------- | :------------ | :-------- | :-------- | :-------- | :-------- |
 | 1           | 1             | 68        | 65        | 68        | 69        |
 | 1           | 2             | 70        | 70        | 71        | 72        |
+
 *Window-by-Window Table.*
 Output from the 2 windows used. Segmenting data by block is optional.   
 
