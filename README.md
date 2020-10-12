@@ -42,6 +42,11 @@ In sum, ...
 * Window-by-window pulse rate as csv file
 * Annotated output video 
 
+
+![Alt text](img/Example_Frame.png?raw=true "Example Frame.")
+Example Frame
+
+
 ## Interface
 
 * Matlab (see software requirements below)
