@@ -20,8 +20,8 @@ In the literature, the long duration typically used is the entire length of the 
 for 1 minute and then used the greatest peak from a periodogram to calculate pulse rate. 
 
 A limitation to taking pulse rate from the entire video is that this may not address research questions concerning changes in pulse rate across time.
-To address this, the second purpose of FacePulseRate is to allow pulse rate to vary across time while still adhering to the use of a relatively long
-duration and the use of a periodogram. To do so, FacePulseRate is implemented to take pulse rate separately from windows of time within the video.
+Addressing this limitation is the first purpose of FacePulseRate. To do so, FacePulseRate allows pulse rate to vary across time while still adhering to the use of a relatively long
+duration and the use of a periodogram. Specifically, FacePulseRate is implemented to take pulse rate separately from windows of time within the video.
 The default window duration is 1 minute, although an argument permits this to be changed to an arbitrary value (although constrained to be at least 2 seconds).
 The window duration can also be changed to be the length of video when a time-varying measure is not desired. 
 
