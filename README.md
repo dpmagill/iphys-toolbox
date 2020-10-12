@@ -11,7 +11,19 @@ FacePulseRate has been designed for researchers interested in acquiring pulse ra
 
 ## Purpose
 
-The first purpose of FacePulseRate is to break down time into numerous windows (each 1.5 minutes) to allow pulse rate to vary across time. An argument can be used to change the window duration according to preference. It is unclear whether this approach has been used previously, so developing the duration according to comparison with objective data (e.g., PPG, ECG) may provide guidance.
+FacePulseRate adopts the approach of iPhys Toolbox, as well as other sources from the literature, by calculating pulse rate (1) from a relatively long 
+duration and (2) as determined by the greatest peak in a periodogram. This contrasts to the calculation typically used for traditional measures, such as PPG or 
+ECG, where a millisecond time scale may be used and local peak detection is used rather than a periodogram. Although it is possible to apply the 
+calculations used for traditional measures on a video measure, it is unclear whether the noise often present in video data is conducive to that level of precision.
+
+In the literature, the long duration typically used is the entire length of the video. For example, Poh, McDuff, and Picard (2011) recorded participants
+for 1 minute and then used the greatest peak from a periodogram to calculate pulse rate. 
+
+A limitation to taking pulse rate from the entire video is that this may not address research questions concerning changes in pulse rate across time.
+To address this, the second purpose of FacePulseRate is to allow pulse rate to vary across time while still adhering to the use of a relatively long
+duration and the use of a periodogram. To do so, FacePulseRate is implemented to take pulse rate separately from windows of time within the video.
+The default window duration is 1 minute, although an argument permits this to be changed to an arbitrary value (although constrained to be at least 2 seconds).
+The window duration can also be changed to be the length of video when a time-varying measure is not desired. 
 
 The second purpose is to provide features to make the collection of data from the videos convenient, accurate, diagnosable, and correctable. These features do not alter the pulse rate algorithms from iPhys Toolbox, but rather concentrate on obtaining data for input into the algorithms. Good data should facilitate the accuracy of the pulse-rate algorithms. The features include ...
 
@@ -164,7 +176,8 @@ See an acknowledgement of third-party software in file 'FacePulseRate/License/Th
 
 ## References
 
-Madan, C. R., Harrison, T., & Mathewson, K. E. (2018). Noncontact measurement of emotional and physiological changes in heart rate from a webcam. Psychophysiology, 55(4), e13005.        
+Madan, C. R., Harrison, T., & Mathewson, K. E. (2018). Noncontact measurement of emotional and physiological changes in heart rate from a webcam. *Psychophysiology, 55*(4), e13005.        
 
-McDuff, D., & Blackford, E. (2019). iphys: An open non-contact imaging-based physiological measurement toolbox. In 2019 Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC), pp. 6521-6524. 
+McDuff, D., & Blackford, E. (2019). *iphys: An open non-contact imaging-based physiological measurement toolbox*. In 2019 Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC), pp. 6521-6524. 
 
+Poh, M. Z., McDuff, D. J., & Picard, R. W. (2011). Advancements in noncontact, multiparameter physiological measurements using a webcam. *IEEE Transactions on Biomedical Engineering, 58*(1), 7-11.

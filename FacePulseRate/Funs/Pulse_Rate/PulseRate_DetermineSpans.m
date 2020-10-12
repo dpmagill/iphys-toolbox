@@ -110,6 +110,7 @@ for i = 1 : size(BlockTimestampsMx2, 1)
     if BlockTimestampEnd - BlockTimestampStart < PulseRateConfigAndData.WindowDurationSec
 
         PulseRateWindowDurationSec_ith = BlockTimestampEnd - BlockTimestampStart;
+        
     else
         
         PulseRateWindowDurationSec_ith = PulseRateConfigAndData.WindowDurationSec;

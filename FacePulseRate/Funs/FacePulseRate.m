@@ -718,10 +718,18 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %               in the current function divides frames into separate windows in order for changes 
 %               in pulse rate across time to be observed. The span of the window is specified by 
 %               PulseRateWindowDurationSec, which is an argument to function FacePulseRate. The   
-%               default currently in use is rather arbitrary; the span, or spans, that provides 
-%               optimal accuracy still needs to be determined. Data are arranged by span by 
-%               function PulseRate_DetermineSpans, which is called by function PulseRate.
+%               default currently in use is rather arbitrary; the span, or spans, of the window  
+%               that provides optimal accuracy still needs to be determined. 
 %
+%               The span of the window can be specified by argument PulseRateWindowDurationSec. To 
+%               take only one pulse rate across the entire video (limiting the video to one 
+%               window), specify the value inf (PulseRateWindowDurationSec = inf). If also 
+%               specifying blocks (see argument PulseRateBlockTimestamps), using inf will cause the 
+%               pulse rate to be calculated for the entirety of each block.
+%
+%               Data are arranged by span by function PulseRate_DetermineSpans, which is called by 
+%               function PulseRate.
+%               
 %               The pulse rate values will be recorded on the "by-window" table, which is an output  
 %               variable of function FacePulseRate and which is written to a csv (see function 
 %               TableOuput, which is called by function FacePulseRate).              
@@ -1306,11 +1314,10 @@ arguments
     NVArgs.PulseRateBlockTimestamps                 (1, :) double  {mustBePositive}                   = [] %note: argument block also accepts column vector, which will be automatically converted to row vector
     NVArgs.PulseRateControlLuminance                (1, 1) char    {mustBeNonempty}                   = 'F' %note: also accepts strings
     NVArgs.PulseRateWindowDurationSec               (1, 1) double  {mustBeNonempty, ...
-                                                                    mustBeInteger, ...
                                                                     mustBePositive, ...
                                                                     mustBeGreaterThanOrEqual( ...
                                                                     NVArgs.PulseRateWindowDurationSec, ...
-                                                                    2)}                               = 90 %>= 2 sec for compatibility with function CHROM_DEHAAN   
+                                                                    2)}                               = 60 %>= 2 sec for compatibility with function CHROM_DEHAAN   
     NVArgs.PulseRateExternallyMeasured              (1, :) double                                     = [] %note: argument block also accepts column vector, which will be automatically converted to row vector
 end
     

@@ -76,6 +76,9 @@ function PulseRateConfigAndData = ...
 %    span, or spans, that provides optimal accuracy still needs to be determined. Data are arranged
 %    by span by function PulseRate_DetermineSpans, which is called by function PulseRate.
 %
+%    When PulseRateWindowDurationSec == inf, the duration of the input video will be used as the
+%    window.
+%
 %    The pulse rate values will be recorded on the "by-window" table, which is an output variable 
 %    of function FacePulseRate and which is written to a csv (see function TableOuput, which is
 %    called by function FacePulseRate).
@@ -125,7 +128,7 @@ function PulseRateConfigAndData = ...
 PulseRateConfigAndData = ...
     struct( ...
         'TF',                 {PulseRateTF}, ... note: brackets ensure scalar structure
-        'WindowDurationSec',  {PulseRateWindowDurationSec}, ...
+        'WindowDurationSec',  {double(0)}, ...
         'ExternallyMeasured', {PulseRateExternallyMeasured}, ...
         'ControlLuminanceTF', {false}, ...
         'ControlLuminanceColorspace', {PulseRateControlLuminance}, ...
@@ -165,6 +168,20 @@ PulseRateConfigAndData = ...
             'PulseRateExpanded_External', [] ...
         ) ...
     );
+
+%%%%%% Specify the window duration %%%%%%
+
+%If PulseRateWindowDurationSec == inf, use the duration of the full video as the window duration.
+%Note: if blocks are specified, function PulseRate_DetermineSpans will cap the window duration to
+%the duration of each respective block.
+if PulseRateWindowDurationSec == inf
+    
+    PulseRateWindowDurationSec = double(VideoReadConfig.EndTime - VideoReadConfig.StartTime);        
+end    
+
+%Must be an integer (although not an integer type).
+%Scalar; type double. 
+PulseRateConfigAndData.WindowDurationSec = floor(PulseRateWindowDurationSec);
 
 
 %%%%%% Preallocate matrixs to store ROI RGB means and luminance (Y) means %%%%%%
