@@ -43,7 +43,7 @@ In sum, ...
 * Annotated output video 
 
 
-![Alt text](img/Example_Frame.png?raw=true "Example Frame.")
+![Alt text](Guides/img/Example_Frame.png?raw=true "Example Frame.")
 Example Frame
 
 
