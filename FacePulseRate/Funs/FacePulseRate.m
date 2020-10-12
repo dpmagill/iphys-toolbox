@@ -67,17 +67,6 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       files. Additionally, an output video is provided for verification of ROI placement and
 %       skin segmentation.
 %
-%       -- Use of Pretesting --
-%
-%       When planning a study, pretests should be conducted where video as well as traditional
-%       measures of pulse rate (e.g., PPG, ECG) are recorded. The traditional measures of pulse 
-%       rate should be used to validate the use of video-derived pulse rate for expected
-%       behavioral tendencies. This is because the accuracy of video-derived pulse rate is highly 
-%       dependent on the degree of facial movement, where greater movement tends to result in 
-%       video-derived pulse rate that is less accurate. The four pulse-rate algorithms may vary in 
-%       accuracy depending on the degree of movement. The pulse-rate algorithm with greatest 
-%       accuracy in a given context should be used.
-%
 %       -- How-To Guides --
 %
 %       The descriptive text in the current function is rather detailed. As an alternative to 
@@ -88,6 +77,8 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       - For recommendations on the input video and the physical enviroment in which it is  
 %         recorded, see Video_and_Recording_Environment_Recommendations.pdf.
+%
+%       - For recommendations on pretesting, see pretesting.pdf.
 %
 %       - For setting up FacePulseRate (downloading the tools), see README.pdf.
 %
