@@ -90,20 +90,23 @@ if ROIMinWidthProportion == -1 || ROIMinHeightProportion == -1
         %Determine the number of frame indices within a quartile                                                    
         FrameIdxQuartile = ...
             int32( ...
-                floor( double(VideoReadConfig.FrameIdx(NFrames - FrameIdxBuffer)) / 4 ) ...
+                floor( (NFrames - FrameIdxBuffer) / 4 ) ...
             );
 
         %Preallocate an index of frame indices from which sample detections will be taken
         IndicesSample = zeros(48, 1, 'uint32');
 
         %Initialize loop indices
-        EndIdx = int32( floor(VideoReadConfig.StartTime * VideoReadConfig.FS - 1) );    
+        EndIdx = int32( floor(VideoReadConfig.StartTime * VideoReadConfig.FS) );    
         EndIdxSample = 0;
 
         %Assign frame indices at which to take samples
         for i = 1 : 4
 
+            %Note: this value must be at least 1
             BeginIdx = int32(EndIdx + 1);
+            
+            assert(BeginIdx >= 1);
 
             EndIdx = ...
                 int32( ...
