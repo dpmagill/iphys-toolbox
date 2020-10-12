@@ -52,7 +52,7 @@ In sum, ...
 | 3           | .208          | -2.61E-06 |  .274     | 68              | 65              |
 
 *Frame-by-Frame Table.*
-A few lines from the first window. Only a small selection of columns is shown.
+A few lines from the first window. Only a small selection of columns is shown. These columns show the output from the Chrom and Green algorithms.
 
 
 | Block       | Window        | Chrom     | Green     | ICA       | POS       |
@@ -61,7 +61,7 @@ A few lines from the first window. Only a small selection of columns is shown.
 | 1           | 2             | 70        | 70        | 71        | 72        |
 
 *Window-by-Window Table.*
-Output from the 2 windows used. Segmenting data by block is optional.   
+Pulse rate from the 2 windows used. Pulse rate is from the Chrom, Green, ICA, and POS algorithms. Segmenting data by block is optional.     
 
 ## Interface
 
