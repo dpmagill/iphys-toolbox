@@ -11,10 +11,10 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       streams. The benefit of pre-recorded video is that some operations can be aware of the 
 %       future (they can look ahead in the video), which improves the accuracy of ROI placement.      
 %
-%       FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate 
-%       algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the
-%       pulse rate of an interval (termed a window here) is calculated by conducting a fast Fourier
-%       transform (FFT) to select the greatest peak. 
+%       FacePulseRate is designed to return output from the four (as of November, 2019) blood 
+%       volume pulse (BVP) algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in 
+%       iPhys Toolbox, the pulse rate of an interval of time (termed a window here) is calculated 
+%       from BVP by conducting a fast Fourier transform (FFT) to select the greatest peak.  
 %
 %       -- Purpose --
 %
