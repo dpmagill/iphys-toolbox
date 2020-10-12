@@ -1,9 +1,13 @@
 
 # FacePulseRate: A Suite of Features to Facilitate the Use of iPhys Toolbox
 
-FacePulseRate returns frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within an input video. This toolbox accepts pre-recorded video rather than video streams. The benefit of pre-recorded video is that some operations can be aware of the future (they can look ahead in the video), which improves the accuracy of ROI placement.      
+FacePulseRate returns frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face present within a pre-recorded (not streaming) input video. 
 
 FacePulseRate is designed to return output from the four (as of November, 2019) blood volume pulse (BVP) algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the pulse rate of an interval of time (termed a window here) is calculated from BVP by conducting a fast Fourier transform (FFT) to select the greatest peak. 
+
+## Use Case
+
+FacePulseRate has been designed for researchers interested in acquiring pulse rate from videos, which have the benefit of being recorded remotely and without contact, in contrast with traditional instruments. FacePulseRate is ready to use; that is, code does not need to be added or modified. In fact, all features of FacePulseRate are available from the relatively short Matlab scripts (i.e., .mlx files) included. Only introductory experience with programming languages is assumed. 
 
 ## Purpose
 
@@ -30,6 +34,8 @@ Supported file extensions include ...
 Other file extensions may be supported. 
 
 For additional discussion and recommendations, see "Video_and_Recording_Environment_Recommendations.pdf".
+
+This toolbox accepts pre-recorded video rather than video streams. The benefit of pre-recorded video is that some operations can be aware of the future (they can look ahead in the video), which improves the accuracy of ROI placement.      
 
 ## Output
 
@@ -114,25 +120,23 @@ Experience has indicated at least two steps of preparation should be undertaken 
 - DSP System Toolbox
 - Optimization Toolbox 
 
-3. Obtain the files. As of October 2020, the files can be found on Github.com under iphys-toolbox. Specifically, FacePulseRate Toolbox is a fork of iphys-toolbox.
+3. Obtain the files for FacePulseRate. As of October 2020, the files can be found on Github.com under iphys-toolbox. Specifically, FacePulseRate Toolbox is a fork of iphys-toolbox.
 
 ### General Use
 
-See file "Examples_General_Instructions.mlx". 
-
-This script is aimed at users with no previous experience with Matlab and introductory experience with programming languages.
+See code examples for general use in "Examples_General_Instructions.mlx". 
 
 Note: .mlx files can only be displayed in the Matlab Environment.
 
 ### Corrections to ROI Placement or Skin Segmentation
 
-See "Examples_Correct_ROIs_and_Skin_Segmentation.mlx".
+See code examples for correcting ROI Placement or Skin Segmentation in "Examples_Correct_ROIs_and_Skin_Segmentation.mlx".
 
 Note: .mlx files can only be displayed in the Matlab Environment.
 
 ## Implementation
 
-For a detailed discussion on the implmentation of FacePulseRate, see file FacePulseRate.m. Additional discussion is included in the helper files to FacePulseRate.m.
+FacePulseRate consists of about 10,000 lines of Matlab code and includes compiled-C code for performance benefits. Compiled code is also used from the FFmpeg (R) project for efficiency. However, no code needs to be modified and no files need to be compiled to use FacePulseRate.   
 
 ## License and Third-Party Software Acknowledgements
 
