@@ -148,7 +148,7 @@ Note: .mlx files can only be displayed in the Matlab Environment.
 
 ## Implementation
 
-FacePulseRate consists of about 10,000 lines of Matlab code and includes compiled-C code for performance benefits. Compiled code is also used from the FFmpeg (R) project for efficiency. However, no code needs to be modified and no files need to be compiled to use FacePulseRate.   
+FacePulseRate consists of about 10,000 lines of Matlab code and includes compiled-C code for performance benefits. Compiled code is also used from the FFmpeg (r) project for efficiency. However, no code needs to be modified and no files need to be compiled to use FacePulseRate.   
 
 ## License and Third-Party Software Acknowledgements
 
