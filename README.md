@@ -114,7 +114,7 @@ Experience has indicated at least two steps of preparation should be undertaken 
 - DSP System Toolbox
 - Optimization Toolbox 
 
-3. Download the folder that contains the functions for FacePulseRate. This folder is named 'FacePulseRate'. As of October 2020, FacePulseRate can be found on Github.com under the username 'dpmagill' as a fork to McDuff and Blackford's (2019) iPhys Toolbox. 
+3. Obtain the files. As of October 2020, the files can be found on Github.com under iphys-toolbox. Specifically, FacePulseRate Toolbox is a fork of iphys-toolbox.
 
 ### General Use
 
