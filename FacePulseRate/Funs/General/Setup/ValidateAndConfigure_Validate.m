@@ -24,7 +24,7 @@ function [Video_InputFile, EndTimeSpecified, EndTime, PulseRateControlLuminance,
 %
 %    Most of the input argument validation is conducted by the current function, but some 
 %    validation is also conducted by the individual configuration functions (e.g., 
-%    ROIGeneralConfig_Setup within function ValidateAndConfigure).
+%    ROIGeneralConfig_Setup) within function ValidateAndConfigure.
 %
 %    Matlab exception handling documentation:
 %

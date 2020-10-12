@@ -42,10 +42,24 @@ In sum, ...
 * Window-by-window pulse rate as csv file
 * Annotated output video 
 
-
 ![Alt text](Guides/img/Example_Frame.png?raw=true "Example Frame.")
-Example Frame
+*A Frame.*
 
+| Frame       | Timestamp_sec | BVP_Chrom | BVP_Green | PulseRate_Chrom | PulseRate_Green |
+| :---------- | :------------ | :-------- | :-------- | :-------------- | :---------------|
+| 1           | .125          | 0         | -.004     | 68              | 65              |        
+| 2           | .167          | -3.40E-06 |  .134     | 68              | 65              | 
+| 3           | .208          | -2.61E-06 |  .274     | 68              | 65              |
+*Frame-by-Frame Table.*
+A few lines from the first window. Only a small selection of columns is shown.
+
+
+| Block       | Window        | Chrom     | Green     | ICA       | POS       |
+| :---------- | :------------ | :-------- | :-------- | :-------- | :-------- |
+| 1           | 1             | 68        | 65        | 68        | 69        |
+| 1           | 2             | 70        | 70        | 71        | 72        |
+*Window-by-Window Table.*
+Output from the 2 windows used. Segmenting data by block is optional.   
 
 ## Interface
 

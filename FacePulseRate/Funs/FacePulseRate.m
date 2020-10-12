@@ -13,8 +13,8 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       FacePulseRate is designed to supply output from the four (as of November, 2019) pulse-rate 
 %       algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in iPhys Toolbox, the
-%       pulse rate of an interval (termed a window here) is calculated by conducting a fast 
-%       Fourier transform (FFT) to select the greatest peak. 
+%       pulse rate of an interval (termed a window here) is calculated by conducting a fast Fourier
+%       transform (FFT) to select the greatest peak. 
 %
 %       -- Purpose --
 %
@@ -55,30 +55,35 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       Other file extensions may be supported.
 %
-%       For additional discussion and recommendations, see "Video and Recording Environment 
-%       Recommendations.pdf".
+%       For additional discussion and recommendations, see 
+%       Video_and_Recording_Environment_Recommendations.pdf.
 %
 %       -- Output --
 %
-%       The BVP and pulse rate results are provided, along with addition information, as output 
+%       The BVP and pulse rate results are provided, along with additional information, as output 
 %       tables. Included among the additional information are the input video timestamps and means   
 %       from the red, green, and blue color channels of an ROI from each frame; these two 
 %       components of the data are the basis for the BVP. These tables are also written to CSV 
-%       files. Additionally, an output video is provided for verification of ROI placement and
-%       skin segmentation.
+%       files. Additionally, an output video is provided for verification of ROI placement and skin
+%       segmentation.
+%
+%       -- Example Code --
+%
+%       [TableByFrame, TableByWindow] = FacePulseRate(<VideoWithFace.mp4>);
+%
+%       Note: a full description of all input arguments is provided below.
 %
 %       -- How-To Guides --
 %
-%       The descriptive text in the current function is rather detailed. As an alternative to 
-%       following the description here, you might consider using the How-To guides listed below to 
-%       get started:
+%       The descriptive text in the current function is rather detailed and aimed toward internal
+%       development. For user-friendly guides, see the following:
 %
 %       - For an overview of FacePulseRate, see README.pdf.
 %
 %       - For recommendations on the input video and the physical enviroment in which it is  
 %         recorded, see Video_and_Recording_Environment_Recommendations.pdf.
 %
-%       - For recommendations on pretesting, see pretesting.pdf.
+%       - For recommendations on pretesting, see Pretesting.pdf.
 %
 %       - For setting up FacePulseRate (downloading the tools), see README.pdf.
 %
@@ -91,93 +96,50 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %   Features Details
 %   ----------------
 %
-%       - Provides a relatively robust automated ROI-detection system with which to conduct the
-%         four RGB-to-BVP algorithms (as of January, 2020) provided in iPhys Toolbox (McDuff &  
-%         Blackford, 2019). iPhys Toolbox indicates where in the implementation ROI detection tools
-%         should be used but does not provide explicit tools. The current function integrates the
-%         RGB-to-BVP algorithms with an ROI-detection system.
+%       - ROI-detection system: Provides a relatively robust automated ROI-detection system to   
+%         focus on the face rather than the environment. Whereas iPhys Toolbox indicates where in  
+%         the code ROI detection tools should be inserted, an ROI-detection system is not 
+%         implemented. The current funtion implements such a system. The current function attemps 
+%         to avoid any gaps in ROIs directed at the face. To do so, it combines ROIs returned by a 
+%         Viola-Jones frontal-face detector, a Viola-Jones profile-face detector, and a novel 
+%         skin-detection algorithm. An algorithm is then used to stitch together ROIs returned by 
+%         these methods. The algorithm smooths the ROIs to maintain a smooth trajectory and 
+%         consistent size. Frames for which a detection was not made are interpolated from nearby 
+%         ROIs. For some frames, the detection algorithms are skipped for more efficient 
+%         processing. Finally, an output video is written to assist with verifying ROI placement 
+%         across frames. Arguments are provided to make refinements to ROI placement, including 
+%         manual replacement of ROIs. 
 %
-%       - Provides a relatively robust automated ROI-detection system to focus on the face rather  
-%         than the environment. The current function attemps to avoid any gaps in ROIs directed at 
-%         the face. To do so, it combines ROIs returned by a Viola-Jones frontal-face detector, a 
-%         Viola-Jones profile-face detector, and a novel skin-detection algorithm. An algorithm is
-%         then used to stitch together ROIs returned by these methods. The algorithm smooths the
-%         ROIs to maintain a smooth trajectory and consistent size. Frames for which a detection
-%         was not made are interpolated from nearby ROIs. For some frames, the detection algorithms
-%         are skipped for more efficient processing. Finally, an output video is written to assist
-%         with verifying ROI placement across frames. Arguments are provided to make refinements to
-%         ROI placement, including manual replacement of ROIs. 
+%       - Enhanced skin segmentation: Provides a skin segmentation method that removes non-facial 
+%         areas of the ROI. The method uses information from the YCbCr and HSV colorspaces and the  
+%         local color range. Morphological adjustments are then made to fill in gaps that may 
+%         correspond to non-skin. Additionally, a novel method is included that self-tailors the  
+%         color thresholds by drawing from skin-color samples from the input video itself. During 
+%         segmentation, checks are made to determine whether over-segmentation has occurred, and, 
+%         if so, adjustments are made to recalibrate segmentation settings. Finally, the output 
+%         video displays the segmentation for each frame for verification. Arguments are provided  
+%         to make refinements to skin segmentation.
 %
-%       - Provides a skin segmentation method that removes non-facial areas of the ROI. The method
-%         uses information from the YCbCr and HSV colorspaces and the local color range. 
-%         Morphological adjustments are then made to fill in gaps that may correspond to non-skin.
-%         Additionally, a novel method is included that self-tailors the color thresholds by 
-%         drawing from skin-color samples from the input video itself. During segmentation, checks
-%         are made to determine whether over-segmentation has occurred, and, if so, adjustments are
-%         made to recalibrate segmentation settings. Finally, the output video displays the
-%         segmentation for each frame for verification. Arguments are provided to make 
-%         refinements to skin segmentation.
+%       - Pulse rate that varies across windows of time: The method used by iPhys Toolbox -- as  
+%         well as some sources in the literatue -- for deriving pulse rate from BVP collected via 
+%         video results in only one pulse rate value for the duration of the video. The limitation 
+%         of a single pulse rate value is that changes in pulse rate across this span are not 
+%         calculated. Although methods exist to derive a continuous measure of pulse rate from BVP 
+%         as calculated from a sensor attached directly to the body, these methods do not appear to 
+%         be appropriate for BVP captured from a video because of the additional noise present in 
+%         the video. To provide a somewhat continuous measure of pulse rate while retaining the 
+%         method used in iPhys Toolbox, the current function breaks the video into windows (the 
+%         duration of which can be specified by PulseRateWindowDurationSec) and applies the method 
+%         used in iPhys Toolbox to each. The appropriate value of the duration, as well as 
+%         conditions that might necessitate changing the value, still require further research, 
+%         although a default value is provided.
 %
-%       - The method used by iPhys Toolbox -- as well as some sources in the literatue -- for 
-%         deriving pulse rate from BVP collected via video results in only one pulse rate value for 
-%         the duration of the video. The limitation of a single pulse rate value is that changes in 
-%         pulse rate across this span are not calculated. Although methods exist to derive a 
-%         continuous measure of pulse rate from BVP as calculated from a sensor attached directly 
-%         to the body, these methods do not appear to be appropriate for BVP captured from a video 
-%         because of the additional noise present in the video. To provide a somewhat continuous 
-%         measure of pulse rate while retaining the method used in iPhys Toolbox, the current 
-%         function breaks the video into windows (the duration of which can be specified by 
-%         PulseRateWindowDurationSec) and applies the method used in iPhys Toolbox to each. The 
-%         appropriate value of the duration, as well as conditions that might necessitate changing 
-%         the value, still require further research, although a default value is provided.
-%
-%
-%   Detailed Description
-%   --------------------
-%
-%   -- Overview -- 
-%
-%       The face in the video is tracked across frames and an ROI is used to separate the face from
-%       the environment. Skin segmentation is applied to further separate facial skin from the
-%       environment. Means from the RGB colorspace are taken from the ROI of each frame as the 
-%       basis for pulse-rate calculations. 
-% 
-%       From these means, four versions of BVP are calculated using the four RGB-to-BVP algorithms 
-%       provided in iPhys Toolbox (McDuff & Blackford, 2019). Additionally, separate versions of 
-%       each of the four while controlled for variation in luminance across frames are provided (if 
-%       enabled) (see Madan et al., 2018). Windows of pulse rate are then derived from each using 
-%       the method from iPhys Toolbox. 
-%        
-%       The method in iPhys Toolbox for deriving pulse rate derives BVP from a span of time, the 
-%       limitation of which is that changes in pulse rate across this span are not calculated. 
-%       Although methods exist to derive a continuous measure of pulse rate from BVP as calculated 
-%       from a sensor attached directly to the body, these methods do not appear to be appropriate 
-%       for BVP captured from a video because of the additional noise present in the video. To 
-%       provide a somewhat continuous measure of pulse rate while retaining the method used in 
-%       iPhys Toolbox, the current function breaks the video into windows (the duration of which  
-%       can be specified by PulseRateWindowDurationSec) and applies the method used in iPhys 
-%       Toolbox to each.
-%       
-%       The BVP and pulse rate results are written to a csv output file along with other data. 
-%       Included among these data are the input video timestamps and means from the red, green, and    
-%       blue color channels of an ROI from each frame; these two components of the data are the
-%       basis for the BVP. Additionally, an output video is provided for inspecting and refining 
-%       the ROI placement.              
-%       
-%       Optionally, externally-measured pulse rate (e.g, via photoplethysmography [PPG] or 
-%       electocardiography [ECG]) can be entered as an input argument to be displayed alongside the 
-%       pulse rate calculated by this function. Comparison of externally-measured pulse rate to 
-%       that calculated by the function can be used to determine environmental and behavioral 
-%       conditions under which the best accuracy is obtained.
-%
-%       An output video is written to enable inspection of the ROIs from which face measurements 
-%       are taken. The output video also superimposes the calculated pulse rate from several 
-%       pulse-rate algorithms to enabled visualization of changes in pulse rate across time. The 
-%       primary purpose of the output video is to determine whether the ROI placement needs to be
-%       change for some frames and whether the severity of skin segmentations needs to be changed.
-%       Arguments, discussed below, are provided for adjusting ROI placement and the severity of 
-%       skin segmentation. For a full description on how the annotations on the output video can 
-%       inform modifications to the arguments, see the description in function WriteFaceVideo.
+%       - External pulse rate input: Optionally, externally-measured pulse rate (e.g, via  
+%         photoplethysmography [PPG] or electocardiography [ECG]) can be entered as an input 
+%         argument to be displayed alongside the pulse rate calculated by this function. Comparison 
+%         of externally-measured pulse rate to that calculated by the function can be used to 
+%         determine environmental and behavioral conditions under which the best accuracy is 
+%         obtained.
 %
 %
 %   System Requirements
@@ -218,23 +180,6 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       - DSP System Toolbox:                      Filtering operaions for pulse rate operations. 
 %       - Optimization Toolbox:                    Training RGB probability for skin-detection 
 %                                                  operations.
-%
-%
-%   Example Script
-%   --------------
-%
-%       See example script Example_Script.mlx, which is located within folder FacePulseRate.   
-%
-%
-%   Example Use
-%   -----------
-%
-%       Full path, file name, and extension for input video file
-%       Path cannot contain characters ',' or ';'. 
-%       Character vector or string array.
-%       Video_InputFile = "C:\Users\User1\Downloads\Data\001.mp4";
-%
-%       [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile);
 %           
 %
 %   Inputs
@@ -299,9 +244,13 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                   specify a few ROIs because the normal smoothing conducted by the function may 
 %                   pull other misplaced ROIs to fit the trajectory of the manually specified ROIs.
 %               
-%               (3) To adjust the sizes of all ROIs across the video, adjust argument 
-%                   ROIWidthResizeFactor to modify the width and argument ROIHeightResizeFactor to 
-%                   modify the height. A larger value increases the size.
+%               (3) It may be useful to resize the final ROIs to maximum the portion of the ROI 
+%                   that captures skin and minimize the portion that could capture non-skin. For 
+%                   example, Poh, McDuff, and Picard (2011) used ROIs of full height but 60% width. 
+%                   In FacePulseRate, the defaults are 120% height and 90% width, which are based 
+%                   upon testing by the author. To adjust the sizes of all ROIs across the video, 
+%                   adjust argument ROIWidthResizeFactor to modify the width and argument 
+%                   ROIHeightResizeFactor to modify the height. A larger value increases the size.
 %               
 %               (4) The profile face-detection algorithm tends to be less accurate than the frontal 
 %                   face-detection algorithm. If the profile algorithm appears to be responsible 
@@ -458,11 +407,6 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %               |     ROIMinHeightProportion = height / v.Height; %reduced height / total height  |         
 %                __________________________________________________________________________________
 %
-%               It may be useful to resize the final ROIs to maximum the portion of the ROI that
-%               captures skin and minimize the portion that could capture non-skin. For example,
-%               Poh, McDuff, and Picard (2011) used ROIs of full height but 60% width. In 
-%               FacePulseRate, the defaults are 120% height and 90% width.
-%
 %               ROIWidthResizeFactor          = Adjust the final widths of the ROIs by this factor.
 %                                               Default = .9.
 %                                               Numeric scalar.
@@ -601,7 +545,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %               changing an input argument to function FacePulseRate and rerunning FacePulseRate to 
 %               actuate the change. Code examples are provided in a code section that follows.
 %
-%               (1) General severity factor.  Increasing this value generally results in more 
+%               (1) General severity factor. Increasing this value generally results in more 
 %                   severe skin segmentation and vice versa. Note that this factor cannot remove 
 %                   segmentation enforced by the permanent thresholds (see course of action No. 2). 
 %                   However, segmentation is determined by several factors in addition to the 
@@ -660,7 +604,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                                                         132, ... Cr minimum threshold       
 %                                                         172, ... Cr maximum threshold
 %                                                        .55,  ... Cb-to-Cr ratio minimum threshold 
-%                                                        .97]; % Cb-to-Cr ratio maximum threshold 
+%                                                        .97]; %   Cb-to-Cr ratio maximum threshold 
 %
 %               SkinSegmentThresholdsGenericHSV  = Optionally specify the minimum and maximum    
 %                                                  values of pixels to be classified as skin in the 
@@ -827,7 +771,16 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       - csv               = TableByFrame written to csv file.
 %       - csv               = TableByWindow written to csv file.
-%       - Output video      = mp4 media file with pulse rate and diagnostic annotations.      
+%       - Output video      = mp4 media file with pulse rate and diagnostic annotations. Note: the 
+%                             time of the output video may not match the time of the input video. 
+%                             This because the output video is produced using a fixed frame rate 
+%                             whereas the input video may use a variable frame rate. However, the 
+%                             timestamp annotations on the output video will always match the time 
+%                             of the input video. That is, to seek to a point in the output video 
+%                             based on a time in the input video, use the timestamp annotations 
+%                             rather than the seek controls of the output video. Note that all 
+%                             other output (variables and csv files) use the time of the input 
+%                             video.
 %        
 %
 %   Input Video Requirements and Recommendations
@@ -871,6 +824,11 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       -- Minimum Recommended Video Length --
 %
+%       The duration of the input video must be at least 2 seconds. This requirement is necessary
+%       for minimal functioning of the pulse-rate algorithms. However, not that a longer duration
+%       may be necessary for accurate results; for example, Poh, McDuff, and Picard (2011) captured
+%       samples of 60 seconds in duration.
+%
 %       Consider using input videos of at least 3 minutes. The skin-detection algorithm and 
 %       tailored skin-segmentation algorithm use skin-color samples from the face in the video to  
 %       enhance their classifications. These algorithms require a minimum number of samples to be  
@@ -893,12 +851,33 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       breaking the video down to smaller segments. The function has been tested on a system with 
 %       8 gigabytes of RAM.
 %
+%       -- Display of Legend --
+%
+%       If convenient, consider using frame dimensions of 1280 x 720 or 1920 x 1080 and recording 
+%       in a landscape orientation. Doing so will allow a legend to appear on the output video. The 
+%       legend is currently only implemented for these specifications. Note that most of the 
+%       indications on the legend are also printed to the Command Window regardless of whether the
+%       legend is displayed.
+%
+%       -- Function Speed Influenced by Start Time -- 
+%
+%       Faster read performance will occur when argument StartTime is less than 10% the length of 
+%       the full video based on video-reading implementations.
+%
+%       -- Time used in Output Video --
+%
+%       The time of the output video may not match the time of the input video. This because the 
+%       output video is produced using a fixed frame rate whereas the input video may use a 
+%       variable frame rate. However, the timestamp annotations on the output video will always 
+%       match the time of the input video. That is, to seek to a point in the output video based on 
+%       a time in the input video, use the timestamp annotations rather than the seek controls of 
+%       the output video. Note that all other output (variables and csv files) use the time of the 
+%       input video.
+%
 %       -- Recording Environment --
 %
 %       Although the environment cannot always be changed, skin detection and skin segmentation 
 %       will be more successful in some recording environments than others. 
-%
-%       Best recording environments:
 %
 %       - The face is not more than a few feet from the video camera. 
 %
@@ -916,17 +895,8 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %         windows, and solid white objects, including clothing, can sometimes lead to a video
 %         automatically reducing the brightness of the face.
 %
-%       -- For Best Appearance of Output Video -- 
-%
-%       The legend that is displayed on the output video has only been implemented for input videos
-%       with dimesions 1280 x 720 or 1920 x 1080 where the video is in a landscape orientation. For 
-%       other cases, the legend will not be displayed.
-%
-%   For Faster Operation
-%   --------------------
-%
-%       Faster read performance will occur when argument StartTime is less than 10% the length of 
-%       the full video based on video-reading implementations.
+%       - There is even illumination of the face. For example, a shadow should not partially cover
+%         the face. Uneven illumination can reduce the accuracy of skin segmentation.
 %
 %
 %   Internal Development
@@ -940,6 +910,27 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       Documentation for the additional video annotations is provided in function WriteFaceVideo,
 %       but a fuller background on these annotations requires inspection of the individual   
 %       functions that correspond to the annotations.
+%
+%
+%   Object Code
+%   -----------
+%
+%       Object code is called by some functions. Currently, the object code consists of executables
+%       from the FFmpeg project and Matlab mex executables. Object code is used to increase the
+%       execution speed of FacePulseRate.
+%
+%       The mex functions were produced using the Matlab Code Generation Toolbox. The first step to
+%       produce a mex file is to write the code as a Matlab function. The command line for the Code
+%       Generation Toolbox is then used both to generate C code and to compile the generated C code
+%       to a mex file. All commands used for code generation are included as a script at the bottom
+%       of Matlab functions used for code generation. Matlab functions used for this purpose will 
+%       contain a note at the top of the description indicating that they are used for code 
+%       generation. 
+%
+%       Mex files are named after the function that generated them and are appended with "_mex". 
+%       For example, the function file "Fun" will produce file "Fun_mex". The file extentsion  
+%       of a mex file indicates the computer architecture is it compatible with; for example,
+%       ".mexw64" indicates the file is compatible with 64-bit Windows.
 %
 %
 %   Execution Path
@@ -1027,7 +1018,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %   Version History
 %   ---------------
 %
-%       1.0: 11 October 2020. 
+%       1.0: 12 October 2020. 
 %           Initial release.
 %           Developed on Matlab 2020b for Windows.
 %           Lines of Matlab code, excluding blank lines and comments: 9809.
@@ -1198,6 +1189,10 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       McDuff, D., & Blackford, E. (2019). iphys: An open non-contact imaging-based physiological 
 %           measurement toolbox. In 2019 Annual International Conference of the IEEE Engineering in 
 %           Medicine and Biology Society (EMBC), pp. 6521-6524. 
+%
+%       Poh, M. Z., McDuff, D. J., & Picard, R. W. (2011). Advancements in noncontact, 
+%           multiparameter physiological measurements using a webcam. IEEE Transactions on 
+%           Biomedical Engineering, 58(1), 7-11.
       
  
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

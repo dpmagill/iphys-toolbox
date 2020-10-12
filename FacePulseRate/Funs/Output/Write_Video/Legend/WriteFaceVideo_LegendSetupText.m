@@ -552,6 +552,43 @@ if PulseRateConfigAndData.TF
 end %end pulse rate text section   
 
 
+%%%%%% Text section 4: Output video %%%%%%
+
+%Note the limitation of seek time in the output video.
+%Only include this note when detailed diagnositics are not enabled because there is not enough room
+%when the detailed diagnostics are used.
+
+%If detailed diagnostics not enabled
+if ~ OutputConfig.WriteVideoDetailedDiagnosticsTF
+    
+    %Section title:
+    
+    %Spaces on left for center-jusification.
+    
+    textOutputVideoTitle = ...
+        { ...
+            {'                          Output Video'} ...                     
+        };                              
+                                        
+    %Subsection body:
+    
+    %Lines within paragraph should appear left-justified (no leading spaces).
+    
+    textOutputVideo = ...
+        { ...
+            { ...
+             'On the output video, the timestamp annotations, but not', ...
+             'necessarily the seek time, will correspond to the seek time of', ...
+             'input video.'
+            } ...
+        }; 
+ 
+     %Concatenate text cell arrays:
+
+     text = [text, textOutputVideoTitle, textOutputVideo];    
+end
+
+
 end %end function
 
 

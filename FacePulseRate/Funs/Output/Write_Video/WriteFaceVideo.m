@@ -12,6 +12,10 @@ function WriteFaceVideo(VideoReadConfig, ROI, HasROI_TF, ROIDiagnostic, SkinSegm
 %   Write output video with annotations on each frame regarding frame information, ROI detection, 
 %   skin segmentation, and pulse rate. 
 %
+%   -- Differences Between Output Video Seek Time and Timestamp Annotations --
+%
+%
+%
 %   -- Annotations --
 %
 %       - Timestamp
