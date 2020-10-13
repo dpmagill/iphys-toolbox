@@ -119,14 +119,13 @@ if ROIMinWidthProportion == -1 || ROIMinHeightProportion == -1
 
             %Assign frame indices at which to take samples for ith quartile
             IndicesSample(BeginIdxSample : EndIdxSample) = ...
-                sort(                                        ... Sort indices in case this makes 
-                                                             ... seeking through the video more 
-                                                             ... efficient.
-                    randi(                                   ... Pseudorandom integers
-                        [VideoReadConfig.FrameIdx(BeginIdx), ... Minimum index of ith quartile
-                         VideoReadConfig.FrameIdx(EndIdx)],  ... Maximum index of ith quartile
-                         1,                                  ... 
-                         12                                  ... Number of samples (indices)
+                sort(              ... Sort indices in case this makes seeking through the video 
+                                   ... more efficient. 
+                    randi(         ... Pseudorandom integers
+                        [BeginIdx, ... Minimum index of ith quartile
+                         EndIdx],  ... Maximum index of ith quartile
+                         1,        ... 
+                         12        ... Number of samples (indices)
                      ) ...
                 );               
         end

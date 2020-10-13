@@ -321,6 +321,20 @@ if NPages ~= 3
 end
 
 
+%Verify that StartTime is not greater than video length
+
+if VidObj.Duration - StartTime < 0  
+
+    ME = ...
+        MException( ...
+            'Component:Argument', ...
+            'Error: StartTime is greater than duration of video.' ...
+        );
+    
+    throw(ME);    
+end
+
+
 %Set EndTime if EndTime is not specified as argument:
 
 %If EndTime is not specified as argument
