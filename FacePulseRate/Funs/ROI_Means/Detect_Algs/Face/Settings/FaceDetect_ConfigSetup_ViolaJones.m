@@ -108,7 +108,7 @@ FaceDetectConfig.Secondary2ProfileTF = false;
 %detection because the detectors skip objects whose size is smaller than the specified minimum.
 
 %Specify minimum size threshold for a detection
-%1 x 2 row vector; type double.
+%Integers. 1 x 2 row vector; type double.
 MinSizeThreshold = ...
     [round( ... minimum height of ROI in pixels, rounded to integer
         ROIGeneralConfig.ROIMinHeightProportion * ... 
@@ -119,10 +119,17 @@ MinSizeThreshold = ...
         double(VideoReadConfig.VidObj.Width)      ...
      )];     
 
-%Prevent MinSizeThreshold from being too small because the size cannot be smaller than the minimum
-%size specified in the xml file.
-MinSizeThreshold(1) = max( 45, MinSizeThreshold(1) );
-MinSizeThreshold(2) = max( 45, MinSizeThreshold(2) );
+%Prevent MinSizeThreshold from being too small 
+%The minimum size cannot be smaller than the minimum size specified in an xml file. 45 pixels as 
+%the minimum size should cover the use of the default primary and secondary face-detection 
+%algorithms.
+MinSizeThreshold(1) = max( MinSizeThreshold(1), 45 ); %height
+MinSizeThreshold(2) = max( MinSizeThreshold(2), 45 ); %width
+
+%Prevent MinSizeThreshold from being too large
+%Set the maximum size as the height and width of the frame.
+MinSizeThreshold(1) = min( MinSizeThreshold(1), double(VideoReadConfig.VidObj.Height) ); %height
+MinSizeThreshold(2) = min( MinSizeThreshold(2), double(VideoReadConfig.VidObj.Width) );  %width
 
 
 %%%%%% Adjustments to the minimum ROI size depending on algorithm %%%%%%

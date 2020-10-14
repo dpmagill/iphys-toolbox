@@ -1,11 +1,12 @@
 function [Video_InputFile, EndTimeSpecified, EndTime, PulseRateControlLuminance, ...
           UseCompiledFunctionsTF] = ...          
               ValidateAndConfigure_Validate(Video_InputFile, StartTime, EndTime, ...
-                  ROISpecifyByArgument, ROIIgnoreByArgument, PulseRateTF, ...                 
-                  PulseRateWindowDurationSec, PulseRateExternallyMeasured, ...                        
-                  PulseRateBlockTimestamps, PulseRateControlLuminance, ...
-                  SkinSegmentThresholdsGenericYCbCr, SkinSegmentThresholdsGenericHSV, ...
-                  DetectVerifyPercentilesYCbCrH, DetectVerifyPercentilesS, UseCompiledFunctionsTF)                                                                  
+                  ROIMinWidthProportion, ROIMinHeightProportion, ROISpecifyByArgument, ...
+                  ROIIgnoreByArgument, PulseRateTF, PulseRateWindowDurationSec, ...
+                  PulseRateExternallyMeasured, PulseRateBlockTimestamps, ...
+                  PulseRateControlLuminance, SkinSegmentThresholdsGenericYCbCr, ...
+                  SkinSegmentThresholdsGenericHSV, DetectVerifyPercentilesYCbCrH, ...
+                  DetectVerifyPercentilesS, UseCompiledFunctionsTF)                                                                  
 %ValidateAndConfigure_Validate   Architecture, toolbox, argument, and flag validation for function 
 %                                FacePulseRate. 
 %                             
@@ -523,8 +524,48 @@ end
 
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% ROI modifications %%%%%%%%%%%%%%%%%%%%%
+%%% ROI %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Verify that these argument are proportions, i.e., between 0 and 1 (inclusive):
+
+%Note: whether these arguments are less than 1 is also checked in the argument block of function
+%FacePulseRate.
+
+%Skip if equals -1, as this is a flag assigned by the argument block in function FacePulseRate. 
+
+ErrorWidthTF  = false;
+ErrorHeightTF = false;
+
+if ROIMinWidthProportion ~= -1
+    
+    if ROIMinWidthProportion < 0 || ...
+       ROIMinWidthProportion > 1
+        
+        ErrorWidthTF = true;
+    end
+end
+
+if ROIMinHeightProportion ~= -1
+    
+    if ROIMinHeightProportion < 0 || ...
+       ROIMinHeightProportion > 1
+   
+        ErrorHeightTF = true;        
+    end
+end
+
+if ErrorWidthTF || ErrorHeightTF
+    
+    ME = ...
+        MException( ...
+            'Component:Argument', ...
+            ['Error: ROIMinWidthProportion and ROIMinHeightProportion must be between 0 and 1', ...
+             ' (inclusive).'] ...
+        );
+
+    throw(ME);      
+end
 
 
 %ROISpecifyByArgument:

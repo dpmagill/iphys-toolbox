@@ -213,20 +213,22 @@ if isempty(FaceDetectConfig.ROIFacePrimaryXML)
 end
 
 %ROIFaceSecondary2XML not empty but ROIFaceSecondary1XML is empty:
+
 if ~ isempty(FaceDetectConfig.ROIFaceSecondary2XML) && ...
    isempty(FaceDetectConfig.ROIFaceSecondary1XML) 
     
     ME = ...
         MException( ...
             'Component:Argument', ...
-             ['Error: when ROIFaceSecondary2XML is assigned, \nFace_Alg_Secondary should be', ...
+             ['Error: when ROIFaceSecondary2XML is assigned, Face_Alg_Secondary should be', ...
               ' assigned. To use only one secondary algorithm, assign ROIFaceSecondary1XML.'] ...
         );
     
     throw(ME);
 end 
 
-%ROIFaceSecondary1TF = true but ROIFaceSecondary1XML empty 
+%ROIFaceSecondary1TF = true but ROIFaceSecondary1XML empty:
+
 if FaceDetectConfig.ROIFaceSecondary1TF && ...
    isempty(FaceDetectConfig.ROIFaceSecondary1XML)  
     
@@ -240,7 +242,8 @@ if FaceDetectConfig.ROIFaceSecondary1TF && ...
     throw(ME);
 end
 
-%ROIFaceSecondary1TF = true but ROIFacePrimaryXML empty 
+%ROIFaceSecondary1TF = true but ROIFacePrimaryXML empty:
+
 if FaceDetectConfig.ROIFaceSecondary1TF && isempty(FaceDetectConfig.ROIFacePrimaryXML)  
     
     ME = ...
@@ -253,7 +256,8 @@ if FaceDetectConfig.ROIFaceSecondary1TF && isempty(FaceDetectConfig.ROIFacePrima
     throw(ME);
 end
 
-%ROISkinTF == true but ROIFacePrimaryXML empty 
+%ROISkinTF == true but ROIFacePrimaryXML empty:
+
 if SkinDetectConfig.ROISkinTF && isempty(FaceDetectConfig.ROIFacePrimaryXML)  
     
     ME = ...
@@ -265,13 +269,12 @@ if SkinDetectConfig.ROISkinTF && isempty(FaceDetectConfig.ROIFacePrimaryXML)
     throw(ME);
 end
 
-%Validate window size for smoothing arguments, which can be up to FrameCacheMaxFrames * 2 - 1. 
+%Validate window size for smoothing arguments, which can be up to FrameCacheMaxFrames * 2 - 1:
+
 WindowSizeMax = ROIGeneralConfig.FrameCacheMaxFrames * 2 - 1;
 
 if FaceDetectConfig.ROIFaceSmoothingWindow > WindowSizeMax 
 
-
-    %Throw exception
     ME = ...
         MException( ...
             'Component:Argument', ...

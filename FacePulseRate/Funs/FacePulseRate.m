@@ -336,12 +336,12 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %               ROIMinWidthProportion       = Optional minimum width of ROI, given as proportion of   
 %                                             ROI width to frame width.
 %                                             Default = calculated from video.
-%                                             Numeric scalar.
+%                                             Numeric scalar between 0 and 1 (inclusive).
 %
 %               ROIMinHeightProportion      = Optional minimum height of ROI, given as proportion      
 %                                             of ROI height to frame height.
 %                                             Default = calculated from video.
-%                                             Numeric scalar. 
+%                                             Numeric scalar between 0 and 1 (inclusive).
 %                _________________________________________________________________________________
 %               | Tutorial to set optional arguments ROIMinWidthProportion and                    |
 %               | ROIMinHeightProportion                                                          |
@@ -591,9 +591,16 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                   "Oversegmentation Adjustments: true". The oversegmentation adjustments can be 
 %                   disabled by specifying argument OversegmentationCheckTF as false.
 %
-%               SkinSegmentThresholdsGenericYCbCr = Optionally specify the minimum and maximum    
-%                                                   values of pixels to be classified as skin in 
-%                                                   the YCbCr colorspace.
+%               SkinSegmentSeverityFactor         = Optional adjusment of the severity of skin      
+%                                                   segmentation. Increasing the value will   
+%                                                   potentially increase the number of pixels 
+%                                                   excluded through skin segmentation.
+%                                                   Default = 1.
+%                                                   Integer. Numeric scalar. 
+%
+%               SkinSegmentThresholdsGenericYCbCr = Optional specification of the minimum and     
+%                                                   maximum values of pixels to be classified as 
+%                                                   skin in the YCbCr colorspace.
 %                                                   1 x 7 numeric vector.
 %                                                   
 %                                                   Default:
@@ -606,47 +613,37 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                                                        .55,  ... Cb-to-Cr ratio minimum threshold 
 %                                                        .97]; %   Cb-to-Cr ratio maximum threshold 
 %
-%               SkinSegmentThresholdsGenericHSV  = Optionally specify the minimum and maximum    
-%                                                  values of pixels to be classified as skin in the 
-%                                                  HSV colorspace.
-%                                                  1 x 2 numeric vector.
+%               SkinSegmentThresholdsGenericHSV   = Optional specification of the minimum and     
+%                                                   maximum values of pixels to be classified as  
+%                                                   skin in the HSV colorspace.
+%                                                   1 x 2 numeric vector.
 %                                                   
 %                                                   Default:
 %                                                   SkinSegmentThresholdsGenericHSV = ...
 %                                                       [ .96,  ... H maximum
-%                                                         .09]; %   S minimum 
+%                                                         .09]; %   S minimum  
 %
-%               Another adjusment is the extent to which pixels near pixels classified as non-skin 
-%               are excluded. Increasing argument SkinSegmentSeverityFactor will potentially   
-%               increase the number of pixels near non-skin pixels that are classified as non-skin,
-%               and vice versa.
-%
-%               SkinSegmentSeverityFactor   = Optional adjusment of the severity of skin      
-%                                             segmentation. Increasing the value will potentially  
-%                                             increase the number of pixels excluded through skin
-%                                             segmentation.
-%                                             Default = 1.
-%                                             Numeric scalar.  
-%
-%               OversegmentationCheckTF     = Whether the oversegmentation check is enabled. By 
-%                                             default, the presence of oversegmentation is checked. 
-%                                             If oversegmentation is determined to be present, some  
-%                                             skin-segmentation settings will be made less severe.  
-%                                             Sometimes, oversegmentation will be detected when it 
-%                                             doesn't exist. For example, the presense of hair 
-%                                             occluding part of the face can sometimes lead the 
-%                                             oversegmentation check to determine that too much of 
-%                                             the face was segmented; in this case, the cause of 
-%                                             much segmentation of the face is due to proper 
-%                                             segmentation of hair rather than general 
-%                                             oversegmentation. Whether settings were made less 
-%                                             severe will be indicated by text on the legend: 
-%                                             "Oversegmentation Adjustments: true". If 
-%                                             skin-segmentation settings have been made less 
-%                                             severe, and the resulting skin segmentation appears 
-%                                             too lenient, the oversegmentation adjustments can be 
-%                                             disabled by specifying argument 
-%                                             OversegmentationCheckTF as false. 
+%               OversegmentationCheckTF           = Whether the oversegmentation check is enabled.  
+%                                                   By default, the presence of oversegmentation is  
+%                                                   checked. If oversegmentation is determined to    
+%                                                   be present, some skin-segmentation settings    
+%                                                   will be made less severe. Sometimes,   
+%                                                   oversegmentation will be detected when it   
+%                                                   doesn't exist. For example, the presense of   
+%                                                   hair occluding part of the face can sometimes   
+%                                                   lead the oversegmentation check to determine   
+%                                                   that too much of the face was segmented; in   
+%                                                   this case, the cause of much segmentation of   
+%                                                   the face is due to proper segmentation of hair   
+%                                                   rather than general oversegmentation. Whether   
+%                                                   settings were made less severe will be   
+%                                                   indicated by text on the legend:   
+%                                                   "Oversegmentation Adjustments: true". If   
+%                                                   skin-segmentation settings have been made less   
+%                                                   severe, and the resulting skin segmentation   
+%                                                   appears too lenient, then the oversegmentation  
+%                                                   adjustments can be disabled by specifying 
+%                                                   argument OversegmentationCheckTF as false. 
 %
 %           -- Pulse Rate Settings --
 %
@@ -1292,8 +1289,14 @@ arguments
                                                                     mustBeInteger}                    = repmat(-1, 1, 5) %flag that none specified      
     NVArgs.ROIIgnoreByArgument                      (:, 1) double  {mustBeNonempty, ...
                                                                     mustBeInteger}                    = -1 %flag that none specified    
-    NVArgs.ROIMinWidthProportion                    (1, 1) double  {mustBeNonempty}                   = -1 %flag that none specified
-    NVArgs.ROIMinHeightProportion                   (1, 1) double  {mustBeNonempty}                   = -1 %flag that none specified
+    NVArgs.ROIMinWidthProportion                    (1, 1) double  {mustBeNonempty, ...                                                              
+                                                                    mustBeLessThanOrEqual( ...
+                                                                    NVArgs.ROIMinWidthProportion, ...
+                                                                    1)}                               = -1 %flag that none specified
+    NVArgs.ROIMinHeightProportion                   (1, 1) double  {mustBeNonempty, ...                                                              
+                                                                    mustBeLessThanOrEqual( ...
+                                                                    NVArgs.ROIMinHeightProportion, ...
+                                                                    1)}                               = -1 %flag that none specified
     NVArgs.ROIWidthResizeFactor                     (1, 1) double  {mustBeNonempty, ...
                                                                     mustBePositive}                   = .90
     NVArgs.ROIHeightResizeFactor                    (1, 1) double  {mustBeNonempty, ...                                                                 
