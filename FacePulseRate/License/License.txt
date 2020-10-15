@@ -1,4 +1,4 @@
-                  FacePulseRate: A Suite of Features to Use with iPhys Toolbox                                 
+         FacePulseRate: A Suite of Features to Facilitate the Use of iPhys Toolbox                                 
 
                                           License
 
