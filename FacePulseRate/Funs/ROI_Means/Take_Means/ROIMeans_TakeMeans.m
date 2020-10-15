@@ -48,8 +48,8 @@ function [SkinRGBMeans_i, IsNotSkin_PixelColor_Packed_i, AdjustedBecauseLowSkinP
 %    rerunning skin-segmentation operations in function WriteFaceVideo.
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
@@ -425,6 +425,7 @@ if SkinSegmentConfig.SkinSegmentTF
         end
     end %end skin-proportion check
 end
+
 
 %%%%%% Store skin-segmentation mask for later use in writing video %%%%%%    
 

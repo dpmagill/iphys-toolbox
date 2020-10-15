@@ -1023,14 +1023,14 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %   Version History
 %   ---------------
 %
-%       1.0: 12 October 2020. 
+%       1.0: 15 October 2020. 
 %           Initial release.
 %           Developed on Matlab 2020b for Windows.
 %           Lines of Matlab code, excluding blank lines and comments: 9809.
 % 
 %
-%   Copyright
-%   ---------
+%   License
+%   -------
 %
 %       Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. 
 %
@@ -1203,8 +1203,12 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Input validation and parsing %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% (1) Validate inputs or assign defaults with the arguments block
+%
+%
+%   Description
+%   -----------
+%
+%   (1) Validate inputs or assign defaults with the arguments block
 %
 %     - The arguments block will convert the size or type of inputs to conform to specifications if
 %       the input can be readily converted (see Matlab documentation topic "Function Argument 
@@ -1252,8 +1256,8 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %     function directly within function FacePulseRate can then be called manually, assuming that
 %     the functions are called in sequential order.
 %
-% (2) Validate inputs, assign defaults, and set configuration settings with function 
-%     ValidateAndConfigure
+%   (2) Validate inputs, assign defaults, and set configuration settings with function 
+%       ValidateAndConfigure
 %
 %     - As previously mentioned, operations within the arguments block are limited. Therefore, many     
 %       validation and default assignment operations are conducted after the arguments block; this
@@ -1337,124 +1341,171 @@ end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Facial ROI determination and ROI-means calculations %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%   Description
+%   -----------
+%  
+%   Determine ROIs targeting frontal or profile orientations of the face. Apply skin segmentation 
+%   to these ROIs, take the means of these ROIs, and assign the means to a struct for use in pulse  
+%   rate calculations, which occur in a later step. 
+%
+%   Conduct the following operations:
+%
+%   -- Timestamps --
+%
+%   - Timestamps are recorded for each frame if function readFrame is used rather than 
+%     vision.VideoFileWriter. Otherwise, timestamps would been assigned by function
+%     VideoFaceReadConfig, which was called by function ValidateAndConfigure. Timestamps, in turn,  
+%     are used by several functions. Specifically, functions ROIMeans_FirstRead_ExtrapolateROI and  
+%     ROIMSIR use timestamps for interpolation, function ROIMeans_SecondRead_SkinDetect uses 
+%     timestamps for seeking, function PulseRate uses timestamps for pulse rate calculations,  
+%     function TableOutput uses timestamps when writing the output tables, and function   
+%     WriteFaceVideo uses timestamps when writing the output video file.
+%
+%   -- ROI --
+%
+%   - A bounding box is determined for each frame to bound the scanning performed by the 
+%     face-detection algorithm(s) and the skin-detection algorithm (see functions 
+%     ROIMeans_FirstRead_SetBoundingBoxes and ROIMeans_SecondRead_SetBoundingBoxes). Using a 
+%     bounding box reduces the computational time of the algorithms and may reduce false positives  
+%     by restricting the area scanned to that where a face is most likely to be detected. The  
+%     position of the bounding box is determined based upon the trajectory of previous face  
+%     movements, and the size is based upon the number of frames that have elapsed since a 
+%     detection was last made.
+%
+%   - An ROI for each frame is assigned to be used for calculating pulse rate. The ROI is targeted 
+%     to be within the frontal or profile orientation of the face. It may also pick up skin in 
+%     other areas. For each frame, the ROI is determined either by a detection algorithm or by 
+%     interpolation based upon ROIs from nearby frames. The detection algorithms include  
+%     face-detection algorithms (see functions FaceDetect_ConfigSetup and FaceDetect) and a 
+%     skin-detection algorithm (see functions SkinDetect_ConfigSetup and SkinDetect). Interpolation
+%     occurs either when the detection algorithms are unable to make a detection for a frame or  
+%     when the detection algorithms are skipped for a frame for efficiency (see function 
+%     ROIMeans_FirstRead_DetermineSkipFrame). Interpolation is conducted by function ROIMSIR. (The  
+%     acronym ROIMSIR stands for ROI size-matching, smoothing, interpolation, and resizing.)   
+%
+%   - The position (i.e., [X, Y] coordinates) and size (i.e., width and height) of each ROI are 
+%     modified after being returned by a detection algorithm to increase accuracy. Modifications 
+%     include normalizing the sizes of ROIs returned from different algorithms to have a consistent 
+%     size and smoothing the position and size of a given ROI with ROIs from nearby frames. 
+%     Additionally, the size of ROIs may be modified based upon arguments ROIWidthResizeFactor and
+%     ROIHeightResizeFactor. The aim of these arguments is to produce an ROI size that tends to 
+%     maximize coverage of the face while minimizing coverage of non-skin regions. Although skin
+%     segmentation will be conducted (in a later step) to help exclude non-skin regions, skin 
+%     segmentation is not perfect, so adjusting the ROI size can be useful. These modifications are
+%     conducted by function ROIMSIR.
+%
+%   - If an ROI that represents a facial profile (as returned by a face-detection algorithm that
+%     targets the profile orientation of the face) occurs in a frame in which a pair of eyes is
+%     detected, the ROI is discarded (see function FaceDetect_ROIValidate, which called within 
+%     function ROIMeans_FirstRead_AlgSelector). It is assumed that a pair of eyes should not be  
+%     detectable if the face is in a profile orientation.
+%
+%   - A check will be conducted to determine whether the skin-segmentation algorithm appears to be
+%     oversegmenting ROIs. If so, some skin-segmentation settings will be changed to reduce the
+%     severity of segmentation in subsequent operations (see function 
+%     SkinSegment_OversegmentationCheck). This check also attempts to modify segmentation settings 
+%     in response to dark conditions. The first-read operations (ROIMeans_FirstRead) will start  
+%     over so that the modified settings can be applied to all frames of the video. 
+%     ROIMeans_FirstRead starts over by a recursive call to itself (see function 
+%     SkinSegment_OversegmentationCheck_Reduce). A notification is made to the command window if
+%     this occurs.
+%
+%   - If an ROI contains a low proportion of pixels classified as skin by skin segmentation, the  
+%     ROI will be discarded (see function ROIMeans_TakeMeans).
+%
+%   -- Tailoring to Skin-Color Samples from Video --
+%
+%   - Skin-color samples are collected for use in skin segmentation and the skin-detection  
+%     algorithm. For details on the collection of skin-color samples, see function 
+%     ROIMeans_FirstRead_CollectSkinColorSamples. 
+%
+%   - Periodically, the thresholds for skin segmentation and the skin-detection algorithm are reset
+%     based on recently-collected skin-color samples from the video. A notification is made to the 
+%     command window when this occurs.
+%
+%   -- Skin Segmentation --
+%
+%   - Skin segmentation is conducted to exclude pixels within the ROI that may not correspond to 
+%     skin. Skin segmentation uses color thresholds, texture thresholds, and morphological 
+%     operations to classify pixels as skin or non-skin. 
+%
+%     - Regarding color thresholds, the pixels within the ROI are converted to the YCbCr and HSV
+%       colorspaces for comparison against thresholds. These colorspaces are used because they were
+%       found to be more effective than the RGB colorspace during testing. These colorspaces are 
+%       frequently used when skin segmentation is discussed in the literature. Preset color 
+%       thresholds are used as well as color thresholds tailored to the face that appears in the 
+%       ROI.
+%
+%     - Regarding texture thresholds, the local color range of each pixel is used. A relatively low  
+%       local color range for a given pixel is used as a heuristic of a pixel corresponding to skin 
+%       based on the assumption that true skin tends to occur in regions of homogeneous color. The
+%       effectiveness of local color range was established through testing. 
+%
+%     - From the application of these thresholds, a two-dimensional logical matrix is assigned  
+%       where pixels that satisfied all thresholds are classified as true and pixels that did not    
+%       are classified as false. A morphological close operation is then applied to the logical  
+%       matrix. The morphological close tends to fill in classification holes, where a hole is   
+%       loosely defined as a region of pixels classified as true that are enclosed by pixels  
+%       classified as false. Holes are filled in based on the assumption that true skin tends to be  
+%       distributed in the face in contiguous, rather than patchy, regions. The morphological close   
+%       fills in holes only below a specified size, which is specified by a morphological  
+%       structuring element, such that many holes are not filled. Otherwise, large regions 
+%       classified as true -- which are assumed to be regions of skin -- may be erroneously filled. 
+%
+%   -- Means for Pulse Rate --
+%
+%   - The means from the RGB (red, green, blue) colorspace are taken from each ROI (see function  
+%     TakeMeans, which is called by functions ROIMeans_FirstRead_TakeMeans and 
+%     ROIMeans_SecondRead_TakeMeans). These means are used later to calculate pulse rate (see 
+%     function PulseRate).
+%
+%   - The luminance mean is taken from each ROI (see function TakeMeans, which is called by  
+%     functions ROIMeans_FirstRead_TakeMeans and ROIMeans_SecondRead_TakeMeans). The luminance 
+%     means from ROIs can be used to control the ROI means for luminance variations across frames   
+%     when the pulse rate is calculated. The luminance mean is from either the L channel of the LAB    
+%     colorspace or the Y channel of the YCbCr colorspace.
+%
+%   -- ROI-Placement and Skin-Segmentation Diagnostics --
+%
+%   - Diagnostic information from many of the above steps is recorded for later display on the 
+%     output video file (see function WriteFaceVideo). This information can be used to fine-tune   
+%     some input arguments to function FacePulseRate.
+%
+%
+%   Uses of Frame Cache
+%   -------------------
+%
+%   A number of operations depend on settings that are not assigned until data from a specified 
+%   number of frames have been collected (see function ROIGeneralConfig_Setup). These settings 
+%   apply to tailored skin segmentation, the skin-detection algorithm (function SkinDetect), the  
+%   ROI-adjustment operations (function ROIMSIR), and the taking of means (ROIMeans_TakeMeans). 
+%   Consequently, these operations will not begin until a sufficient number of frames has elapsed 
+%   to collect the data (the precise number of frames needed varies by video depending on the ease 
+%   of collecting some data; see ROIMeans_FirstRead_CollectSkinColorSamples). 
+%
+%   To reduce the number of frames that need to be reread because settings were not assigned when 
+%   they were read by the video reader, read frames are temporarily assigned to a cache of a 
+%   limited length, which can store about a couple hundred frames (see function 
+%   ROIMeans_FirstRead_TakeMeans). The operations are applied to frames from the cache rather than
+%   directly from the video reader to provide additional time for the settings to be assigned.
+%   However, it is expected that some frames, near the beginning of the video, will enter and leave 
+%   the cache before the settings are assigned. These frames will be reread and processed by  
+%   function ROIMeans_SecondRead. The "SecondRead" portion of this function name refers to frames 
+%   being reread). Because some frames are processed the first time they are read and  others are
+%   processed the second time they are read, a distinction is made in FacePulseRate between frames
+%   read during "first-read operations" and "second-read operations". Frames processed by the
+%   current function are considered to be processed during first-read operations. 
+%
+%   The presence of a frame cache, beside being used to increase efficiency, as previously 
+%   described, is also used to increase the accuracy of ROI-adjustment operations (function 
+%   ROIMSIR). Specifically, these operations index the frame in the middle of the frame cache,
+%   rather than the beginning, to be able to base smoothing and other adjustment operations on data
+%   for frames both before and after the frame.
 
-%Description:
-  
-%Determine ROIs targeting frontal or profile orientations of the face. Apply skin segmentation to
-%these ROIs, take the means of these ROIs, and assign the means to a struct for use in pulse rate 
-%calculations, which occur in a later step. 
 
-%A number of operations depend on settings being set that require a certain number of frames to 
-%have been processed. To facilitate this, frames are stored in a limited-size frame cache to permit
-%delayed evaluation. For some operations near the first frames processed, the frame cache will not 
-%be large enough to permit delayed evaluation. For these frames, the operations will be delayed 
-%until the frames will be read a second time. Because some frames are processed the first time they 
-%are read and others are processed the second time they are read, a distinction is made in 
-%FacePulseRate between frames read during "first-read operations" and "second-read operations".
-%Frames processed during first-read operations are processed by function ROIMeans_FirstRead. Frames  
-%processed during second-read operations are processed by function ROIMeans_SecondRead.
-
-%Conduct the following operations:
-
-% - A bounding box is determined for each frame to bound the scanning performed by the 
-%   face-detection algorithm(s) and the skin-detection algorithm. Using a bounding box reduces the
-%   computational time of the algorithms and may reduce false positives by restricting the area
-%   scanned to that where a face is most likely to be detected. The position of the bounding box is
-%   determined based upon the trajectory of previous face movements, and the size is based upon the
-%   number of frames that have elapsed since a detection was last made.
-%
-% - An ROI for each frame is assigned to be used for calculating pulse rate. The ROI is targeted to
-%   be within the frontal or profile orientation of the face. It may also pick up skin in other
-%   areas. For each frame, the ROI is determined either by a detection algorithm or by 
-%   interpolation based upon ROIs from nearby frames. The detection algorithms include  
-%   face-detection algorithms (see functions FaceDetect_ConfigSetup and FaceDetect) and a 
-%   skin-detection algorithm (see functions SkinDetect_ConfigSetup and SkinDetect). Interpolation
-%   occurs either when the detection algorithms are unable to make a detection for a frame or when  
-%   the detection algorithms are skipped for a frame for efficiency. Interpolation is conducted by
-%   function ROIMSIR. (The acronym ROIMSIR stands for ROI size-matching, smoothing, interpolation, 
-%   and resizing.)   
-%
-% - Skin-color samples are collected for use in skin segmentation and the skin-detection algorithm. 
-%   For details on the collection of skin-color samples, see function 
-%   ROIMeans_FirstRead_CollectSkinColorSamples. 
-%
-% - Timestamps are recorded for each frame if function readFrame is used rather than 
-%   vision.VideoFileWriter. Otherwise, timestamps would been assigned by function
-%   VideoFaceReadConfig, which was called by function ValidateAndConfigure. Timestamps, in turn,  
-%   are used by several functions. Specifically, functions ROIMeans_FirstRead_ExtrapolateROI and  
-%   ROIMSIR use timestamps for interpolation, function ROIMeans_SecondRead_SkinDetect uses 
-%   timestamps for seeking, function PulseRate uses timestamps for pulse rate calculations,  
-%   function TableOutput uses timestamps when writing the output tables, and function   
-%   WriteFaceVideo uses timestamps when writing the output video file.
-%
-% - The position (i.e., [X, Y] coordinates) and size (i.e., width and height) of each ROI are 
-%   modified after being returned by a detection algorithm to increase accuracy. Modifications 
-%   include normalizing the sizes of ROIs returned from different algorithms to have a consistent 
-%   size and smoothing the position and size of a given ROI with ROIs from nearby frames. 
-%   Additionally, the size of ROIs may be modified based upon arguments ROIWidthResizeFactor and
-%   ROIHeightResizeFactor. The aim of these arguments is to produce an ROI size that tends to 
-%   maximize coverage of the face while minimizing coverage of non-skin regions. Although skin
-%   segmentation will be conducted (in a later step) to help exclude non-skin regions, skin 
-%   segmentation is not perfect, so adjusting the ROI size can be useful. These modifications are
-%   conducted by function ROIMSIR.
-%
-% - Skin segmentation is conducted to exclude pixels within the ROI that may not correspond to 
-%   skin. Skin segmentation uses color thresholds, texture thresholds, and morphological operations
-%   to classify pixels as skin or non-skin. 
-%
-%   - Regarding color thresholds, the pixels within the ROI are converted to the YCbCr and HSV
-%     colorspaces for comparison against thresholds. These colorspaces are used because they were
-%     found to be more effective than the RGB colorspace during testing. These colorspaces are 
-%     frequently used when skin segmentation is discussed in the literature. Preset color 
-%     thresholds are used as well as color thresholds tailored to the face that appears in the ROI.
-%
-%   - Regarding texture thresholds, the local color range of each pixel is used. A relatively low  
-%     local color range for a given pixel is used as a heuristic of a pixel corresponding to skin 
-%     based on the assumption that true skin tends to occur in regions of homogeneous color. The
-%     effectiveness of local color range was established through testing. 
-%
-%   - From the application of these thresholds, a two-dimensional logical matrix is assigned where 
-%     pixels that satisfied all thresholds are classified as true and pixels that did not are   
-%     classified as false. A morphological close operation is then applied to the logical matrix. 
-%     The morphological close tends to fill in classification holes, where a hole is loosely  
-%     defined as a region of pixels classified as true that are enclosed by pixels classified as 
-%     false. Holes are filled in based on the assumption that true skin tends to be distributed in  
-%     the face in contiguous, rather than patchy, regions. The morphological close fills in holes  
-%     only below a specified size, which is specified by a morphological structuring element, such 
-%     that many holes are not filled. Otherwise, large regions classified as true -- which are
-%     assumed to be regions of skin -- may be erroneously filled. 
-%
-% - Periodically, the thresholds for skin segmentation and the skin-detection algorithm are reset
-%   based on recently-collected skin-color samples from the video. A notification is made to the 
-%   command window when this occurs.
-%
-% - If an ROI contains a low proportion of pixels classified as skin by skin segmentation, the ROI 
-%   will be discarded. 
-%
-% - If an ROI that represents a facial profile (as returned by a face-detection algorithm that
-%   targets the profile orientation of the face) occurs in a frame in which a pair of eyes is
-%   detected, the ROI is discarded. It is assumed that a pair of eyes should not be detectable if 
-%   the face is in a profile orientation.
-%
-% - A check will be conducted to determine whether the skin-segmentation algorithm appears to be
-%   oversegmenting ROIs. If so, skin-segmentation settings will be modified to reduce the severity
-%   of segmentation in subsequent operations. The first-read operations will start over again to
-%   enable the modifications to be applied to all frames. A notification is made to the command
-%   window when this occurs.
-%
-% - The means from the RGB colorspace are taken from each ROI. These means are used later to
-%   calculate pulse rate (in function PulseRate).
-%
-% - The luminance mean is taken from each ROI. The luminance mean is taken either from the Y 
-%   channel of the YCbCr colorspace or the L channel of the LAB colorspace. These means can be used 
-%   to control the R, G, and B means for luminance variation across frames when the pulse rate is 
-%   calculated. 
-%
-% - Diagnostic information from many of the above steps is recorded for later display on the output
-%   video file (see function WriteFaceVideo). This information can be used to fine-tune some input  
-%   arguments to function FacePulseRate.
-
-%First-read operations:
+%Conduct first-read operations:
 
 %Note: 'ROIMeans_FirstRead' is a custom function located within the folder 'FacePulseRate'.
 [ROIGeneralConfig, VideoReadConfig, ROI, ROIDiagnostic, SkinSegmentConfig, SkinSegmentMasks, ...
@@ -1463,7 +1514,7 @@ end
         ROIDiagnostic, SkinSegmentConfig, SkinSegmentMasks, PulseRateConfigAndData, HasROI_TF, ...  
         ROIMatchSizeData, SkinDetectConfig, OutputConfig);
 
-%Second-read operations:    
+%Conduct second-read operations:    
     
 %Note: 'ROIMeans_SecondRead' is a custom function located within folder 'FacePulseRate'.
 [ROI, HasROI_TF, ROIDiagnostic, PulseRateConfigAndData, SkinSegmentConfig, SkinSegmentMasks] = ...
@@ -1475,17 +1526,20 @@ end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
 %%% Estimate blood volume pulse and calculate pulse rate %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%Description:
-
-% - Calculate the blood volume pulse (BVP) at the frame-by-frame level from the ROI means 
-%   previously calculated from the ROI of each frame.
 %
-% - Calculate pulse rate for windows of frames using BVP. Pulse rate is calculated for windows
-%   rather than at the frame-by-frame level because, from the author's observations, too much noise
-%   exists at the frame-by-frame level for accurate frame-by-frame pulse rate. Further, the  
-%   algorithms utilized were designed to estimate pulse rate across a set of frames rather than at
-%   the frame-by-frame level.
+%
+%   Description
+%   -----------
+%
+%   - Calculate the blood volume pulse (BVP) at the frame-by-frame level from the ROI means 
+%     previously calculated from the ROI of each frame.
+%
+%   - Calculate pulse rate for windows of frames using BVP. Pulse rate is calculated for windows
+%     rather than at the frame-by-frame level because, from the author's observations, too much 
+%     noise exists at the frame-by-frame level for accurate frame-by-frame pulse rate. Further, the  
+%     algorithms utilized were designed to estimate pulse rate across a set of frames rather than 
+%     atthe frame-by-frame level.
+
 
 %If calculating pulse rate enabled
 if PulseRateConfigAndData.TF
@@ -1498,17 +1552,20 @@ end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Return data table and write table to csv file %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%Description:
-
-%Conduct the following operations:
-
-% - Two tables of data are returned. Table TableByFrame contains frame-by-frame ROI means, blood  
-%   volume pulse, and pulse rate estimated by windows. Various configuration settings are also  
-%   included. Table TableByWindow contains data at the window-level, which is at the level of
-%   resolution provided by the pulse-rate algorithms.
 %
-% - These tables are written to csv files. 
+%
+%   Description
+%   -----------
+%
+%   Conduct the following operations:
+%
+%   - Two tables of data are returned. Table TableByFrame contains frame-by-frame ROI means, blood  
+%     volume pulse, and pulse rate estimated by windows. Various configuration settings are also  
+%     included. Table TableByWindow contains data at the window-level, which is at the level of
+%     resolution provided by the pulse-rate algorithms.
+%
+%   - These tables are written to csv files. 
+
 
 %Note: 'TableOutput' is a custom function located within folder 'FacePulseRate'.
 [TableByFrame, TableByWindow] = ...
@@ -1519,27 +1576,18 @@ end
 %% %%%%%%%%%%%%%%%%%%%%%
 %%% Write video file %%%
 %%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%   Description
+%   -----------
+%
+%   Write an output video with diagnostic annotations to permit verification of ROI placement and
+%   skin segmentation. Arguments to function FacePulseRate are provided to make corrections to ROI
+%   placement and skin segmentation based on the annotations of the output video. A description of
+%   these annotations and arguments is provided in function WriteFaceVideo.
 
-%Description:
 
-%Write video with the following annotations:
-
-% - Timestamp
-% - Frame number
-% - Pulse rate
-% - ROIs at various stages of modifications (see function ROIMSIR)
-% - Detection algorithms attempted
-% - Detection algorithm that made detection
-% - Proportion of detection algorithm detections out of attempts
-% - Bounding boxes used for detection algorithms
-% - Skin-detection algorithm diagnositics
-% - Skin-segmentation mask
-
-%Function WriteFaceVideo provides a description of how the annotations can be used to fix ROI
-%placement and skin segmentation. Specifically, it provides recommendations on how input arguments
-%can be modified to correct ROI placement and skin segmentation.
-
-%If writing to video is enabled
+%If writing an output video is enabled
 if OutputConfig.WriteVideoTF 
     
     %Note: 'WriteFaceVideo' is a custom function located within folder 'FacePulseRate'.

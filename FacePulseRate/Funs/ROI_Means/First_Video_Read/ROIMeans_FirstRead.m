@@ -16,22 +16,8 @@ function [ROIGeneralConfig, VideoReadConfig, ROI, ROIDiagnostic, SkinSegmentConf
 %   Take the ROI means of each frame for later use in pulse rate operations. To do so, for each 
 %   frame, find a frontal or profile face ROI with face-detection algorithm(s) or a facial-skin ROI 
 %   with the skin-detection algorithm. Then, modify the ROI for stability and accuracy and apply 
-%   skin segmentation to the ROI. Then, take and store the means of the ROI for later use in pulse 
-%   rate operations.
-%
-%   A number of operations depend on settings being set that require a certain number of frames to 
-%   have been processed. To facilitate this, frames are stored in a limited-size frame cache
-%   (see function ROIMeans_FirstRead_TakeMeans) to permit delayed evaluation. For some operations  
-%   near the first frames processed, the frame cache will not be large enough to permit delayed  
-%   evaluation. For these frames, the operations will be delayed until function  
-%   ROIMeans_SecondRead, where frames will be read a second time. Because some frames are processed 
-%   the first time they are read and others are processed the second time they are read, a 
-%   distinction is made in FacePulseRate between frames read during "first-read operations" and 
-%   "second-read operations. Frames processed by the current function are considered to be 
-%   processed during first-read operations. Frames processed by function ROIMeans_SecondRead are
-%   considered to be processed during second-read operations. Operations the depend upon delayed 
-%   evaluation include tailored skin segmentation, skin detection, ROI modifications (function 
-%   ROIMSIR), and the taking of means of ROIs (ROIMeans_FirstRead_TakeMeans).
+%   skin segmentation to the ROI. FInally, take and store the means of the ROI for later use in  
+%   pulse-rate operations.
 %
 %
 %   List of Operations
@@ -108,6 +94,37 @@ function [ROIGeneralConfig, VideoReadConfig, ROI, ROIDiagnostic, SkinSegmentConf
 %     output video file. This information can be used to fine-tune configuration settings. 
 %
 %
+%   Uses of Frame Cache
+%   -------------------
+%
+%   A number of operations depend on settings that are not assigned until data from a specified 
+%   number of frames have been collected (see function ROIGeneralConfig_Setup). These settings 
+%   apply to tailored skin segmentation, the skin-detection algorithm (function SkinDetect), the  
+%   ROI-adjustment operations (function ROIMSIR), and the taking of means (ROIMeans_TakeMeans). 
+%   Consequently, these operations will not begin until a sufficient number of frames has elapsed 
+%   to collect the data (the precise number of frames needed varies by video depending on the ease 
+%   of collecting some data; see ROIMeans_FirstRead_CollectSkinColorSamples). 
+%
+%   To reduce the number of frames that need to be reread because settings were not assigned when 
+%   they were read by the video reader, read frames are temporarily assigned to a cache of a 
+%   limited length, which can store about a couple hundred frames (see function 
+%   ROIMeans_FirstRead_TakeMeans). The operations are applied to frames from the cache rather than
+%   directly from the video reader to provide additional time for the settings to be assigned.
+%   However, it is expected that some frames, near the beginning of the video, will enter and leave 
+%   the cache before the settings are assigned. These frames will be reread and processed by  
+%   function ROIMeans_SecondRead. The "SecondRead" portion of this function name refers to frames 
+%   being reread). Because some frames are processed the first time they are read and  others are
+%   processed the second time they are read, a distinction is made in FacePulseRate between frames
+%   read during "first-read operations" and "second-read operations". Frames processed by the
+%   current function are considered to be processed during first-read operations.    
+%
+%   The presence of a frame cache, beside being used to increase efficiency, as previously 
+%   described, is also used to increase the accuracy of ROI-adjustment operations (function 
+%   ROIMSIR). Specifically, these operations index the frame in the middle of the frame cache,
+%   rather than the beginning, to be able to base smoothing and other adjustment operations on data
+%   for frames both before and after the frame.
+%
+%
 %   Recursion
 %   ---------
 % 
@@ -115,12 +132,12 @@ function [ROIGeneralConfig, VideoReadConfig, ROI, ROIDiagnostic, SkinSegmentConf
 %   SkinSegment_OversegmentationCheck_Reduce).
 %
 %
-%    Copyright
-%    ---------
+%   License
+%   -------
 %
-%    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
-%    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
-%    licensing, please contact the author.
+%   Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
+%   licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
+%   licensing, please contact the author.
  
             
 %%%%%% Display notification message %%%%%%  
