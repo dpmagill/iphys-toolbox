@@ -104,8 +104,8 @@ static void b_Ops(emlrtCTX aTLS, real_T i, boolean_T RegionSelectedAnyTF,
     /*     output video. The boundaries are thickened for better visibility on output video. */
     /*  */
     /*  */
-    /*     Copyright */
-    /*     --------- */
+    /*     License */
+    /*     ------- */
     /*  */
     /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
     /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -368,8 +368,8 @@ static void b_Ops(emlrtCTX aTLS, real_T i, boolean_T RegionSelectedAnyTF,
     /*     output video. The boundaries are thickened for better visibility on output video. */
     /*  */
     /*  */
-    /*     Copyright */
-    /*     --------- */
+    /*     License */
+    /*     ------- */
     /*  */
     /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
     /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -659,8 +659,8 @@ static void b_Ops(emlrtCTX aTLS, real_T i, boolean_T RegionSelectedAnyTF,
     /*     output video. The boundaries are thickened for better visibility on output video. */
     /*  */
     /*  */
-    /*     Copyright */
-    /*     --------- */
+    /*     License */
+    /*     ------- */
     /*  */
     /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
     /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */

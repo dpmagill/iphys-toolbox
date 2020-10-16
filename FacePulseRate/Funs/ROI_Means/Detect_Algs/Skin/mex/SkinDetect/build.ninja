@@ -6,7 +6,7 @@ ninja_required_version = 1.3
 root = .
 builddir = $root/build/win64
 matlabdir = C:/Program Files/MATLAB/R2020b
-startdir = G:/My Drive/Articles/topics/physio/Articles Chapters/Measures/Autonomic NS (GSR HR)/HR/HR webcam/FacePulseRate
+startdir = G:/My Drive/Articles/Design & Analysis/FacePulseRate/Git/FacePulseRate
 
 # Toolchain information
 cc = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
@@ -14,9 +14,9 @@ cxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrse
 linker = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\gcc
 linkerxx = C:\ProgramData\MATLAB\SupportPackages\R2020a\3P.instrset\mingw_w64.instrset\bin\g++
 
-cflags =  -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\FacePulseRate\codegen\mex\SkinDetect" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\FacePulseRate" -I "C:\Program Files\MATLAB\R2020b\extern\include" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\FacePulseRate\codegen\mex\SkinDetect\interface" -I "." -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp 
+cflags =  -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I "G:\My Drive\Articles\Design & Analysis\FacePulseRate\Git\FacePulseRate\codegen\mex\SkinDetect" -I "G:\My Drive\Articles\Design & Analysis\FacePulseRate\Git\FacePulseRate" -I "C:\Program Files\MATLAB\R2020b\extern\include" -I "G:\My Drive\Articles\Design & Analysis\FacePulseRate\Git\FacePulseRate\codegen\mex\SkinDetect\interface" -I "." -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp 
 
-cxxflags =  -c -fexceptions -fno-omit-frame-pointer -std=c++11 -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c++11 -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\FacePulseRate\codegen\mex\SkinDetect" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\FacePulseRate" -I "C:\Program Files\MATLAB\R2020b\extern\include" -I "G:\My Drive\Articles\topics\physio\Articles Chapters\Measures\Autonomic NS (GSR HR)\HR\HR webcam\FacePulseRate\codegen\mex\SkinDetect\interface" -I "." -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp 
+cxxflags =  -c -fexceptions -fno-omit-frame-pointer -std=c++11 -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c++11 -I "G:\My Drive\Articles\Design & Analysis\FacePulseRate\Git\FacePulseRate\codegen\mex\SkinDetect" -I "G:\My Drive\Articles\Design & Analysis\FacePulseRate\Git\FacePulseRate" -I "C:\Program Files\MATLAB\R2020b\extern\include" -I "G:\My Drive\Articles\Design & Analysis\FacePulseRate\Git\FacePulseRate\codegen\mex\SkinDetect\interface" -I "." -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp 
 
 ldflags =  -m64 -Wl,--no-undefined -shared -static -L"C:\Program Files\MATLAB\R2020b\extern\lib\win64\mingw64" -llibmx -llibmex -llibmat -lm -llibmwlapack -llibmwblas -o "SkinDetect_mex.mexw64" -L"$matlabdir\extern\lib\win64\mingw64" -llibmwblas -llibemlrt -llibcovrt -llibut -llibmwmathutil -Ofast -fopenmp "$matlabdir\extern\lib\win64\mingw64\libmwbwpackctbb.lib" "$matlabdir\extern\lib\win64\mingw64\libmwbwunpackctbb.lib" "$matlabdir\extern\lib\win64\mingw64\libmwbwlookup_tbb.lib" "$matlabdir\extern\lib\win64\mingw64\libmwmorphop_binary_tbb.lib" "$matlabdir\extern\lib\win64\mingw64\libmwmorphop_packed.lib" "$matlabdir\extern\lib\win64\mingw64\libmwmorphop_ipp.lib" -Wl,--version-script,SkinDetect_mex.map
 

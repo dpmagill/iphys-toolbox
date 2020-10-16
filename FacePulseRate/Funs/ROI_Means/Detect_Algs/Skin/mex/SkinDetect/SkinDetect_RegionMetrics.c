@@ -374,8 +374,8 @@ void SkinDetect_RegionMetrics(emlrtCTX aTLS, const b_struct_T
   /*     See the file for function SkinDetect for additional description. */
   /*  */
   /*  */
-  /*     Copyright */
-  /*     --------- */
+  /*     License */
+  /*     ------- */
   /*  */
   /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
   /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */

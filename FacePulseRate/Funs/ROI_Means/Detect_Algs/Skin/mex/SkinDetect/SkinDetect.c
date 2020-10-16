@@ -41,8 +41,8 @@
 static emlrtMCInfo emlrtMCI = { 203,   /* lineNo */
   5,                                   /* colNo */
   "SkinDetect_PartitionRegions",       /* fName */
-  "G:\\My Drive\\Articles\\topics\\physio\\Articles Chapters\\Measures\\Autonomic NS (GSR HR)\\HR\\HR webcam\\FacePulseRate\\Funs\\ROI_Means\\De"
-  "tect_Algs\\Skin\\SkinDetect_PartitionRegions.m"/* pName */
+  "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\Funs\\ROI_Means\\Detect_Algs\\Skin\\SkinDetect_PartitionRegio"
+  "ns.m"                               /* pName */
 };
 
 /* Function Declarations */
@@ -661,7 +661,11 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   real32_T RegionZ_Difference_data[400];
   real32_T RegionZ_Y_Standardized_data[400];
   real32_T RegionZ_Y_data[400];
+  real32_T YCbCrThresholds_Tailored[8];
+  real32_T b_YCbCrThresholds_Tailored[8];
   real32_T YCbCrThresholds_Generic[7];
+  real32_T b_YCbCrThresholds_Generic[7];
+  real32_T HSThresholds_Tailored[3];
   real32_T HSThresholds_Generic[2];
   real32_T b_HSThresholds_Generic[2];
   real32_T CbBounded_Single_data[1];
@@ -729,6 +733,12 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   emxInit_uint8_T(emlrtRootTLSGlobal, &RBounded_Uint8, 2, true);
   emxInit_uint8_T(emlrtRootTLSGlobal, &GBounded_Uint8, 2, true);
   emxInit_uint8_T(emlrtRootTLSGlobal, &BBounded_Uint8, 2, true);
+  emxInit_boolean_T(emlrtRootTLSGlobal, &IsSkinMask, 2, true);
+  emxInit_real32_T(&YBounded_Single, 2, true);
+  emxInit_real32_T(&CbBounded_Single, 2, true);
+  emxInit_real32_T(&CrBounded_Single, 2, true);
+  emxInit_boolean_T(emlrtRootTLSGlobal, &IsSkinMask_Range, 2, true);
+  emxInit_boolean_T(emlrtRootTLSGlobal, &IsSkinMask_ROISelected, 2, true);
 
   /* SkinDetect   Identify an ROI for a frame using a skin-detection algorithm.                   */
   /*  */
@@ -781,7 +791,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     -------------------- */
   /*  */
   /*  */
-  /*     -- Partitioning bounding box into regions to classify -- */
+  /*     -- Partitioning Bounding Box into Regions to Classify -- */
   /*  */
   /*     See function SkinDetect_PartitionRegions, which is called by the current function. */
   /*   */
@@ -789,7 +799,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     assessed as being skin. By the completion of the algorithm, one region (or no regions) will be */
   /*     selected as the skin detection. */
   /*  */
-  /*     - Bounding box: */
+  /*     - Bounding Box: */
   /*  */
   /*     Using a bounding box may reduce false positive skin detections by focusing on an area of the  */
   /*     frame potentially more likely to contain skin. Using a bounding box may also reduce  */
@@ -802,7 +812,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     ROIMeans_FirstRead_SetBoundingBoxes. In the second-read operations, the bounding box is set by */
   /*     function ROIMeans_SecondRead_SkinDetect.  */
   /*        */
-  /*     - Skin segmentation: */
+  /*     - Skin Segmentation: */
   /*  */
   /*     Within the bounding box, skin segmentation (see function SkinSegmentMask) is applied to remove  */
   /*     areas less likely to be skin. The term "skin segmentation" is used to define the operations */
@@ -923,7 +933,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     (SkinClassifyRegionColorThresholds(1)) to function FacePulseRate. A Larger threshold value may    */
   /*     decrease false positives but increase false negatives. */
   /*  */
-  /*     - Cb, Cr Mean: */
+  /*     - Cb, Cr means: */
   /*  */
   /*     Regarding the YCbCr color space, only Cb and Cr are used for rejection thresholds because of */
   /*     greater luminance invariance compared to Y. The Cb and Cr similarities are quanitifed as  */
@@ -938,7 +948,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     SkinClassifyRegionColorThresholds(3) = Cr z-score threshold. Smaller threshold values may   */
   /*     decrease false positives but increase false negatives. */
   /*  */
-  /*    - Pixel Count: */
+  /*    - Pixel count: */
   /*  */
   /*     In addition to assessing regions by their means, they are also assessed by their pixel counts, */
   /*     with the assumption that small pixel counts indicate non-skin as skin is assumed to be present  */
@@ -947,7 +957,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     RegionNThreshold, which is specified by function SkinDetect_ConfigSetup. A Larger threshold  */
   /*     value may decrease false positives but increase false negatives.   */
   /*  */
-  /*     - Standard Deviation of Cr: */
+  /*     - Standard deviation of Cr: */
   /*  */
   /*     The standard deviation of colors within a region can be an indication that the region is not */
   /*     skin as it has been observed that skin regions have fairly homogeneous color ranges, which  */
@@ -955,7 +965,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     rejected as skin. */
   /*  */
   /*  */
-  /*     -- Selecting one region out of candidates (regions that were not rejected) -- */
+  /*     -- Selecting one Region Out of Candidates (Regions That were Not Rejected) -- */
   /*  */
   /*     See function SkinDetect_SelectRegion, which is called by the current function. */
   /*  */
@@ -1017,8 +1027,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     SkinDetect_EnlargeROI, which is called by function SkinDetect_SelectRegion. */
   /*  */
   /*  */
-  /*     Copyright */
-  /*     --------- */
+  /*     License */
+  /*     ------- */
   /*  */
   /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
   /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -1125,8 +1135,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     regions to classify" in the notes of function SkinDetect. */
   /*  */
   /*  */
-  /*     Copyright */
-  /*     --------- */
+  /*     License */
+  /*     ------- */
   /*  */
   /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
   /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -1218,8 +1228,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     UseCompiledFunctionsTF. */
   /*  */
   /*  */
-  /*     Copyright */
-  /*     --------- */
+  /*     License */
+  /*     ------- */
   /*  */
   /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
   /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -1237,7 +1247,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     Within function FacePulseRate, called by function SkinSegmentMask. */
   /*  */
   /*  */
-  /*     Code generation */
+  /*     Code Generation */
   /*     --------------- */
   /*  */
   /*     Can be called as a Matlab function or used for C-language code generation. */
@@ -1571,10 +1581,26 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     Within function FacePulseRate, called by function SkinSegmentMask_Ops. */
   /*  */
   /*  */
-  /*     Code generation */
+  /*     Code Generation */
   /*     --------------- */
   /*  */
   /*     Can be called as a Matlab function or used for C-language code generation.     */
+  /*  */
+  /*  */
+  /*     Description */
+  /*     ----------- */
+  /*  */
+  /*     Parse imput arguments to function SkinSegmentMask_Ops. */
+  /*  */
+  /*     -- Adjustment to thresholds -- */
+  /*  */
+  /*     Function SkinSegmentMask_Threshold_Colors will only use < and > for efficiency rather than <=     */
+  /*     and >=, although <= and >= are more appropriate as the thresholds are intended to accept    */
+  /*     values equal to them. To use < and > while also allowing equality, the thresholds are  */
+  /*     modified.  */
+  /*  */
+  /*     Note that for the thresholds of floating-point type, even if <= and >= were used, the     */
+  /*     thresholds would still need to be modified to allow a tolerance for floating-point equality. */
   /*  */
   /*  */
   /*     Copyright */
@@ -1585,83 +1611,122 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     licensing, please contact the author.  */
   /* Inline function */
   /* %%%%% Local range %%%%%% */
-  /*  - Structuring element width for calculating local range for a given pixel */
+  /* Structuring element width for calculating local range for a given pixel: */
   /* Value assigned in function SkinSegment_ConfigSetup. */
-  /*  - Individual pixel local color range threshold  */
+  /* Individual pixel local color range threshold:  */
   /* Value assigned in function SkinSegment_ConfigSetup. */
   /* Should be type uint8 for fastest evaluation.  */
+  /* Type uint8. */
+  /* Adjust maximum */
   /* %%%%% Color thresholds %%%%%% */
-  /*  - Individual pixel YCbCr colorspace skin-segmentation generic thresholds */
+  /* The Cb-to-Cr ratio, H, and S thresholds use a smaller adjustment because the intervals between */
+  /* colors are smaller. */
+  /* %%%%% --- Generic thresholds %%%%%% */
   /* Values assigned in function SkinSegment_ConfigSetup.   */
   /* Note: these should be in type single for fastest evaluation. */
-  for (b_i = 0; b_i < 7; b_i++) {
-    YCbCrThresholds_Generic[b_i] =
-      SkinSegmentConfig->Args.YCbCrThresholdsGeneric[b_i];
-  }
-
-  emxInit_boolean_T(emlrtRootTLSGlobal, &IsSkinMask, 2, true);
-  emxInit_real32_T(&YBounded_Single, 2, true);
-  emxInit_real32_T(&CbBounded_Single, 2, true);
-  emxInit_real32_T(&CrBounded_Single, 2, true);
-  emxInit_boolean_T(emlrtRootTLSGlobal, &IsSkinMask_Range, 2, true);
-  emxInit_boolean_T(emlrtRootTLSGlobal, &IsSkinMask_ROISelected, 2, true);
-
-  /* Function SkinSegmentMask_Threshold_Colors will only use < and > rather than <= and >=, so these  */
-  /* values are adjusted so that < and > are equivalent to <= and >=, respectively. */
+  /* YCbCr thresholds */
+  /* Type single. */
+  /* HSV thresholds */
+  /* Type single. */
+  /* Adjust minimums */
   YCbCrThresholds_Generic[0] = SkinSegmentConfig->Args.YCbCrThresholdsGeneric[0]
-    - 1.0F;
+    - 0.1F;
 
   /* Y min */
   YCbCrThresholds_Generic[1] = SkinSegmentConfig->Args.YCbCrThresholdsGeneric[1]
-    - 1.0F;
-
-  /* Cb min */
-  /* Cr min */
-  YCbCrThresholds_Generic[5] = SkinSegmentConfig->Args.YCbCrThresholdsGeneric[5]
     - 0.1F;
 
+  /* Cb min */
+  YCbCrThresholds_Generic[3] = SkinSegmentConfig->Args.YCbCrThresholdsGeneric[3]
+    - 0.1F;
+
+  /* Cr min */
+  YCbCrThresholds_Generic[5] = SkinSegmentConfig->Args.YCbCrThresholdsGeneric[5]
+    - 0.01F;
+
   /* Cb-to-Cr ratio min */
+  HSThresholds_Generic[1] = SkinSegmentConfig->Args.HSThresholdsGeneric[1] -
+    0.01F;
+
+  /* S min */
+  /* Adjust maximums */
   YCbCrThresholds_Generic[2] = SkinSegmentConfig->Args.YCbCrThresholdsGeneric[2]
-    + 1.0F;
+    + 0.1F;
 
   /* Cb max */
   YCbCrThresholds_Generic[4] = SkinSegmentConfig->Args.YCbCrThresholdsGeneric[4]
-    + 1.0F;
+    + 0.1F;
 
   /* Cr max */
-  YCbCrThresholds_Generic[3] = (SkinSegmentConfig->Args.YCbCrThresholdsGeneric[3]
-    - 1.0F) + 0.1F;
+  YCbCrThresholds_Generic[6] = SkinSegmentConfig->Args.YCbCrThresholdsGeneric[6]
+    + 0.01F;
 
   /* Cb-to-Cr ratio max */
-  /*  - Individual pixel HSV colorspace skin-segmentation generic thresholds */
-  /* Values assigned in function SkinSegment_ConfigSetup.   */
-  /* Note: these should be in type single for fastest evaluation. */
-  /* Function SkinSegmentMask_Threshold_Colors will only use < and > rather than <= and >=, so these  */
-  /* values are adjusted so that < and > are equivalent to <= and >=, respectively. */
-  HSThresholds_Generic[1] = SkinSegmentConfig->Args.HSThresholdsGeneric[1] -
-    0.1F;
-
-  /* S min */
   HSThresholds_Generic[0] = SkinSegmentConfig->Args.HSThresholdsGeneric[0] +
-    0.1F;
+    0.01F;
 
   /* H max */
-  /*  - Individual pixel YCbCr and HSV colorspaces skin-segmentation tailored thresholds */
+  /* %%%%% --- Tailored thresholds %%%%%% */
   /* Values assigned in function SkinSegment_SetThresholds. */
   /* Note: a threshold is not used for the value (V) channel of the HSV colorspace.  */
   /* Note: these should be in type single for fastest evaluation.  */
-  /*    - Low-severity tailored thresholds */
-  /* YCbCr channels */
-  /* H and S channels */
-  /*  - Flag not to use tailored thresholds */
+  /* Low-severity tailored thresholds */
+  /* YCbCr thresholds */
+  /* Type single. */
+  /* HSV thresholds */
+  /* Type single. */
+  HSThresholds_Tailored[2] = SkinSegmentConfig->Args.HSThresholdsTailored_Sev[2];
+
+  /* Adjust minimums */
+  YCbCrThresholds_Tailored[0] =
+    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[0] - 0.1F;
+
+  /* Y min */
+  YCbCrThresholds_Tailored[2] =
+    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[2] - 0.1F;
+
+  /* Cb min */
+  YCbCrThresholds_Tailored[4] =
+    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[4] - 0.1F;
+
+  /* Cr min */
+  YCbCrThresholds_Tailored[6] =
+    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[6] - 0.01F;
+
+  /* Cb-to-Cr ratio min */
+  HSThresholds_Tailored[1] = SkinSegmentConfig->Args.HSThresholdsTailored_Sev[1]
+    - 0.01F;
+
+  /* S min */
+  /* Adjust maximums */
+  YCbCrThresholds_Tailored[1] =
+    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[1] - 0.1F;
+
+  /* Y min */
+  YCbCrThresholds_Tailored[3] =
+    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[3] + 0.1F;
+
+  /* Cb max */
+  YCbCrThresholds_Tailored[5] =
+    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[5] + 0.1F;
+
+  /* Cr max */
+  YCbCrThresholds_Tailored[7] =
+    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[7] + 0.01F;
+
+  /* Cb-to-Cr ratio max */
+  HSThresholds_Tailored[0] = SkinSegmentConfig->Args.HSThresholdsTailored_Sev[0]
+    + 0.01F;
+
+  /* H max */
+  /* Flag not to use tailored thresholds: */
   /* Whether a sufficient number of skin-color samples was collected to activate tailored skin */
   /* segmentation. For details on the collection skin-color samples, see function */
   /* ROIMeans_FirstRead_CollectSkinColorSamples. */
   /* Value assigned by function SkinSegment_SetThresholds. */
   /* %%%%% Morphological close %%%%%% */
-  /*  - Severity of morphological close */
-  /*    - High severity of morphological close operation */
-  /*    - Low severity of morphological close operation */
+  /* High severity of morphological close operation */
+  /* Low severity of morphological close operation */
   /* %%%%% Number of elements in input matrices %%%%%% */
   /* Number of elements of a given matrix */
   /* Scalar; type int32. */
@@ -1676,12 +1741,11 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
     BBounded_Uint8, IsSkinMask_Range, BoundingBoxSkin[3], BoundingBoxSkin[2],
     BoundingBoxSkin[3] * BoundingBoxSkin[2], YCbCrThresholds_Generic,
     !SkinSegmentConfig->Args.c_SkinColorSamples_NThresholdPa,
-    SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev, HSThresholds_Generic,
-    SkinSegmentConfig->Args.HSThresholdsTailored_Sev,
-    SkinSegmentConfig->Args.RangeSEWidth, SkinSegmentConfig->Args.RangeThreshold,
-    IsSkinMask, YBounded_Single, CbBounded_Single, CrBounded_Single,
-    HBounded_Single_data, HBounded_Single_size, SBounded_Single_data,
-    SBounded_Single_size);
+    YCbCrThresholds_Tailored, HSThresholds_Generic, HSThresholds_Tailored,
+    SkinSegmentConfig->Args.RangeSEWidth, (uint8_T)
+    (SkinSegmentConfig->Args.RangeThreshold + 1U), IsSkinMask, YBounded_Single,
+    CbBounded_Single, CrBounded_Single, HBounded_Single_data,
+    HBounded_Single_size, SBounded_Single_data, SBounded_Single_size);
 
   /* %%%%% Morphologically close skin-segmentation mask regions with patchy classifications %%%%%% */
   /* Note: SkinSegmentMask_MorphClose is a custom function located within folder FacePulseRate. */
@@ -2347,8 +2411,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /*     used. */
   /*  */
   /*   */
-  /*     Copyright */
-  /*     --------- */
+  /*     License */
+  /*     ------- */
   /*  */
   /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
   /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -2674,8 +2738,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
     /*     function SkinDetect. */
     /*  */
     /*  */
-    /*     Copyright */
-    /*     --------- */
+    /*     License */
+    /*     ------- */
     /*  */
     /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
     /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -2962,8 +3026,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
       /*     ProportionSkinPixelsTooLowTF_ith will be false and vice versa. */
       /*  */
       /*  */
-      /*     Copyright */
-      /*     --------- */
+      /*     License */
+      /*     ------- */
       /*  */
       /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
       /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -3405,8 +3469,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
       /*     ProportionSkinPixelsTooLowTF_ith will be false and vice versa. */
       /*  */
       /*  */
-      /*     Copyright */
-      /*     --------- */
+      /*     License */
+      /*     ------- */
       /*  */
       /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
       /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -3571,8 +3635,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
       /*     SkinDetect for notes. */
       /*  */
       /*  */
-      /*     Copyright */
-      /*     --------- */
+      /*     License */
+      /*     ------- */
       /*  */
       /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
       /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -4074,8 +4138,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
       /*     than just cropped. */
       /*  */
       /*  */
-      /*     Copyright */
-      /*     --------- */
+      /*     License */
+      /*     ------- */
       /*  */
       /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
       /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -4318,6 +4382,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
         emxInit_uint8_T(emlrtRootTLSGlobal, &RUint8, 2, true);
         emxInit_uint8_T(emlrtRootTLSGlobal, &GUint8, 2, true);
         emxInit_uint8_T(emlrtRootTLSGlobal, &BUint8, 2, true);
+        emxInit_boolean_T(emlrtRootTLSGlobal, &b_IsSkinMask_Range, 2, true);
 
         /* Crop VidFrame and separate into colorspace channels */
         /* Local function. */
@@ -4547,8 +4612,8 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
         /*     UseCompiledFunctionsTF. */
         /*  */
         /*  */
-        /*     Copyright */
-        /*     --------- */
+        /*     License */
+        /*     ------- */
         /*  */
         /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
         /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
@@ -4566,7 +4631,7 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
         /*     Within function FacePulseRate, called by function SkinSegmentMask. */
         /*  */
         /*  */
-        /*     Code generation */
+        /*     Code Generation */
         /*     --------------- */
         /*  */
         /*     Can be called as a Matlab function or used for C-language code generation. */
@@ -4900,10 +4965,26 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
         /*     Within function FacePulseRate, called by function SkinSegmentMask_Ops. */
         /*  */
         /*  */
-        /*     Code generation */
+        /*     Code Generation */
         /*     --------------- */
         /*  */
         /*     Can be called as a Matlab function or used for C-language code generation.     */
+        /*  */
+        /*  */
+        /*     Description */
+        /*     ----------- */
+        /*  */
+        /*     Parse imput arguments to function SkinSegmentMask_Ops. */
+        /*  */
+        /*     -- Adjustment to thresholds -- */
+        /*  */
+        /*     Function SkinSegmentMask_Threshold_Colors will only use < and > for efficiency rather than <=     */
+        /*     and >=, although <= and >= are more appropriate as the thresholds are intended to accept    */
+        /*     values equal to them. To use < and > while also allowing equality, the thresholds are  */
+        /*     modified.  */
+        /*  */
+        /*     Note that for the thresholds of floating-point type, even if <= and >= were used, the     */
+        /*     thresholds would still need to be modified to allow a tolerance for floating-point equality. */
         /*  */
         /*  */
         /*     Copyright */
@@ -4914,78 +4995,123 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
         /*     licensing, please contact the author.  */
         /* Inline function */
         /* %%%%% Local range %%%%%% */
-        /*  - Structuring element width for calculating local range for a given pixel */
+        /* Structuring element width for calculating local range for a given pixel: */
         /* Value assigned in function SkinSegment_ConfigSetup. */
-        /*  - Individual pixel local color range threshold  */
+        /* Individual pixel local color range threshold:  */
         /* Value assigned in function SkinSegment_ConfigSetup. */
         /* Should be type uint8 for fastest evaluation.  */
+        /* Type uint8. */
+        /* Adjust maximum */
         /* %%%%% Color thresholds %%%%%% */
-        /*  - Individual pixel YCbCr colorspace skin-segmentation generic thresholds */
+        /* The Cb-to-Cr ratio, H, and S thresholds use a smaller adjustment because the intervals between */
+        /* colors are smaller. */
+        /* %%%%% --- Generic thresholds %%%%%% */
         /* Values assigned in function SkinSegment_ConfigSetup.   */
         /* Note: these should be in type single for fastest evaluation. */
-        for (b_i = 0; b_i < 7; b_i++) {
-          YCbCrThresholds_Generic[b_i] =
-            SkinSegmentConfig->Args.YCbCrThresholdsGeneric[b_i];
-        }
-
-        emxInit_boolean_T(emlrtRootTLSGlobal, &b_IsSkinMask_Range, 2, true);
-
-        /* Function SkinSegmentMask_Threshold_Colors will only use < and > rather than <= and >=, so these  */
-        /* values are adjusted so that < and > are equivalent to <= and >=, respectively. */
-        YCbCrThresholds_Generic[0] =
-          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[0] - 1.0F;
+        /* YCbCr thresholds */
+        /* Type single. */
+        /* HSV thresholds */
+        /* Type single. */
+        /* Adjust minimums */
+        b_YCbCrThresholds_Generic[0] =
+          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[0] - 0.1F;
 
         /* Y min */
-        YCbCrThresholds_Generic[1] =
-          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[1] - 1.0F;
+        b_YCbCrThresholds_Generic[1] =
+          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[1] - 0.1F;
 
         /* Cb min */
+        b_YCbCrThresholds_Generic[3] =
+          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[3] - 0.1F;
+
         /* Cr min */
-        YCbCrThresholds_Generic[5] =
-          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[5] - 0.1F;
+        b_YCbCrThresholds_Generic[5] =
+          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[5] - 0.01F;
 
         /* Cb-to-Cr ratio min */
-        YCbCrThresholds_Generic[2] =
-          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[2] + 1.0F;
-
-        /* Cb max */
-        YCbCrThresholds_Generic[4] =
-          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[4] + 1.0F;
-
-        /* Cr max */
-        YCbCrThresholds_Generic[3] =
-          (SkinSegmentConfig->Args.YCbCrThresholdsGeneric[3] - 1.0F) + 0.1F;
-
-        /* Cb-to-Cr ratio max */
-        /*  - Individual pixel HSV colorspace skin-segmentation generic thresholds */
-        /* Values assigned in function SkinSegment_ConfigSetup.   */
-        /* Note: these should be in type single for fastest evaluation. */
-        /* Function SkinSegmentMask_Threshold_Colors will only use < and > rather than <= and >=, so these  */
-        /* values are adjusted so that < and > are equivalent to <= and >=, respectively. */
         b_HSThresholds_Generic[1] = SkinSegmentConfig->Args.HSThresholdsGeneric
-          [1] - 0.1F;
+          [1] - 0.01F;
 
         /* S min */
+        /* Adjust maximums */
+        b_YCbCrThresholds_Generic[2] =
+          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[2] + 0.1F;
+
+        /* Cb max */
+        b_YCbCrThresholds_Generic[4] =
+          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[4] + 0.1F;
+
+        /* Cr max */
+        b_YCbCrThresholds_Generic[6] =
+          SkinSegmentConfig->Args.YCbCrThresholdsGeneric[6] + 0.01F;
+
+        /* Cb-to-Cr ratio max */
         b_HSThresholds_Generic[0] = SkinSegmentConfig->Args.HSThresholdsGeneric
-          [0] + 0.1F;
+          [0] + 0.01F;
 
         /* H max */
-        /*  - Individual pixel YCbCr and HSV colorspaces skin-segmentation tailored thresholds */
+        /* %%%%% --- Tailored thresholds %%%%%% */
         /* Values assigned in function SkinSegment_SetThresholds. */
         /* Note: a threshold is not used for the value (V) channel of the HSV colorspace.  */
         /* Note: these should be in type single for fastest evaluation.  */
-        /*    - Low-severity tailored thresholds */
-        /* YCbCr channels */
-        /* H and S channels */
-        /*  - Flag not to use tailored thresholds */
+        /* Low-severity tailored thresholds */
+        /* YCbCr thresholds */
+        /* Type single. */
+        /* HSV thresholds */
+        /* Type single. */
+        HSThresholds_Tailored[2] =
+          SkinSegmentConfig->Args.HSThresholdsTailored_Sev[2];
+
+        /* Adjust minimums */
+        b_YCbCrThresholds_Tailored[0] =
+          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[0] - 0.1F;
+
+        /* Y min */
+        b_YCbCrThresholds_Tailored[2] =
+          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[2] - 0.1F;
+
+        /* Cb min */
+        b_YCbCrThresholds_Tailored[4] =
+          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[4] - 0.1F;
+
+        /* Cr min */
+        b_YCbCrThresholds_Tailored[6] =
+          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[6] - 0.01F;
+
+        /* Cb-to-Cr ratio min */
+        HSThresholds_Tailored[1] =
+          SkinSegmentConfig->Args.HSThresholdsTailored_Sev[1] - 0.01F;
+
+        /* S min */
+        /* Adjust maximums */
+        b_YCbCrThresholds_Tailored[1] =
+          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[1] - 0.1F;
+
+        /* Y min */
+        b_YCbCrThresholds_Tailored[3] =
+          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[3] + 0.1F;
+
+        /* Cb max */
+        b_YCbCrThresholds_Tailored[5] =
+          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[5] + 0.1F;
+
+        /* Cr max */
+        b_YCbCrThresholds_Tailored[7] =
+          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev[7] + 0.01F;
+
+        /* Cb-to-Cr ratio max */
+        HSThresholds_Tailored[0] =
+          SkinSegmentConfig->Args.HSThresholdsTailored_Sev[0] + 0.01F;
+
+        /* H max */
+        /* Flag not to use tailored thresholds: */
         /* Whether a sufficient number of skin-color samples was collected to activate tailored skin */
         /* segmentation. For details on the collection skin-color samples, see function */
         /* ROIMeans_FirstRead_CollectSkinColorSamples. */
         /* Value assigned by function SkinSegment_SetThresholds. */
         /* %%%%% Morphological close %%%%%% */
-        /*  - Severity of morphological close */
-        /*    - High severity of morphological close operation */
-        /*    - Low severity of morphological close operation */
+        /* High severity of morphological close operation */
+        /* Low severity of morphological close operation */
         /* %%%%% Number of elements in input matrices %%%%%% */
         /* Number of elements of a given matrix */
         /* Scalar; type int32. */
@@ -5001,13 +5127,12 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
         b_IsSkinMask_Range->size[1] = 0;
         b_SkinSegmentMask_Threshold(emlrtRootTLSGlobal, RUint8, GUint8, BUint8,
           b_IsSkinMask_Range, ROIRegionSelected_FullFrame[3],
-          ROIRegionSelected_FullFrame[2], NRegions_ith, YCbCrThresholds_Generic,
+          ROIRegionSelected_FullFrame[2], NRegions_ith,
+          b_YCbCrThresholds_Generic,
           !SkinSegmentConfig->Args.c_SkinColorSamples_NThresholdPa,
-          SkinSegmentConfig->Args.YCbCrThresholdsTailored_Sev,
-          b_HSThresholds_Generic,
-          SkinSegmentConfig->Args.HSThresholdsTailored_Sev,
-          SkinSegmentConfig->Args.RangeSEWidth,
-          SkinSegmentConfig->Args.RangeThreshold, IsSkinMask_ROISelected,
+          b_YCbCrThresholds_Tailored, b_HSThresholds_Generic,
+          HSThresholds_Tailored, SkinSegmentConfig->Args.RangeSEWidth, (uint8_T)
+          (SkinSegmentConfig->Args.RangeThreshold + 1U), IsSkinMask_ROISelected,
           YBounded_Single_data, RegionRGBMeans_size, CbBounded_Single_data,
           tmp_size, CrBounded_Single_data, CrBounded_Single_size,
           HBounded_Single_data, HBounded_Single_size, SBounded_Single_data,
@@ -6421,825 +6546,862 @@ void SkinDetect(int32_T i, const emxArray_uint8_T *VidFrame, int16_T
   /* %%%%% Record data for use in skin-detection diagnostics %%%%%% */
   /* Record data to be displayed on the output video for the purpose of assessing the effectiveness of  */
   /* the skin-detection algorithm. */
-  /* If including skin-detection algorithm diagnostic information on output video is enabled */
-  /* Also, proceed only if at least one region was available to the skin-detection algorithm. */
-  /* If no regions are available, this is likely due to skin segmentation classifying all pixels as  */
-  /* non-skin. */
-  emxInitMatrix_cell_wrap_32(RegionBoundaries, true);
-  if (c_OutputConfig_WriteVideoShowRO && (NRegions > 0)) {
-    /* at least one region available */
-    /* Scalar struct. */
-    /* Note: 'SkinDetect_RecordDiagnosticData' is a custom function located within folder  */
-    /* 'FacePulseRate'. */
-    b_cast(ROIDiagnostic_ROISkin_ith, &b_ROIDiagnostic_ROISkin_ith);
+  /* At least one region was available */
+  /* (See function SkinDetect_PartitionRegions). */
+  if (NRegions > 0) {
+    /* Record that at least one region was available for skin detection for the ith frame */
+    /* If the skin-detection algorithm was attempted for the ith frame (HasROI_TF.SkinAttempted(i) == */
+    /* true) but at least one region was not available, the characters '[NS]' will be displayed on */
+    /* the output video (see function WriteFaceVideo_ROIAnnotation_ROIMethod). These characters are  */
+    /* an acronym for "no skin", indicating that no skin regions were available. */
+    /* Note: This will be false (assigned by local function ROIDiagnosticInitialize) if the area  */
+    /* corresponding to the skin-detection bounding box was completely segmented and, hence, has no  */
+    /* regions available (NRegions == 0). Note that a false value will also be present if the frame  */
+    /* did not have the skin-detection algorithm applied on it, that is, if function SkinDetect was  */
+    /* not used for the frame; in this case, the value would have been preallocated as false by */
+    /* function SkinDetect_PreallocateDiagnosticData. */
+    ROIDiagnostic_ROISkin_ith->RegionAnyAvailable = true;
 
-    /* SkinDetect_RecordDiagnosticData   Record various metrics to determine effectiveness of the skin-  */
-    /*                                   detection algorithm on each frame assessed. */
-    /*  */
-    /*     Helper function to function FacePulseRate.  */
-    /*     Within function FacePulseRate, called by function SkinDetect.   */
-    /*  */
-    /*  */
-    /*     Code Generation */
-    /*     --------------- */
-    /*  */
-    /*     Can be called as a Matlab function or used for C-language code generation. */
-    /*  */
-    /*  */
-    /*     Description */
-    /*     ----------- */
-    /*  */
-    /*     Collect frame-by-frame diagnostic information regarding the performance of the skin-detection  */
-    /*     algorithm. This information will be displayed on the output video (by function WriteFaceVideo  */
-    /*     and, more specifically, WriteFaceVideo_SkinDetectDiagnosis).  */
-    /*  */
-    /*     Four states are possible from function SkinDetect, from which the current function is called. */
-    /*  */
-    /*     The first state is a successful ROI detection. In this state, region borders are shown for all  */
-    /*     regions, with the regions color coded depending on whether the region corresponds to a  */
-    /*     rejected, candidate, or selected region. Other information is also shown.  */
-    /*  */
-    /*     The second state is a region selected that fails the skin proportion test (see function  */
-    /*     ConfirmSkinPresent). In this state, borders and other information are not shown but a message  */
-    /*     is displayed on the output video indicating this result.  */
-    /*  */
-    /*     The third state is when all regions fail the rejection thresholds (see function  */
-    /*     SkinDetect_RejectRegions). In this state, region borders of the rejected region(s) are shown  */
-    /*     on the output video along with other information.      */
-    /*  */
-    /*     The forth state is when no regions are available for classification, likely because of  */
-    /*     complete, or near complete, skin segmentation of the bounding box area. In this state, borders  */
-    /*     and other information are not shown but a message is displayed on the output video indicating  */
-    /*     this result. For more information on the diagnostic information displayed on the output video,  */
-    /*     see functions WriteFaceVideo and WriteFaceVideo_SkinDetectDiagnosis. */
-    /*  */
-    /*  */
-    /*     Copyright */
-    /*     --------- */
-    /*  */
-    /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
-    /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
-    /*     licensing, please contact the author. */
-    /* %%%%% Code-generation settings %%%%% */
-    /* Inline function */
-    /* Declare variable-size variables: */
-    /*                                          Upp. Bounds   Var. Size (T/F) */
-    /* cell array */
-    /* cell array element */
-    /* %%%%% Setup %%%%%% */
-    /* Record that at least one region was available for skin detection for ith frame */
-    /* Note: a false value will be present if the area corresponding to the skin-detection bounding box  */
-    /* was completely segmented and, hence, has no regions available. Note that a false value will also  */
-    /* be present if the frame did not have the skin-detection algorithm applied on it, that is, if  */
-    /* function SkinDetect was not used for the frame.  */
-    b_ROIDiagnostic_ROISkin_ith.RegionAnyAvailable = true;
+    /* %%%%% --- Detailed skin-diagnostic information %%%%%% */
+    /* Record detailed skin-detection algorithm diagnostic information.  */
+    /* Note: the following condition will be true only if the detailed display option is enabled.  */
+    /* This diagnostic information is shown in the output video only if the detailed display option */
+    /* is enabled, in which case flag OutputConfig.WriteVideoDetailedDiagnosticsTF will be true. By  */
+    /* default, it is false. Flag OutputConfig.WriteVideoDetailedDiagnosticsTF is set by function */
+    /* ValidateAndConfigure_InternalFlags. */
+    if (c_OutputConfig_WriteVideoShowRO) {
+      /* Scalar struct. */
+      /* Note: 'SkinDetect_RecordDiagnosticData' is a custom function located within folder  */
+      /* 'FacePulseRate'. */
+      b_cast(ROIDiagnostic_ROISkin_ith, &b_ROIDiagnostic_ROISkin_ith);
 
-    /* Proceed if the proportion of pixels classified as skin within the ROI from the selected region was  */
-    /* above the specified threshold. If not, it is likely that skin-segmentation completely segmented  */
-    /* the ROI. If not, diagnostic information is not displayed to avoid confusion because the depiction */
-    /* of candidate regions and a selected region may make it appear that the skin-detection algorithm  */
-    /* was successful for the ith frame. */
-    if (!b_ROIDiagnostic_ROISkin_ith.ProportionSkinPixelsTooLow) {
-      /* %%%%% Assign linear indices and flags to specify region status (candidate, rejected) %%%%%% */
-      /* Note: RegionSelectedLinIdx already assigned. */
-      /* Flag indicating a region was selected  */
-      RegionSelectedAnyTF = ((RegionSelectedLinIdx_size[0] != 0) &&
-        (RegionSelectedLinIdx_size[1] != 0));
-
-      /* Linear index of rejected regions */
-      /* Local function. */
-      /*  column vector; type uint16 */
-      /*  scalar; type uint16 */
-      /* end main function */
-      /* ============================================================================================= */
-      /* Local functions */
-      /* ============================================================================================= */
-      /* ============================================================================================= */
-      /* FindRejectedRegions   Return a linear index of rejected regions. */
+      /* SkinDetect_RecordDiagnosticData   Record various metrics to determine effectiveness of the skin-  */
+      /*                                   detection algorithm on each frame assessed. */
       /*  */
-      /*     Note: The linear index will be in the order of least to greatest. */
+      /*     Helper function to function FacePulseRate.  */
+      /*     Within function FacePulseRate, called by function SkinDetect.   */
+      /*  */
+      /*  */
+      /*     Code Generation */
+      /*     --------------- */
+      /*  */
+      /*     Can be called as a Matlab function or used for C-language code generation. */
+      /*  */
+      /*  */
+      /*     Description */
+      /*     ----------- */
+      /*  */
+      /*     Collect frame-by-frame diagnostic information regarding the performance of the skin-detection  */
+      /*     algorithm. This information will be displayed on the output video (by function WriteFaceVideo  */
+      /*     and, more specifically, WriteFaceVideo_SkinDetectDiagnosis).  */
+      /*  */
+      /*     This diagnostic information is shown in the output video only if the detailed display option */
+      /*     is enabled, in which case flag OutputConfig.WriteVideoDetailedDiagnosticsTF will be true. By  */
+      /*     default, it is false. Flag OutputConfig.WriteVideoDetailedDiagnosticsTF is set by function */
+      /*     ValidateAndConfigure_InternalFlags. */
+      /*  */
+      /*     Four states are possible from function SkinDetect, from which the current function is called. */
+      /*  */
+      /*     The first state is a successful ROI detection. In this state, region borders are shown for all  */
+      /*     regions, with the regions color coded depending on whether the region corresponds to a  */
+      /*     rejected, candidate, or selected region. Other information is also shown.  */
+      /*  */
+      /*     The second state is a region selected that fails the skin proportion test (see function  */
+      /*     ConfirmSkinPresent). In this state, borders and other information are not shown but a message  */
+      /*     is displayed on the output video indicating this result.  */
+      /*  */
+      /*     The third state is when all regions fail the rejection thresholds (see function  */
+      /*     SkinDetect_RejectRegions). In this state, region borders of the rejected region(s) are shown  */
+      /*     on the output video along with other information.      */
+      /*  */
+      /*     The forth state is when no regions are available for classification, likely because of  */
+      /*     complete, or near complete, skin segmentation of the bounding box area. In this state, borders  */
+      /*     and other information are not shown but a message is displayed on the output video indicating  */
+      /*     this result. For more information on the diagnostic information displayed on the output video,  */
+      /*     see functions WriteFaceVideo and WriteFaceVideo_SkinDetectDiagnosis. */
+      /*  */
+      /*  */
+      /*     License */
+      /*     ------- */
+      /*  */
+      /*     Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL  */
+      /*     licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial   */
+      /*     licensing, please contact the author. */
+      /* %%%%% Code-generation settings %%%%% */
       /* Inline function */
-      Counter_True = 0U;
-      for (c_i = 0; c_i < NRegions; c_i++) {
-        /* If false value */
-        if (!c_RegionPassAllThresholdsTF_Log[c_i]) {
-          Counter_True++;
-          RegionPoints_RGBProbSkin_data[Counter_True - 1] = (uint16_T)(c_i + 1);
+      /* Declare variable-size variables: */
+      /*                                          Upp. Bounds   Var. Size (T/F) */
+      /* cell array */
+      /* cell array element */
+      /* %%%%% Setup %%%%%% */
+      /* Proceed if the proportion of pixels classified as skin within the ROI from the selected region was  */
+      /* above the specified threshold. If not, it is likely that skin-segmentation completely segmented  */
+      /* the ROI. If not, diagnostic information is not displayed to avoid confusion because the depiction */
+      /* of candidate regions and a selected region may make it appear that the skin-detection algorithm  */
+      /* was successful for the ith frame. */
+      if (!b_ROIDiagnostic_ROISkin_ith.ProportionSkinPixelsTooLow) {
+        /* %%%%% Assign linear indices and flags to specify region status (candidate, rejected) %%%%%% */
+        /* Note: RegionSelectedLinIdx already assigned. */
+        /* Flag indicating a region was selected  */
+        RegionSelectedAnyTF = ((RegionSelectedLinIdx_size[0] != 0) &&
+          (RegionSelectedLinIdx_size[1] != 0));
+
+        /* Linear index of rejected regions */
+        /* Local function. */
+        /*  column vector; type uint16 */
+        /*  scalar; type uint16 */
+        /* end main function */
+        /* ============================================================================================= */
+        /* Local functions */
+        /* ============================================================================================= */
+        /* ============================================================================================= */
+        /* FindRejectedRegions   Return a linear index of rejected regions. */
+        /*  */
+        /*     Note: The linear index will be in the order of least to greatest. */
+        /* Inline function */
+        Counter_True = 0U;
+        for (c_i = 0; c_i < NRegions; c_i++) {
+          /* If false value */
+          if (!c_RegionPassAllThresholdsTF_Log[c_i]) {
+            Counter_True++;
+            RegionPoints_RGBProbSkin_data[Counter_True - 1] = (uint16_T)(c_i + 1);
+          }
         }
-      }
 
-      /* Trim unassigned preallocated elements */
-      if (Counter_True == 0) {
-        RegionPoints_RGBProbSkin_size[0] = 0;
-      } else {
-        RegionPoints_RGBProbSkin_size[0] = Counter_True;
-      }
+        /* Trim unassigned preallocated elements */
+        if (Counter_True == 0) {
+          RegionPoints_RGBProbSkin_size[0] = 0;
+        } else {
+          RegionPoints_RGBProbSkin_size[0] = Counter_True;
+        }
 
-      /* Assign number of rejected regions */
-      /* Flag indicating at least one region was rejected  */
-      RegionsRejectedAnyTF = (Counter_True != 0);
+        /* Assign number of rejected regions */
+        /* Flag indicating at least one region was rejected  */
+        RegionsRejectedAnyTF = (Counter_True != 0);
 
-      /* Assert value to prevent dynamic memory allocation */
-      /* Linear index of candidate regions */
-      /* Local function. */
-      /*  column vector; type uint16 */
-      /*  scalar; type uint16 */
-      /* end local function */
-      /* ============================================================================================= */
-      /* FindCandidateRegions   Return a linear index of candidate regions. */
-      /*  */
-      /*     Description: */
-      /*  */
-      /*     Return a linear index of candidate regions. Determine whether a region is a candidate region  */
-      /*     by determining whether the linear index of the region does not correspond to that of a  */
-      /*     selected region or a rejected region. */
-      /*  */
-      /*     The linear index will be in the order of least to greatest. */
-      /*  */
-      /*     Restrictions: */
-      /*  */
-      /*     - RegionSelectedLinIdx must be of length 0 or 1. */
-      /*     - RegionsRejectedLinIdx must contain non-repeating values and monotonically increase. */
-      /*     - The values of RegionSelectedLinIdx and RegionsRejectedLinIdx must be mutually exclusive. */
-      /* Inline function */
-      d_RegionPassAllThresholdsTF_Lin[0] = NRegions;
+        /* Assert value to prevent dynamic memory allocation */
+        /* Linear index of candidate regions */
+        /* Local function. */
+        /*  column vector; type uint16 */
+        /*  scalar; type uint16 */
+        /* end local function */
+        /* ============================================================================================= */
+        /* FindCandidateRegions   Return a linear index of candidate regions. */
+        /*  */
+        /*     Description: */
+        /*  */
+        /*     Return a linear index of candidate regions. Determine whether a region is a candidate region  */
+        /*     by determining whether the linear index of the region does not correspond to that of a  */
+        /*     selected region or a rejected region. */
+        /*  */
+        /*     The linear index will be in the order of least to greatest. */
+        /*  */
+        /*     Restrictions: */
+        /*  */
+        /*     - RegionSelectedLinIdx must be of length 0 or 1. */
+        /*     - RegionsRejectedLinIdx must contain non-repeating values and monotonically increase. */
+        /*     - The values of RegionSelectedLinIdx and RegionsRejectedLinIdx must be mutually exclusive. */
+        /* Inline function */
+        d_RegionPassAllThresholdsTF_Lin[0] = NRegions;
 
-      /* If at least one rejected region */
-      if (Counter_True != 0) {
-        /* If at least one region is not rejected */
-        if (Counter_True != NRegions) {
-          MaxPoints = 0U;
-          Counter_False = 0U;
-          for (c_i = 0; c_i < NRegions; c_i++) {
-            j = MaxPoints;
-            CompletelyContainedTF = false;
-            exitg1 = false;
-            while ((!exitg1) && (j < Counter_True)) {
-              j++;
-              if (c_i + 1 == RegionPoints_RGBProbSkin_data[j - 1]) {
-                CompletelyContainedTF = true;
-                MaxPoints = j;
-                exitg1 = true;
+        /* If at least one rejected region */
+        if (Counter_True != 0) {
+          /* If at least one region is not rejected */
+          if (Counter_True != NRegions) {
+            MaxPoints = 0U;
+            Counter_False = 0U;
+            for (c_i = 0; c_i < NRegions; c_i++) {
+              j = MaxPoints;
+              CompletelyContainedTF = false;
+              exitg1 = false;
+              while ((!exitg1) && (j < Counter_True)) {
+                j++;
+                if (c_i + 1 == RegionPoints_RGBProbSkin_data[j - 1]) {
+                  CompletelyContainedTF = true;
+                  MaxPoints = j;
+                  exitg1 = true;
+                }
               }
-            }
 
-            if (!CompletelyContainedTF) {
-              /* If at least one selected region */
-              if ((RegionSelectedLinIdx_size[0] != 0) &&
-                  (RegionSelectedLinIdx_size[1] != 0)) {
-                /* If linear index is not the index of the selected region */
-                i_size[0] = 1;
-                i_size[1] = 1;
-                TrueCount_data[0] = (c_i + 1 != RegionSelectedLinIdx_data[0]);
-                if (b_ifWhileCond(TrueCount_data, i_size)) {
+              if (!CompletelyContainedTF) {
+                /* If at least one selected region */
+                if ((RegionSelectedLinIdx_size[0] != 0) &&
+                    (RegionSelectedLinIdx_size[1] != 0)) {
+                  /* If linear index is not the index of the selected region */
+                  i_size[0] = 1;
+                  i_size[1] = 1;
+                  TrueCount_data[0] = (c_i + 1 != RegionSelectedLinIdx_data[0]);
+                  if (b_ifWhileCond(TrueCount_data, i_size)) {
+                    Counter_False++;
+
+                    /* Add linear index as candidate linear index */
+                    c_RegionPassAllThresholdsTF_Lin[Counter_False - 1] =
+                      (uint16_T)(c_i + 1);
+                  }
+
+                  /* If no region was selected     */
+                } else {
                   Counter_False++;
 
                   /* Add linear index as candidate linear index */
                   c_RegionPassAllThresholdsTF_Lin[Counter_False - 1] = (uint16_T)
                     (c_i + 1);
                 }
+              }
+            }
 
-                /* If no region was selected     */
-              } else {
+            /* Trim unused preallocated elements */
+            if (Counter_False == 0) {
+              d_RegionPassAllThresholdsTF_Lin[0] = 0;
+            } else {
+              d_RegionPassAllThresholdsTF_Lin[0] = Counter_False;
+            }
+
+            /* Assign number of candidate regions */
+            /* If all regions rejected          */
+          } else {
+            d_RegionPassAllThresholdsTF_Lin[0] = 0;
+
+            /* Assign number of candidate regions */
+            Counter_False = 0U;
+          }
+
+          /* If no rejected regions     */
+        } else {
+          /* If at least one selected region */
+          if ((RegionSelectedLinIdx_size[0] != 0) && (RegionSelectedLinIdx_size
+               [1] != 0)) {
+            /* Note: length is NRegions - 1 because there can only be one selected region. */
+            d_RegionPassAllThresholdsTF_Lin[0] = NRegions - 1;
+            Counter_False = 0U;
+            if (0 <= NRegions - 1) {
+              i_size[0] = 1;
+              i_size[1] = 1;
+            }
+
+            for (c_i = 0; c_i < NRegions; c_i++) {
+              TrueCount_data[0] = (c_i + 1 != RegionSelectedLinIdx_data[0]);
+              if (b_ifWhileCond(TrueCount_data, i_size)) {
                 Counter_False++;
-
-                /* Add linear index as candidate linear index */
                 c_RegionPassAllThresholdsTF_Lin[Counter_False - 1] = (uint16_T)
                   (c_i + 1);
               }
             }
-          }
 
-          /* Trim unused preallocated elements */
-          if (Counter_False == 0) {
-            d_RegionPassAllThresholdsTF_Lin[0] = 0;
+            /* Assign number of candidate regions */
+            /* If no region was selected */
           } else {
-            d_RegionPassAllThresholdsTF_Lin[0] = Counter_False;
+            for (c_i = 0; c_i < NRegions; c_i++) {
+              c_RegionPassAllThresholdsTF_Lin[c_i] = (uint16_T)(c_i + 1);
+            }
+
+            /* Assign number of candidate regions */
+            Counter_False = (uint16_T)NRegions;
           }
-
-          /* Assign number of candidate regions */
-          /* If all regions rejected          */
-        } else {
-          d_RegionPassAllThresholdsTF_Lin[0] = 0;
-
-          /* Assign number of candidate regions */
-          Counter_False = 0U;
         }
 
-        /* If no rejected regions     */
-      } else {
-        /* If at least one selected region */
-        if ((RegionSelectedLinIdx_size[0] != 0) && (RegionSelectedLinIdx_size[1]
-             != 0)) {
-          /* Note: length is NRegions - 1 because there can only be one selected region. */
-          d_RegionPassAllThresholdsTF_Lin[0] = NRegions - 1;
-          Counter_False = 0U;
-          if (0 <= NRegions - 1) {
-            i_size[0] = 1;
-            i_size[1] = 1;
+        emxInitMatrix_cell_wrap_32(RegionBoundaries, true);
+
+        /* end local function */
+        /* Flag indicating at least one region is a candidate region  */
+        RegionsCandidateAnyTF = (Counter_False != 0);
+
+        /* Assert value to prevent dynamic memory allocation */
+        /* %%%%% Record Boundaries of Regions %%%%%% */
+        /* Return an index of the pixels that lie on the external (perimeter) and internal (holes) */
+        /* boundaries for each region. As the pixels have been dilated (for visibility on the output   */
+        /* video), the pixels include pixels near the boundary as well. */
+        /* 1 x 3 cell array; elements: N pixels x 1 column vector, type uint32. */
+        /* Note: SkinDetect_RegionBoundariesByCategory is a custom function located within folder    */
+        /* 'FacePulseRate'.     */
+        c_SkinDetect_RegionBoundariesBy(emlrtRootTLSGlobal, RegionSelectedAnyTF,
+          Counter_False, Counter_True, RegionSelectedLinIdx_data,
+          b_RegionIndices.data, c_RegionPassAllThresholdsTF_Lin,
+          RegionPoints_RGBProbSkin_data, VideoReadConfig_VidObjHeight,
+          BoundingBoxSkin, RegionNPixels_data, BoundingBoxSkin[3],
+          BoundingBoxSkin[2], RegionBoundaries);
+
+        /* Store linear index of boundary pixels for later use for displaying skin regions on output  */
+        /* video:  */
+        /* Selected region */
+        if (RegionSelectedAnyTF) {
+          /* Assign boundary index to struct   */
+          /* N pixels x 1 column vector; type uint32. */
+          b_i =
+            b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->size[0]
+            * b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->size
+            [1];
+          b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->size[0] =
+            RegionBoundaries[0].f1->size[0];
+          b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->size[1] =
+            1;
+          emxEnsureCapacity_uint32_T
+            (b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx, b_i);
+          NCentroids = RegionBoundaries[0].f1->size[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->
+              data[b_i] = RegionBoundaries[0].f1->data[b_i];
+          }
+        }
+
+        /* Candidate regions */
+        if (RegionsCandidateAnyTF) {
+          /* Assign boundary index to struct   */
+          /* N pixels x 1 column vector; type uint32. */
+          b_i =
+            b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->size[0]
+            * b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->size
+            [1];
+          b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->size[0] =
+            RegionBoundaries[1].f1->size[0];
+          b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->size[1] =
+            1;
+          emxEnsureCapacity_uint32_T
+            (b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin, b_i);
+          NCentroids = RegionBoundaries[1].f1->size[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->
+              data[b_i] = RegionBoundaries[1].f1->data[b_i];
+          }
+        }
+
+        /* Rejected regions */
+        if (RegionsRejectedAnyTF) {
+          /* Assign boundary index to struct   */
+          /* N pixels x 1 column vector; type uint32. */
+          b_i =
+            b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->size[0]
+            * b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->size
+            [1];
+          b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->size[0] =
+            RegionBoundaries[2].f1->size[0];
+          b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->size[1] =
+            1;
+          emxEnsureCapacity_uint32_T
+            (b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx, b_i);
+          NCentroids = RegionBoundaries[2].f1->size[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->
+              data[b_i] = RegionBoundaries[2].f1->data[b_i];
+          }
+        }
+
+        emxFreeMatrix_cell_wrap_32(RegionBoundaries);
+
+        /* %%%%% Record Centroids of Regions %%%%%% */
+        /* Adjust the [X, Y] coordinates to undo change to [X, Y] as a result of cropping. This  */
+        /* adjustment will place [X, Y] in the coordinate plane of the full (uncropped) frame so that  */
+        /* [X, Y] can be used in the output video. To do so, add back distances of X and Y that were  */
+        /* changed by cropping. */
+        /* Note: 1 pixel length is subtracted from the [X, Y] that is added back because the previous  */
+        /* cropping changed [Xoriginal, Yoriginal] to [1, 1]; that is, the cropping moved the coordinates  */
+        /* a distance of Xoriginal - 1 and Yoriginal - 1. */
+        /* Called during code generation */
+        /* M regions x 2 matrix; type int16 */
+        /* Scalars; type int16. */
+        /* The X-coordinate column */
+        for (c_i = 0; c_i < NRegions; c_i++) {
+          RegionCentroids_Uncrop_data[c_i] = (int16_T)((int16_T)
+            (RegionCentroids_data[c_i] + BoundingBoxSkin[0]) - 1);
+          RegionCentroids_Uncrop_data[c_i + NRegions] = (int16_T)((int16_T)
+            (RegionCentroids_data[c_i + RegionCentroids_size_idx_0] +
+             BoundingBoxSkin[1]) - 1);
+        }
+
+        /* Called outsize of code generation            */
+        /* Assign [X, Y] coordinates of region centroids to ith row of nested-struct RegionCentroids; */
+        /* assign to the field corresponding to regions status (selected, candidate, rejected). */
+        /* Type uint16. */
+        if (RegionSelectedAnyTF) {
+          /* if at least one region */
+          /* 1 selected region x 2 row vector; type uint16. */
+          NRegions_ith = RegionSelectedLinIdx_size[0] *
+            RegionSelectedLinIdx_size[1];
+          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_SelectedXY.size[0] =
+            NRegions_ith;
+          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_SelectedXY.size[1] = 2;
+          if (0 <= NRegions_ith - 1) {
+            b_ROIDiagnostic_ROISkin_ith.RegionCentroids_SelectedXY.data[0] =
+              RegionCentroids_Uncrop_data[RegionSelectedLinIdx_data[0] - 1];
+            b_ROIDiagnostic_ROISkin_ith.RegionCentroids_SelectedXY.data[NRegions_ith]
+              = RegionCentroids_Uncrop_data[(RegionSelectedLinIdx_data[0] +
+              NRegions) - 1];
+          }
+        }
+
+        if (RegionsCandidateAnyTF) {
+          /* if at least one region */
+          /* M candidate regions x 2 matrix; type uint16. */
+          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.size[0] =
+            d_RegionPassAllThresholdsTF_Lin[0];
+          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.size[1] = 2;
+          NCentroids = d_RegionPassAllThresholdsTF_Lin[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.data[b_i] =
+              RegionCentroids_Uncrop_data[c_RegionPassAllThresholdsTF_Lin[b_i] -
+              1];
           }
 
-          for (c_i = 0; c_i < NRegions; c_i++) {
-            TrueCount_data[0] = (c_i + 1 != RegionSelectedLinIdx_data[0]);
-            if (b_ifWhileCond(TrueCount_data, i_size)) {
-              Counter_False++;
-              c_RegionPassAllThresholdsTF_Lin[Counter_False - 1] = (uint16_T)
-                (c_i + 1);
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.data[b_i +
+              b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.size[0]] =
+              RegionCentroids_Uncrop_data[(c_RegionPassAllThresholdsTF_Lin[b_i]
+              + NRegions) - 1];
+          }
+        }
+
+        if (RegionsRejectedAnyTF) {
+          /* if at least one region */
+          /* M rejected regions x 2 matrix; type uint16. */
+          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.size[0] =
+            RegionPoints_RGBProbSkin_size[0];
+          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.size[1] = 2;
+          NCentroids = RegionPoints_RGBProbSkin_size[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.data[b_i] =
+              RegionCentroids_Uncrop_data[RegionPoints_RGBProbSkin_data[b_i] - 1];
+          }
+
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.data[b_i +
+              b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.size[0]] =
+              RegionCentroids_Uncrop_data[(RegionPoints_RGBProbSkin_data[b_i] +
+              NRegions) - 1];
+          }
+        }
+
+        /* %%%%% Record the center point [X, Y] coordinates of the predicted ROI %%%%%% */
+        /* Record the center point [X, Y] coordinates of the predicted ROI for the use of diagnosing  */
+        /* skin-detection errors later. The predicted ROI will be superimposed on the output video if  */
+        /* WriteVideoShowROISkinDiagnosisTF, which is an argument to function FacePulseRate, is true. In  */
+        /* diagnosis, the proximity of the centroid of the selected region to the predicted-ROI center is  */
+        /* inspected. This proximity is used, in part, to determine which of the candidate regions is */
+        /* selected. Inspection can determine whether the proximity weight should be fine tuned depending  */
+        /* on the desirability of the selected skin region. */
+        /* Adjust the [X, Y] coordinates to undo change to [X, Y] as a result of cropping. This  */
+        /* adjustment will place [X, Y] in the coordinate plane of the full (uncropped) frame so that  */
+        /* [X, Y] can be used in the output video. To do so, add back distances of X and Y that were  */
+        /* changed by cropping. */
+        /* Convert from type int16 to type uint16 because signed operations not conducted with this */
+        /* variable. */
+        /* If at least one region passed the rejection thresholds (resulting in at least one selected or */
+        /* candidate region). Otherwise, this information wasn't used in the assessment of regions for  */
+        /* this frame. */
+        if (RegionSelectedAnyTF || RegionsCandidateAnyTF) {
+          /* 1 x 2 row vector; type uint16. */
+          b_ROIDiagnostic_ROISkin_ith.PredictedROI_center.size[0] = 1;
+          b_ROIDiagnostic_ROISkin_ith.PredictedROI_center.size[1] = 2;
+          b_ROIDiagnostic_ROISkin_ith.PredictedROI_center.data[0] = (uint16_T)
+            ((int16_T)(ROIPredicted_CenterX + BoundingBoxSkin[0]) - 1);
+          b_ROIDiagnostic_ROISkin_ith.PredictedROI_center.data[1] = (uint16_T)
+            ((int16_T)(ROIPredicted_CenterY + BoundingBoxSkin[1]) - 1);
+        }
+
+        /* %%%%% Record RGB probabilities of regions %%%%%% */
+        /* Assign probabilities of regions to ith row of nested-struct RegionScores; assign to the RGB */
+        /* probability field corresponding to region status (selected, candidate, rejected).  */
+        /* To conserve memory, convert RGB probability to type uint8 (multiply by 100 to remove  */
+        /* fraction); uint8 conversion automatically rounds value to integer, which is necessary later   */
+        /* when using the values as indices. */
+        if (RegionSelectedAnyTF) {
+          /* if at least one region */
+          /* Scalar; type uint8. */
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedRGBProb.size[0] =
+            RegionSelectedLinIdx_size[0];
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedRGBProb.size[1] =
+            RegionSelectedLinIdx_size[1];
+          NCentroids = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size
+            [1];
+          if (0 <= NCentroids - 1) {
+            b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedRGBProb.data[0] =
+              (uint8_T)muDoubleScalarRound
+              (RegionRGBProbSkin_data[RegionSelectedLinIdx_data[0] - 1] * 100.0);
+          }
+        }
+
+        if (RegionsCandidateAnyTF) {
+          /* if at least one region */
+          /* M candidate regions x 1 column vector; type uint8. */
+          NRegions_ith = d_RegionPassAllThresholdsTF_Lin[0];
+          NCentroids = d_RegionPassAllThresholdsTF_Lin[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_tmp_data[b_i] = (uint8_T)muDoubleScalarRound
+              (RegionRGBProbSkin_data[c_RegionPassAllThresholdsTF_Lin[b_i] - 1] *
+               100.0);
+          }
+
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateRGBProb.size[0] =
+            d_RegionPassAllThresholdsTF_Lin[0];
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateRGBProb.size[1] = 1;
+          if (0 <= NRegions_ith - 1) {
+            memcpy
+              (&b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateRGBProb.data[0],
+               &b_tmp_data[0], NRegions_ith * sizeof(uint8_T));
+          }
+        }
+
+        if (RegionsRejectedAnyTF) {
+          /* if at least one region */
+          /* M rejected regions x 1 column vector; type uint8. */
+          NRegions_ith = RegionPoints_RGBProbSkin_size[0];
+          NCentroids = RegionPoints_RGBProbSkin_size[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_tmp_data[b_i] = (uint8_T)muDoubleScalarRound
+              (RegionRGBProbSkin_data[RegionPoints_RGBProbSkin_data[b_i] - 1] *
+               100.0);
+          }
+
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedRGBProb.size[0] =
+            RegionPoints_RGBProbSkin_size[0];
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedRGBProb.size[1] = 1;
+          if (0 <= NRegions_ith - 1) {
+            memcpy
+              (&b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedRGBProb.data[0],
+               &b_tmp_data[0], NRegions_ith * sizeof(uint8_T));
+          }
+        }
+
+        /* %%%%% Record YCbCr Z-Scores of Regions %%%%%% */
+        /* Assign z-scores of regions to ith row of nested-struct RegionScores; assign to the YCbCr  */
+        /* z-scores field corresponding to region status (selected, candidate, rejected). */
+        /* Round to 2 decimal places for presentation purposes. The round(X * 100) * .01 is used because  */
+        /* code generation does not support round(X, 2). */
+        if (RegionSelectedAnyTF) {
+          /* if at least one region */
+          /* 1 selected region x 3 row vector; type single.         */
+          NCentroids = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size
+            [1];
+          if (0 <= NCentroids - 1) {
+            HBounded_Single_data[0] = RegionZ_Y_data[RegionSelectedLinIdx_data[0]
+              - 1] * 100.0F;
+          }
+
+          NRegions_ith = RegionSelectedLinIdx_size[0] *
+            RegionSelectedLinIdx_size[1];
+          for (ElementIdx = 0; ElementIdx < NRegions_ith; ElementIdx++) {
+            HBounded_Single_data[0] = muSingleScalarRound(HBounded_Single_data[0]);
+          }
+
+          for (b_i = 0; b_i < NRegions_ith; b_i++) {
+            HBounded_Single_data[0] *= 0.01F;
+          }
+
+          NCentroids = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size
+            [1];
+          if (0 <= NCentroids - 1) {
+            SBounded_Single_data[0] = RegionZ_Cb_data[RegionSelectedLinIdx_data
+              [0] - 1] * 100.0F;
+          }
+
+          NRegions_ith = RegionSelectedLinIdx_size[0] *
+            RegionSelectedLinIdx_size[1];
+          for (ElementIdx = 0; ElementIdx < NRegions_ith; ElementIdx++) {
+            SBounded_Single_data[0] = muSingleScalarRound(SBounded_Single_data[0]);
+          }
+
+          for (b_i = 0; b_i < NRegions_ith; b_i++) {
+            SBounded_Single_data[0] *= 0.01F;
+          }
+
+          NCentroids = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size
+            [1];
+          if (0 <= NCentroids - 1) {
+            YBounded_Single_data[0] = RegionZ_Cr_data[RegionSelectedLinIdx_data
+              [0] - 1] * 100.0F;
+          }
+
+          NRegions_ith = RegionSelectedLinIdx_size[0] *
+            RegionSelectedLinIdx_size[1];
+          for (ElementIdx = 0; ElementIdx < NRegions_ith; ElementIdx++) {
+            YBounded_Single_data[0] = muSingleScalarRound(YBounded_Single_data[0]);
+          }
+
+          for (b_i = 0; b_i < NRegions_ith; b_i++) {
+            YBounded_Single_data[0] *= 0.01F;
+          }
+
+          if ((RegionSelectedLinIdx_size[0] != 0) && (RegionSelectedLinIdx_size
+               [1] != 0)) {
+            NRegions_ith = 1;
+          } else if ((RegionSelectedLinIdx_size[0] != 0) &&
+                     (RegionSelectedLinIdx_size[1] != 0)) {
+            NRegions_ith = 1;
+          } else if ((RegionSelectedLinIdx_size[0] != 0) &&
+                     (RegionSelectedLinIdx_size[1] != 0)) {
+            NRegions_ith = 1;
+          } else {
+            NRegions_ith = (RegionSelectedLinIdx_size[0] > 0);
+            if (RegionSelectedLinIdx_size[0] > NRegions_ith) {
+              NRegions_ith = 1;
+            }
+
+            if (RegionSelectedLinIdx_size[0] > NRegions_ith) {
+              NRegions_ith = 1;
             }
           }
 
-          /* Assign number of candidate regions */
-          /* If no region was selected */
-        } else {
-          for (c_i = 0; c_i < NRegions; c_i++) {
-            c_RegionPassAllThresholdsTF_Lin[c_i] = (uint16_T)(c_i + 1);
+          CompletelyContainedTF = (NRegions_ith == 0);
+          if (CompletelyContainedTF || ((RegionSelectedLinIdx_size[0] != 0) &&
+               (RegionSelectedLinIdx_size[1] != 0))) {
+            input_sizes_idx_1 = (int8_T)RegionSelectedLinIdx_size[1];
+          } else {
+            input_sizes_idx_1 = 0;
           }
 
-          /* Assign number of candidate regions */
-          Counter_False = (uint16_T)NRegions;
-        }
-      }
-
-      /* end local function */
-      /* Flag indicating at least one region is a candidate region  */
-      RegionsCandidateAnyTF = (Counter_False != 0);
-
-      /* Assert value to prevent dynamic memory allocation */
-      /* %%%%% Record Boundaries of Regions %%%%%% */
-      /* Return an index of the pixels that lie on the external (perimeter) and internal (holes) */
-      /* boundaries for each region. As the pixels have been dilated (for visibility on the output   */
-      /* video), the pixels include pixels near the boundary as well. */
-      /* 1 x 3 cell array; elements: N pixels x 1 column vector, type uint32. */
-      /* Note: SkinDetect_RegionBoundariesByCategory is a custom function located within folder    */
-      /* 'FacePulseRate'.     */
-      c_SkinDetect_RegionBoundariesBy(emlrtRootTLSGlobal, RegionSelectedAnyTF,
-        Counter_False, Counter_True, RegionSelectedLinIdx_data,
-        b_RegionIndices.data, c_RegionPassAllThresholdsTF_Lin,
-        RegionPoints_RGBProbSkin_data, VideoReadConfig_VidObjHeight,
-        BoundingBoxSkin, RegionNPixels_data, BoundingBoxSkin[3],
-        BoundingBoxSkin[2], RegionBoundaries);
-
-      /* Store linear index of boundary pixels for later use for displaying skin regions on output  */
-      /* video:  */
-      /* Selected region */
-      if (RegionSelectedAnyTF) {
-        /* Assign boundary index to struct   */
-        /* N pixels x 1 column vector; type uint32. */
-        b_i = b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->size
-          [0] *
-          b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->size[1];
-        b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->size[0] =
-          RegionBoundaries[0].f1->size[0];
-        b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->size[1] = 1;
-        emxEnsureCapacity_uint32_T
-          (b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx, b_i);
-        NCentroids = RegionBoundaries[0].f1->size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_SelectedLinIdx->data[b_i]
-            = RegionBoundaries[0].f1->data[b_i];
-        }
-      }
-
-      /* Candidate regions */
-      if (RegionsCandidateAnyTF) {
-        /* Assign boundary index to struct   */
-        /* N pixels x 1 column vector; type uint32. */
-        b_i = b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->size
-          [0] *
-          b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->size[1];
-        b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->size[0] =
-          RegionBoundaries[1].f1->size[0];
-        b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->size[1] = 1;
-        emxEnsureCapacity_uint32_T
-          (b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin, b_i);
-        NCentroids = RegionBoundaries[1].f1->size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.c_RegionBoundaries_CandidateLin->data[b_i]
-            = RegionBoundaries[1].f1->data[b_i];
-        }
-      }
-
-      /* Rejected regions */
-      if (RegionsRejectedAnyTF) {
-        /* Assign boundary index to struct   */
-        /* N pixels x 1 column vector; type uint32. */
-        b_i = b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->size
-          [0] *
-          b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->size[1];
-        b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->size[0] =
-          RegionBoundaries[2].f1->size[0];
-        b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->size[1] = 1;
-        emxEnsureCapacity_uint32_T
-          (b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx, b_i);
-        NCentroids = RegionBoundaries[2].f1->size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.RegionBoundaries_RejectedLinIdx->data[b_i]
-            = RegionBoundaries[2].f1->data[b_i];
-        }
-      }
-
-      /* %%%%% Record Centroids of Regions %%%%%% */
-      /* Adjust the [X, Y] coordinates to undo change to [X, Y] as a result of cropping. This  */
-      /* adjustment will place [X, Y] in the coordinate plane of the full (uncropped) frame so that  */
-      /* [X, Y] can be used in the output video. To do so, add back distances of X and Y that were  */
-      /* changed by cropping. */
-      /* Note: 1 pixel length is subtracted from the [X, Y] that is added back because the previous  */
-      /* cropping changed [Xoriginal, Yoriginal] to [1, 1]; that is, the cropping moved the coordinates  */
-      /* a distance of Xoriginal - 1 and Yoriginal - 1. */
-      /* Called during code generation */
-      /* M regions x 2 matrix; type int16 */
-      /* Scalars; type int16. */
-      /* The X-coordinate column */
-      for (c_i = 0; c_i < NRegions; c_i++) {
-        RegionCentroids_Uncrop_data[c_i] = (int16_T)((int16_T)
-          (RegionCentroids_data[c_i] + BoundingBoxSkin[0]) - 1);
-        RegionCentroids_Uncrop_data[c_i + NRegions] = (int16_T)((int16_T)
-          (RegionCentroids_data[c_i + RegionCentroids_size_idx_0] +
-           BoundingBoxSkin[1]) - 1);
-      }
-
-      /* Called outsize of code generation            */
-      /* Assign [X, Y] coordinates of region centroids to ith row of nested-struct RegionCentroids; */
-      /* assign to the field corresponding to regions status (selected, candidate, rejected). */
-      /* Type uint16. */
-      if (RegionSelectedAnyTF) {
-        /* if at least one region */
-        /* 1 selected region x 2 row vector; type uint16. */
-        NRegions_ith = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size
-          [1];
-        b_ROIDiagnostic_ROISkin_ith.RegionCentroids_SelectedXY.size[0] =
-          NRegions_ith;
-        b_ROIDiagnostic_ROISkin_ith.RegionCentroids_SelectedXY.size[1] = 2;
-        if (0 <= NRegions_ith - 1) {
-          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_SelectedXY.data[0] =
-            RegionCentroids_Uncrop_data[RegionSelectedLinIdx_data[0] - 1];
-          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_SelectedXY.data[NRegions_ith]
-            = RegionCentroids_Uncrop_data[(RegionSelectedLinIdx_data[0] +
-            NRegions) - 1];
-        }
-      }
-
-      if (RegionsCandidateAnyTF) {
-        /* if at least one region */
-        /* M candidate regions x 2 matrix; type uint16. */
-        b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.size[0] =
-          d_RegionPassAllThresholdsTF_Lin[0];
-        b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.size[1] = 2;
-        NCentroids = d_RegionPassAllThresholdsTF_Lin[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.data[b_i] =
-            RegionCentroids_Uncrop_data[c_RegionPassAllThresholdsTF_Lin[b_i] - 1];
-        }
-
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.data[b_i +
-            b_ROIDiagnostic_ROISkin_ith.RegionCentroids_CandidateXY.size[0]] =
-            RegionCentroids_Uncrop_data[(c_RegionPassAllThresholdsTF_Lin[b_i] +
-            NRegions) - 1];
-        }
-      }
-
-      if (RegionsRejectedAnyTF) {
-        /* if at least one region */
-        /* M rejected regions x 2 matrix; type uint16. */
-        b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.size[0] =
-          RegionPoints_RGBProbSkin_size[0];
-        b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.size[1] = 2;
-        NCentroids = RegionPoints_RGBProbSkin_size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.data[b_i] =
-            RegionCentroids_Uncrop_data[RegionPoints_RGBProbSkin_data[b_i] - 1];
-        }
-
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.data[b_i +
-            b_ROIDiagnostic_ROISkin_ith.RegionCentroids_RejectedXY.size[0]] =
-            RegionCentroids_Uncrop_data[(RegionPoints_RGBProbSkin_data[b_i] +
-            NRegions) - 1];
-        }
-      }
-
-      /* %%%%% Record the center point [X, Y] coordinates of the predicted ROI %%%%%% */
-      /* Record the center point [X, Y] coordinates of the predicted ROI for the use of diagnosing  */
-      /* skin-detection errors later. The predicted ROI will be superimposed on the output video if  */
-      /* WriteVideoShowROISkinDiagnosisTF, which is an argument to function FacePulseRate, is true. In  */
-      /* diagnosis, the proximity of the centroid of the selected region to the predicted-ROI center is  */
-      /* inspected. This proximity is used, in part, to determine which of the candidate regions is */
-      /* selected. Inspection can determine whether the proximity weight should be fine tuned depending  */
-      /* on the desirability of the selected skin region. */
-      /* Adjust the [X, Y] coordinates to undo change to [X, Y] as a result of cropping. This  */
-      /* adjustment will place [X, Y] in the coordinate plane of the full (uncropped) frame so that  */
-      /* [X, Y] can be used in the output video. To do so, add back distances of X and Y that were  */
-      /* changed by cropping. */
-      /* Convert from type int16 to type uint16 because signed operations not conducted with this */
-      /* variable. */
-      /* If at least one region passed the rejection thresholds (resulting in at least one selected or */
-      /* candidate region). Otherwise, this information wasn't used in the assessment of regions for  */
-      /* this frame. */
-      if (RegionSelectedAnyTF || RegionsCandidateAnyTF) {
-        /* 1 x 2 row vector; type uint16. */
-        b_ROIDiagnostic_ROISkin_ith.PredictedROI_center.size[0] = 1;
-        b_ROIDiagnostic_ROISkin_ith.PredictedROI_center.size[1] = 2;
-        b_ROIDiagnostic_ROISkin_ith.PredictedROI_center.data[0] = (uint16_T)
-          ((int16_T)(ROIPredicted_CenterX + BoundingBoxSkin[0]) - 1);
-        b_ROIDiagnostic_ROISkin_ith.PredictedROI_center.data[1] = (uint16_T)
-          ((int16_T)(ROIPredicted_CenterY + BoundingBoxSkin[1]) - 1);
-      }
-
-      /* %%%%% Record RGB probabilities of regions %%%%%% */
-      /* Assign probabilities of regions to ith row of nested-struct RegionScores; assign to the RGB */
-      /* probability field corresponding to region status (selected, candidate, rejected).  */
-      /* To conserve memory, convert RGB probability to type uint8 (multiply by 100 to remove  */
-      /* fraction); uint8 conversion automatically rounds value to integer, which is necessary later   */
-      /* when using the values as indices. */
-      if (RegionSelectedAnyTF) {
-        /* if at least one region */
-        /* Scalar; type uint8. */
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedRGBProb.size[0] =
-          RegionSelectedLinIdx_size[0];
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedRGBProb.size[1] =
-          RegionSelectedLinIdx_size[1];
-        NCentroids = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size[1];
-        if (0 <= NCentroids - 1) {
-          b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedRGBProb.data[0] =
-            (uint8_T)muDoubleScalarRound
-            (RegionRGBProbSkin_data[RegionSelectedLinIdx_data[0] - 1] * 100.0);
-        }
-      }
-
-      if (RegionsCandidateAnyTF) {
-        /* if at least one region */
-        /* M candidate regions x 1 column vector; type uint8. */
-        NRegions_ith = d_RegionPassAllThresholdsTF_Lin[0];
-        NCentroids = d_RegionPassAllThresholdsTF_Lin[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_tmp_data[b_i] = (uint8_T)muDoubleScalarRound
-            (RegionRGBProbSkin_data[c_RegionPassAllThresholdsTF_Lin[b_i] - 1] *
-             100.0);
-        }
-
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateRGBProb.size[0] =
-          d_RegionPassAllThresholdsTF_Lin[0];
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateRGBProb.size[1] = 1;
-        if (0 <= NRegions_ith - 1) {
-          memcpy
-            (&b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateRGBProb.data[0],
-             &b_tmp_data[0], NRegions_ith * sizeof(uint8_T));
-        }
-      }
-
-      if (RegionsRejectedAnyTF) {
-        /* if at least one region */
-        /* M rejected regions x 1 column vector; type uint8. */
-        NRegions_ith = RegionPoints_RGBProbSkin_size[0];
-        NCentroids = RegionPoints_RGBProbSkin_size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_tmp_data[b_i] = (uint8_T)muDoubleScalarRound
-            (RegionRGBProbSkin_data[RegionPoints_RGBProbSkin_data[b_i] - 1] *
-             100.0);
-        }
-
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedRGBProb.size[0] =
-          RegionPoints_RGBProbSkin_size[0];
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedRGBProb.size[1] = 1;
-        if (0 <= NRegions_ith - 1) {
-          memcpy(&b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedRGBProb.data
-                 [0], &b_tmp_data[0], NRegions_ith * sizeof(uint8_T));
-        }
-      }
-
-      /* %%%%% Record YCbCr Z-Scores of Regions %%%%%% */
-      /* Assign z-scores of regions to ith row of nested-struct RegionScores; assign to the YCbCr  */
-      /* z-scores field corresponding to region status (selected, candidate, rejected). */
-      /* Round to 2 decimal places for presentation purposes. The round(X * 100) * .01 is used because  */
-      /* code generation does not support round(X, 2). */
-      if (RegionSelectedAnyTF) {
-        /* if at least one region */
-        /* 1 selected region x 3 row vector; type single.         */
-        NCentroids = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size[1];
-        if (0 <= NCentroids - 1) {
-          HBounded_Single_data[0] = RegionZ_Y_data[RegionSelectedLinIdx_data[0]
-            - 1] * 100.0F;
-        }
-
-        NRegions_ith = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size
-          [1];
-        for (ElementIdx = 0; ElementIdx < NRegions_ith; ElementIdx++) {
-          HBounded_Single_data[0] = muSingleScalarRound(HBounded_Single_data[0]);
-        }
-
-        for (b_i = 0; b_i < NRegions_ith; b_i++) {
-          HBounded_Single_data[0] *= 0.01F;
-        }
-
-        NCentroids = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size[1];
-        if (0 <= NCentroids - 1) {
-          SBounded_Single_data[0] = RegionZ_Cb_data[RegionSelectedLinIdx_data[0]
-            - 1] * 100.0F;
-        }
-
-        NRegions_ith = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size
-          [1];
-        for (ElementIdx = 0; ElementIdx < NRegions_ith; ElementIdx++) {
-          SBounded_Single_data[0] = muSingleScalarRound(SBounded_Single_data[0]);
-        }
-
-        for (b_i = 0; b_i < NRegions_ith; b_i++) {
-          SBounded_Single_data[0] *= 0.01F;
-        }
-
-        NCentroids = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size[1];
-        if (0 <= NCentroids - 1) {
-          YBounded_Single_data[0] = RegionZ_Cr_data[RegionSelectedLinIdx_data[0]
-            - 1] * 100.0F;
-        }
-
-        NRegions_ith = RegionSelectedLinIdx_size[0] * RegionSelectedLinIdx_size
-          [1];
-        for (ElementIdx = 0; ElementIdx < NRegions_ith; ElementIdx++) {
-          YBounded_Single_data[0] = muSingleScalarRound(YBounded_Single_data[0]);
-        }
-
-        for (b_i = 0; b_i < NRegions_ith; b_i++) {
-          YBounded_Single_data[0] *= 0.01F;
-        }
-
-        if ((RegionSelectedLinIdx_size[0] != 0) && (RegionSelectedLinIdx_size[1]
-             != 0)) {
-          NRegions_ith = 1;
-        } else if ((RegionSelectedLinIdx_size[0] != 0) &&
-                   (RegionSelectedLinIdx_size[1] != 0)) {
-          NRegions_ith = 1;
-        } else if ((RegionSelectedLinIdx_size[0] != 0) &&
-                   (RegionSelectedLinIdx_size[1] != 0)) {
-          NRegions_ith = 1;
-        } else {
-          NRegions_ith = (RegionSelectedLinIdx_size[0] > 0);
-          if (RegionSelectedLinIdx_size[0] > NRegions_ith) {
-            NRegions_ith = 1;
+          if (CompletelyContainedTF || ((RegionSelectedLinIdx_size[0] != 0) &&
+               (RegionSelectedLinIdx_size[1] != 0))) {
+            b_input_sizes_idx_1 = (int8_T)RegionSelectedLinIdx_size[1];
+          } else {
+            b_input_sizes_idx_1 = 0;
           }
 
-          if (RegionSelectedLinIdx_size[0] > NRegions_ith) {
-            NRegions_ith = 1;
+          if (CompletelyContainedTF || ((RegionSelectedLinIdx_size[0] != 0) &&
+               (RegionSelectedLinIdx_size[1] != 0))) {
+            sizes_idx_1 = (int8_T)RegionSelectedLinIdx_size[1];
+          } else {
+            sizes_idx_1 = 0;
+          }
+
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.size[0] =
+            NRegions_ith;
+          b_i = input_sizes_idx_1 + b_input_sizes_idx_1;
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.size[1] = b_i
+            + sizes_idx_1;
+          NCentroids = input_sizes_idx_1;
+          if ((0 <= NCentroids - 1) && (0 <= NRegions_ith - 1)) {
+            b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.data[0] =
+              HBounded_Single_data[0];
+          }
+
+          NCentroids = b_input_sizes_idx_1;
+          if ((0 <= NCentroids - 1) && (0 <= NRegions_ith - 1)) {
+            b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.data[NRegions_ith
+              * input_sizes_idx_1] = SBounded_Single_data[0];
+          }
+
+          NCentroids = sizes_idx_1;
+          if ((0 <= NCentroids - 1) && (0 <= NRegions_ith - 1)) {
+            b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.data[NRegions_ith
+              * b_i] = YBounded_Single_data[0];
           }
         }
 
-        CompletelyContainedTF = (NRegions_ith == 0);
-        if (CompletelyContainedTF || ((RegionSelectedLinIdx_size[0] != 0) &&
-             (RegionSelectedLinIdx_size[1] != 0))) {
-          input_sizes_idx_1 = (int8_T)RegionSelectedLinIdx_size[1];
-        } else {
-          input_sizes_idx_1 = 0;
-        }
+        if (RegionsCandidateAnyTF) {
+          /* if at least one region   */
+          /* M candidate regions x 3 matrix; type single. */
+          b_i = Counter_False;
+          for (c_i = 0; c_i < b_i; c_i++) {
+            NRegions_ith = c_RegionPassAllThresholdsTF_Lin[c_i] - 1;
+            c_RegionScores_CandidateYCbCrZ_[c_i] = muSingleScalarRound
+              (RegionZ_Y_data[NRegions_ith] * 100.0F) * 0.01F;
+            c_RegionScores_CandidateYCbCrZ_[c_i + Counter_False] =
+              muSingleScalarRound(RegionZ_Cb_data[NRegions_ith] * 100.0F) *
+              0.01F;
+            c_RegionScores_CandidateYCbCrZ_[c_i + Counter_False * 2] =
+              muSingleScalarRound(RegionZ_Cr_data[NRegions_ith] * 100.0F) *
+              0.01F;
+          }
 
-        if (CompletelyContainedTF || ((RegionSelectedLinIdx_size[0] != 0) &&
-             (RegionSelectedLinIdx_size[1] != 0))) {
-          b_input_sizes_idx_1 = (int8_T)RegionSelectedLinIdx_size[1];
-        } else {
-          b_input_sizes_idx_1 = 0;
-        }
-
-        if (CompletelyContainedTF || ((RegionSelectedLinIdx_size[0] != 0) &&
-             (RegionSelectedLinIdx_size[1] != 0))) {
-          sizes_idx_1 = (int8_T)RegionSelectedLinIdx_size[1];
-        } else {
-          sizes_idx_1 = 0;
-        }
-
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.size[0] =
-          NRegions_ith;
-        b_i = input_sizes_idx_1 + b_input_sizes_idx_1;
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.size[1] = b_i +
-          sizes_idx_1;
-        NCentroids = input_sizes_idx_1;
-        if ((0 <= NCentroids - 1) && (0 <= NRegions_ith - 1)) {
-          b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.data[0] =
-            HBounded_Single_data[0];
-        }
-
-        NCentroids = b_input_sizes_idx_1;
-        if ((0 <= NCentroids - 1) && (0 <= NRegions_ith - 1)) {
-          b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.data[NRegions_ith
-            * input_sizes_idx_1] = SBounded_Single_data[0];
-        }
-
-        NCentroids = sizes_idx_1;
-        if ((0 <= NCentroids - 1) && (0 <= NRegions_ith - 1)) {
-          b_ROIDiagnostic_ROISkin_ith.RegionScores_SelectedYCbCrZ.data[NRegions_ith
-            * b_i] = YBounded_Single_data[0];
-        }
-      }
-
-      if (RegionsCandidateAnyTF) {
-        /* if at least one region   */
-        /* M candidate regions x 3 matrix; type single. */
-        b_i = Counter_False;
-        for (c_i = 0; c_i < b_i; c_i++) {
-          NRegions_ith = c_RegionPassAllThresholdsTF_Lin[c_i] - 1;
-          c_RegionScores_CandidateYCbCrZ_[c_i] = muSingleScalarRound
-            (RegionZ_Y_data[NRegions_ith] * 100.0F) * 0.01F;
-          c_RegionScores_CandidateYCbCrZ_[c_i + Counter_False] =
-            muSingleScalarRound(RegionZ_Cb_data[NRegions_ith] * 100.0F) * 0.01F;
-          c_RegionScores_CandidateYCbCrZ_[c_i + Counter_False * 2] =
-            muSingleScalarRound(RegionZ_Cr_data[NRegions_ith] * 100.0F) * 0.01F;
-        }
-
-        /* Assign to struct */
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateYCbCrZ.size[0] =
-          Counter_False;
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateYCbCrZ.size[1] = 3;
-        NCentroids = Counter_False * 3;
-        if (0 <= NCentroids - 1) {
-          memcpy(&b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateYCbCrZ.data
-                 [0], &c_RegionScores_CandidateYCbCrZ_[0], NCentroids * sizeof
-                 (real32_T));
-        }
-      }
-
-      if (RegionsRejectedAnyTF) {
-        /* if at least one region                      */
-        /* M rejected regions x 3 matrix; type single. */
-        b_i = Counter_True;
-        for (c_i = 0; c_i < b_i; c_i++) {
-          NRegions_ith = RegionPoints_RGBProbSkin_data[c_i] - 1;
-          c_RegionScores_CandidateYCbCrZ_[c_i] = muSingleScalarRound
-            (RegionZ_Y_data[NRegions_ith] * 100.0F) * 0.01F;
-          c_RegionScores_CandidateYCbCrZ_[c_i + Counter_True] =
-            muSingleScalarRound(RegionZ_Cb_data[NRegions_ith] * 100.0F) * 0.01F;
-          c_RegionScores_CandidateYCbCrZ_[c_i + Counter_True * 2] =
-            muSingleScalarRound(RegionZ_Cr_data[NRegions_ith] * 100.0F) * 0.01F;
-        }
-
-        /* Assign to struct */
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedYCbCrZ.size[0] =
-          Counter_True;
-        b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedYCbCrZ.size[1] = 3;
-        NCentroids = Counter_True * 3;
-        if (0 <= NCentroids - 1) {
-          memcpy(&b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedYCbCrZ.data[0],
-                 &c_RegionScores_CandidateYCbCrZ_[0], NCentroids * sizeof
-                 (real32_T));
-        }
-      }
-
-      /* %%%%% Record Rankings Index of Candidate Regions %%%%%%  */
-      /* Rankings are recorded to enable a cleaner display on the output video. */
-      /* For example, it may be most useful to show only the top couple and bottom couple of candidate  */
-      /* regions. */
-      /* Index candidate regions by selection points from largest to smallest */
-      /* Convert to type single to conserve memory. */
-      if (RegionsCandidateAnyTF) {
-        /* if at least one region */
-        /* Type double. */
-        RegionPoints_Proximity_size[0] = d_RegionPassAllThresholdsTF_Lin[0];
-        NCentroids = d_RegionPassAllThresholdsTF_Lin[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          RegionPoints_Proximity_data[b_i] =
-            RegionPoints_data[c_RegionPassAllThresholdsTF_Lin[b_i] - 1];
-        }
-
-        d_sort(RegionPoints_Proximity_data, RegionPoints_Proximity_size,
-               iidx_data, s_size);
-        NCentroids = s_size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          RegionDistance_LinIdx_data[b_i] = iidx_data[b_i];
-        }
-
-        /* M candidate regions x 1 column vector; type single. */
-        b_ROIDiagnostic_ROISkin_ith.RegionRankings_CandidateHi2Lo.size[0] =
-          s_size[0];
-        b_ROIDiagnostic_ROISkin_ith.RegionRankings_CandidateHi2Lo.size[1] = 1;
-        NCentroids = s_size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.RegionRankings_CandidateHi2Lo.data[b_i] =
-            (real32_T)RegionDistance_LinIdx_data[b_i];
-        }
-      }
-
-      /* %%%%% Record the Cr standard deviation of rejected regions %%%%%% */
-      /* For regions rejected due to exceeding the Cr standard deviation, only Cr standard deviation  */
-      /* information on the output video (RGB, YCbCr, and pixel-count values not displayed for these */
-      /* regions).    */
-      /* If at least one region rejected due to Cr SD */
-      d_RegionPassAllThresholdsTF_Log[0] = c_RegionSD_Cr_PassThresholdTF_L;
-      for (b_i = 0; b_i < c_RegionSD_Cr_PassThresholdTF_L; b_i++) {
-        c_RegionPassAllThresholdsTF_Log[b_i] =
-          !d_RegionSD_Cr_PassThresholdTF_L[b_i];
-      }
-
-      if (any(c_RegionPassAllThresholdsTF_Log, d_RegionPassAllThresholdsTF_Log))
-      {
-        /* Record index of regions rejected due to Cr SD */
-        /* A linear index of uint16 will be used instead of a logical index because few regions are */
-        /* expected to be rejected by this threshold. Storing a few linear indices of type uint16 */
-        /* will use less memory than holding a logical value for each region. */
-        /* M x 1 column vector; type uint16. */
-        eml_find(c_RegionPassAllThresholdsTF_Log,
-                 d_RegionPassAllThresholdsTF_Log, iidx_data, s_size);
-        NCentroids = s_size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          c_RegionPassAllThresholdsTF_Lin[b_i] = (uint16_T)iidx_data[b_i];
-        }
-
-        b_ROIDiagnostic_ROISkin_ith.c_RegionCrSDScores_RejectedCrSD.size[0] =
-          s_size[0];
-        b_ROIDiagnostic_ROISkin_ith.c_RegionCrSDScores_RejectedCrSD.size[1] = 1;
-        NCentroids = s_size[0];
-        if (0 <= NCentroids - 1) {
-          memcpy
-            (&b_ROIDiagnostic_ROISkin_ith.c_RegionCrSDScores_RejectedCrSD.data[0],
-             &c_RegionPassAllThresholdsTF_Lin[0], NCentroids * sizeof(uint16_T));
-        }
-
-        /* Record standard deviation of regions rejected due to Cr SD */
-        /* M x 1 column vector; type single. */
-        NRegions_ith = c_RegionSD_Cr_PassThresholdTF_L - 1;
-        NCentroids = 0;
-        ElementIdx = 0;
-        for (c_i = 0; c_i <= NRegions_ith; c_i++) {
-          if (!d_RegionSD_Cr_PassThresholdTF_L[c_i]) {
-            NCentroids++;
-            c_tmp_data[ElementIdx] = (int16_T)(c_i + 1);
-            ElementIdx++;
+          /* Assign to struct */
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateYCbCrZ.size[0] =
+            Counter_False;
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateYCbCrZ.size[1] = 3;
+          NCentroids = Counter_False * 3;
+          if (0 <= NCentroids - 1) {
+            memcpy
+              (&b_ROIDiagnostic_ROISkin_ith.RegionScores_CandidateYCbCrZ.data[0],
+               &c_RegionScores_CandidateYCbCrZ_[0], NCentroids * sizeof(real32_T));
           }
         }
 
-        b_ROIDiagnostic_ROISkin_ith.RegionCrSDScores_RejectedCrSD.size[0] =
-          NCentroids;
-        b_ROIDiagnostic_ROISkin_ith.RegionCrSDScores_RejectedCrSD.size[1] = 1;
-        for (b_i = 0; b_i < NCentroids; b_i++) {
-          b_ROIDiagnostic_ROISkin_ith.RegionCrSDScores_RejectedCrSD.data[b_i] =
-            RegionSD_Cr_data[c_tmp_data[b_i] - 1];
-        }
-      }
+        if (RegionsRejectedAnyTF) {
+          /* if at least one region                      */
+          /* M rejected regions x 3 matrix; type single. */
+          b_i = Counter_True;
+          for (c_i = 0; c_i < b_i; c_i++) {
+            NRegions_ith = RegionPoints_RGBProbSkin_data[c_i] - 1;
+            c_RegionScores_CandidateYCbCrZ_[c_i] = muSingleScalarRound
+              (RegionZ_Y_data[NRegions_ith] * 100.0F) * 0.01F;
+            c_RegionScores_CandidateYCbCrZ_[c_i + Counter_True] =
+              muSingleScalarRound(RegionZ_Cb_data[NRegions_ith] * 100.0F) *
+              0.01F;
+            c_RegionScores_CandidateYCbCrZ_[c_i + Counter_True * 2] =
+              muSingleScalarRound(RegionZ_Cr_data[NRegions_ith] * 100.0F) *
+              0.01F;
+          }
 
-      /* %%%%% Record the Number of Pixels of Rejected Regions %%%%%% */
-      /* For regions rejected due to low pixel counts, only display the pixel count information on the */
-      /* output video (RGB and YCbCr values not displayed for these regions). */
-      /* This is conducted to enable a cleaner display. For example, if a region is rejected due to a  */
-      /* low pixel count, this may be the only relevant information as a low pixel count tends to   */
-      /* predict non-skin regions well. */
-      if (RegionsRejectedAnyTF) {
-        /* if at least one region */
-        /* Assign number of pixels of regions to field RejectedN in ith row of nested-struct  */
-        /* RegionNPixels. */
-        /* Convert to type uint32 to conserve memory. */
-        NRegions_ith = Counter_True;
-        b_i = Counter_True;
-        for (c_i = 0; c_i < b_i; c_i++) {
-          RegionNPixels_RejectedN_data[c_i] = (uint32_T)
-            RegionNPixels_data[RegionPoints_RGBProbSkin_data[c_i] - 1];
-        }
-
-        /* Assign to struct */
-        b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedN.size[0] =
-          Counter_True;
-        b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedN.size[1] = 1;
-        if (0 <= NRegions_ith - 1) {
-          memcpy(&b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedN.data[0],
-                 &RegionNPixels_RejectedN_data[0], NRegions_ith * sizeof
-                 (uint32_T));
+          /* Assign to struct */
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedYCbCrZ.size[0] =
+            Counter_True;
+          b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedYCbCrZ.size[1] = 3;
+          NCentroids = Counter_True * 3;
+          if (0 <= NCentroids - 1) {
+            memcpy
+              (&b_ROIDiagnostic_ROISkin_ith.RegionScores_RejectedYCbCrZ.data[0],
+               &c_RegionScores_CandidateYCbCrZ_[0], NCentroids * sizeof(real32_T));
+          }
         }
 
-        /* Record TF whether rejected region was rejected because n lower than minimum: */
-        /* This information can be used in conjuction with the pixel count data. */
-        d_RegionPassAllThresholdsTF_Log[0] = RegionPoints_RGBProbSkin_size[0];
-        NCentroids = RegionPoints_RGBProbSkin_size[0];
-        for (b_i = 0; b_i < NCentroids; b_i++) {
+        /* %%%%% Record Rankings Index of Candidate Regions %%%%%%  */
+        /* Rankings are recorded to enable a cleaner display on the output video. */
+        /* For example, it may be most useful to show only the top couple and bottom couple of candidate  */
+        /* regions. */
+        /* Index candidate regions by selection points from largest to smallest */
+        /* Convert to type single to conserve memory. */
+        if (RegionsCandidateAnyTF) {
+          /* if at least one region */
+          /* Type double. */
+          RegionPoints_Proximity_size[0] = d_RegionPassAllThresholdsTF_Lin[0];
+          NCentroids = d_RegionPassAllThresholdsTF_Lin[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            RegionPoints_Proximity_data[b_i] =
+              RegionPoints_data[c_RegionPassAllThresholdsTF_Lin[b_i] - 1];
+          }
+
+          d_sort(RegionPoints_Proximity_data, RegionPoints_Proximity_size,
+                 iidx_data, s_size);
+          NCentroids = s_size[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            RegionDistance_LinIdx_data[b_i] = iidx_data[b_i];
+          }
+
+          /* M candidate regions x 1 column vector; type single. */
+          b_ROIDiagnostic_ROISkin_ith.RegionRankings_CandidateHi2Lo.size[0] =
+            s_size[0];
+          b_ROIDiagnostic_ROISkin_ith.RegionRankings_CandidateHi2Lo.size[1] = 1;
+          NCentroids = s_size[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.RegionRankings_CandidateHi2Lo.data[b_i] =
+              (real32_T)RegionDistance_LinIdx_data[b_i];
+          }
+        }
+
+        /* %%%%% Record the Cr standard deviation of rejected regions %%%%%% */
+        /* For regions rejected due to exceeding the Cr standard deviation, only Cr standard deviation  */
+        /* information on the output video (RGB, YCbCr, and pixel-count values not displayed for these */
+        /* regions).    */
+        /* If at least one region rejected due to Cr SD */
+        d_RegionPassAllThresholdsTF_Log[0] = c_RegionSD_Cr_PassThresholdTF_L;
+        for (b_i = 0; b_i < c_RegionSD_Cr_PassThresholdTF_L; b_i++) {
           c_RegionPassAllThresholdsTF_Log[b_i] =
-            c_RegionNPixels_PassNThresholdT[RegionPoints_RGBProbSkin_data[b_i] -
-            1];
+            !d_RegionSD_Cr_PassThresholdTF_L[b_i];
         }
 
         if (any(c_RegionPassAllThresholdsTF_Log, d_RegionPassAllThresholdsTF_Log))
         {
-          /* Assign to ith row of field RejectedLowNTF of nested-struct RegionNPixels */
-          /* Type logical. */
+          /* Record index of regions rejected due to Cr SD */
+          /* A linear index of uint16 will be used instead of a logical index because few regions are */
+          /* expected to be rejected by this threshold. Storing a few linear indices of type uint16 */
+          /* will use less memory than holding a logical value for each region. */
+          /* M x 1 column vector; type uint16. */
+          eml_find(c_RegionPassAllThresholdsTF_Log,
+                   d_RegionPassAllThresholdsTF_Log, iidx_data, s_size);
+          NCentroids = s_size[0];
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            c_RegionPassAllThresholdsTF_Lin[b_i] = (uint16_T)iidx_data[b_i];
+          }
+
+          b_ROIDiagnostic_ROISkin_ith.c_RegionCrSDScores_RejectedCrSD.size[0] =
+            s_size[0];
+          b_ROIDiagnostic_ROISkin_ith.c_RegionCrSDScores_RejectedCrSD.size[1] =
+            1;
+          NCentroids = s_size[0];
+          if (0 <= NCentroids - 1) {
+            memcpy
+              (&b_ROIDiagnostic_ROISkin_ith.c_RegionCrSDScores_RejectedCrSD.data[
+               0], &c_RegionPassAllThresholdsTF_Lin[0], NCentroids * sizeof
+               (uint16_T));
+          }
+
+          /* Record standard deviation of regions rejected due to Cr SD */
+          /* M x 1 column vector; type single. */
+          NRegions_ith = c_RegionSD_Cr_PassThresholdTF_L - 1;
+          NCentroids = 0;
+          ElementIdx = 0;
+          for (c_i = 0; c_i <= NRegions_ith; c_i++) {
+            if (!d_RegionSD_Cr_PassThresholdTF_L[c_i]) {
+              NCentroids++;
+              c_tmp_data[ElementIdx] = (int16_T)(c_i + 1);
+              ElementIdx++;
+            }
+          }
+
+          b_ROIDiagnostic_ROISkin_ith.RegionCrSDScores_RejectedCrSD.size[0] =
+            NCentroids;
+          b_ROIDiagnostic_ROISkin_ith.RegionCrSDScores_RejectedCrSD.size[1] = 1;
+          for (b_i = 0; b_i < NCentroids; b_i++) {
+            b_ROIDiagnostic_ROISkin_ith.RegionCrSDScores_RejectedCrSD.data[b_i] =
+              RegionSD_Cr_data[c_tmp_data[b_i] - 1];
+          }
+        }
+
+        /* %%%%% Record the Number of Pixels of Rejected Regions %%%%%% */
+        /* For regions rejected due to low pixel counts, only display the pixel count information on the */
+        /* output video (RGB and YCbCr values not displayed for these regions). */
+        /* This is conducted to enable a cleaner display. For example, if a region is rejected due to a  */
+        /* low pixel count, this may be the only relevant information as a low pixel count tends to   */
+        /* predict non-skin regions well. */
+        if (RegionsRejectedAnyTF) {
+          /* if at least one region */
+          /* Assign number of pixels of regions to field RejectedN in ith row of nested-struct  */
+          /* RegionNPixels. */
+          /* Convert to type uint32 to conserve memory. */
+          NRegions_ith = Counter_True;
+          b_i = Counter_True;
+          for (c_i = 0; c_i < b_i; c_i++) {
+            RegionNPixels_RejectedN_data[c_i] = (uint32_T)
+              RegionNPixels_data[RegionPoints_RGBProbSkin_data[c_i] - 1];
+          }
+
+          /* Assign to struct */
+          b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedN.size[0] =
+            Counter_True;
+          b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedN.size[1] = 1;
+          if (0 <= NRegions_ith - 1) {
+            memcpy(&b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedN.data[0],
+                   &RegionNPixels_RejectedN_data[0], NRegions_ith * sizeof
+                   (uint32_T));
+          }
+
+          /* Record TF whether rejected region was rejected because n lower than minimum: */
+          /* This information can be used in conjuction with the pixel count data. */
+          d_RegionPassAllThresholdsTF_Log[0] = RegionPoints_RGBProbSkin_size[0];
           NCentroids = RegionPoints_RGBProbSkin_size[0];
           for (b_i = 0; b_i < NCentroids; b_i++) {
             c_RegionPassAllThresholdsTF_Log[b_i] =
-              !c_RegionNPixels_PassNThresholdT[RegionPoints_RGBProbSkin_data[b_i]
+              c_RegionNPixels_PassNThresholdT[RegionPoints_RGBProbSkin_data[b_i]
               - 1];
           }
 
-          b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedLowNTF.size[0] =
-            RegionPoints_RGBProbSkin_size[0];
-          b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedLowNTF.size[1] = 1;
-          NCentroids = RegionPoints_RGBProbSkin_size[0];
-          if (0 <= NCentroids - 1) {
-            memcpy
-              (&b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedLowNTF.data[0],
-               &c_RegionPassAllThresholdsTF_Log[0], NCentroids * sizeof
-               (boolean_T));
+          if (any(c_RegionPassAllThresholdsTF_Log,
+                  d_RegionPassAllThresholdsTF_Log)) {
+            /* Assign to ith row of field RejectedLowNTF of nested-struct RegionNPixels */
+            /* Type logical. */
+            NCentroids = RegionPoints_RGBProbSkin_size[0];
+            for (b_i = 0; b_i < NCentroids; b_i++) {
+              c_RegionPassAllThresholdsTF_Log[b_i] =
+                !c_RegionNPixels_PassNThresholdT[RegionPoints_RGBProbSkin_data[b_i]
+                - 1];
+            }
+
+            b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedLowNTF.size[0] =
+              RegionPoints_RGBProbSkin_size[0];
+            b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedLowNTF.size[1] = 1;
+            NCentroids = RegionPoints_RGBProbSkin_size[0];
+            if (0 <= NCentroids - 1) {
+              memcpy
+                (&b_ROIDiagnostic_ROISkin_ith.RegionNPixels_RejectedLowNTF.data
+                 [0], &c_RegionPassAllThresholdsTF_Log[0], NCentroids * sizeof
+                 (boolean_T));
+            }
           }
         }
       }
-    }
 
-    c_cast(&b_ROIDiagnostic_ROISkin_ith, ROIDiagnostic_ROISkin_ith);
+      c_cast(&b_ROIDiagnostic_ROISkin_ith, ROIDiagnostic_ROISkin_ith);
+    }
   }
 
-  emxFreeMatrix_cell_wrap_32(RegionBoundaries);
   emxFreeStruct_struct_T1(&b_ROIDiagnostic_ROISkin_ith);
   emxFree_struct_T_400(&b_RegionIndices);
 
