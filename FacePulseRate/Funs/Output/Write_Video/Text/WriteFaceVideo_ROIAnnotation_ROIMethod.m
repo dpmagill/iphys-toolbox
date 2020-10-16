@@ -24,9 +24,11 @@ function Text = WriteFaceVideo_ROIAnnotation_ROIMethod(i, HasROI_TF, ROIDiagnost
 %    function. Under the detailed display option, these characters are prepared by function 
 %    WriteFaceVideo_ROIAnnotation_DetectAttempts.
 %
+%    For additional details, see function WriteFaceVideo_ROIAnnotation.
 %
-%    Copyright
-%    ---------
+%
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
@@ -101,7 +103,15 @@ if ~ OutputConfig.WriteVideoDetailedDiagnosticsTF
     %Provided for robustness.
     else 
 
-        Text = '';
+        %Error message
+        ME = ...
+            MException( ...
+                'Component:Internal', ...
+                'Internal Error: At least one detection method should have occurred.' ...
+            );
+
+        %Throw exception
+        throw(ME);   
     end     
 
     %%%%%% --- Detection notifications %%%%%%
@@ -113,20 +123,42 @@ if ~ OutputConfig.WriteVideoDetailedDiagnosticsTF
     SkinNotPresent = false;
     
     %If ROI classified as not containing skin
+    %Note: if this condition is entered, a detection could still have been made by another 
+    %algorithm.
     if HasROI_TF.SkinNotPresent_Skin(i) || ... skin-detection algorithm
-       HasROI_TF.SkinNotPresent_Pri(i)  || ... primary face-detection algorithm
-       HasROI_TF.SkinNotPresent_Sec1(i) || ... secondary #1 face-detection algorithm
+       HasROI_TF.SkinNotPresent_Pri(i)  || ... primary (frontal) face-detection algorithm
+       HasROI_TF.SkinNotPresent_Sec1(i) || ... secondary #1 (profile) face-detection algorithm
        HasROI_TF.SkinNotPresent_Sec2(i)    %   secondary #2 face-detection algorithm
    
         Text = [Text, ' | [RS]'];
         
         SkinNotPresent = true;
-    end
+    end  
     
     %If no regions were avilable to the skin-detection algorithm
-    if HasROI_TF.SkinAttempted(i) && ... the skin-detection algorithm was attempted
-       ~ ROIDiagnostic.ROISkin.RegionAnyAvailable(i)                
+    if HasROI_TF.SkinAttempted(i) &&                 ... The skin-detection algorithm was 
+                                                     ... attempted for the ith frame. Assigned by  
+                                                     ... function SkinDetect.
+       ~ ROIDiagnostic.ROISkin.RegionAnyAvailable(i) ... At least one skin region was available for
+                                                     %   the skin-detection algorithm. Assigned by
+                                                     %   function SkinDetect.
    
+        %The if-statement above should not be true if a skin-detection algorithm detection was 
+        %made. If so, this indicates an implementation error.
+        if HasROI_TF.Skin(i)
+            
+            %Error message
+            ME = ...
+                MException( ...
+                    'Component:Internal', ...
+                    ['Internal Error: The skin-detection algorithm should not have made a', ... 
+                    ' detection in this condition.'] ...
+                );
+
+            %Throw exception
+            throw(ME);  
+        end
+                                                     
         if SkinNotPresent
             
             Text = [Text, ' [NR]']; 

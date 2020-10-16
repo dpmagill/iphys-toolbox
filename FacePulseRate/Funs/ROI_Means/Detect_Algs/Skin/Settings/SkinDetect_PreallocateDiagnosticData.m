@@ -20,8 +20,8 @@ function ROISkinDiagnosis = SkinDetect_PreallocateDiagnosticData(ROI, SkinDetect
 %    OutputConfig_Setup_VideoWriting). Also, if flag OutputConfig.WriteVideoDetailedDiagnosticsTF
 %    is false, then OutputConfig.WriteVideoShowROISkinDiagnosisTF will be false.
 %
-%    Note: the variables preallocated here may be preallocated again after processing begins if
-%    function ROIMeans_FirstRead is called recursively (see function
+%    Note: the variables preallocated here may be preallocated here again after processing begins 
+%    if function ROIMeans_FirstRead is called recursively (see function
 %    SkinSegment_OversegmentationCheck_Reduce).
 %
 %    -- Use of Data for Diagnostics --
@@ -47,8 +47,8 @@ function ROISkinDiagnosis = SkinDetect_PreallocateDiagnosticData(ROI, SkinDetect
 %    the distance score should be increased.
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  

@@ -1,0 +1,206 @@
+[
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect_data.c -o build/win64/SkinDetect_data.o",
+    "file": "SkinDetect_data.c",
+    "output": "build/win64/SkinDetect_data.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  rt_nonfinite.c -o build/win64/rt_nonfinite.o",
+    "file": "rt_nonfinite.c",
+    "output": "build/win64/rt_nonfinite.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect_initialize.c -o build/win64/SkinDetect_initialize.o",
+    "file": "SkinDetect_initialize.c",
+    "output": "build/win64/SkinDetect_initialize.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect_terminate.c -o build/win64/SkinDetect_terminate.o",
+    "file": "SkinDetect_terminate.c",
+    "output": "build/win64/SkinDetect_terminate.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect.c -o build/win64/SkinDetect.o",
+    "file": "SkinDetect.c",
+    "output": "build/win64/SkinDetect.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect_PartitionRegions.c -o build/win64/SkinDetect_PartitionRegions.o",
+    "file": "SkinDetect_PartitionRegions.c",
+    "output": "build/win64/SkinDetect_PartitionRegions.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinSegmentMask_Threshold_Colors.c -o build/win64/SkinSegmentMask_Threshold_Colors.o",
+    "file": "SkinSegmentMask_Threshold_Colors.c",
+    "output": "build/win64/SkinSegmentMask_Threshold_Colors.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinSegmentMask_Threshold.c -o build/win64/SkinSegmentMask_Threshold.o",
+    "file": "SkinSegmentMask_Threshold.c",
+    "output": "build/win64/SkinSegmentMask_Threshold.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  bwpack.c -o build/win64/bwpack.o",
+    "file": "bwpack.c",
+    "output": "build/win64/bwpack.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  imerode.c -o build/win64/imerode.o",
+    "file": "imerode.c",
+    "output": "build/win64/imerode.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  imdilate.c -o build/win64/imdilate.o",
+    "file": "imdilate.c",
+    "output": "build/win64/imdilate.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  bwunpack.c -o build/win64/bwunpack.o",
+    "file": "bwunpack.c",
+    "output": "build/win64/bwunpack.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  bwconncomp.c -o build/win64/bwconncomp.o",
+    "file": "bwconncomp.c",
+    "output": "build/win64/bwconncomp.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  repmat.c -o build/win64/repmat.o",
+    "file": "repmat.c",
+    "output": "build/win64/repmat.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  regionprops.c -o build/win64/regionprops.o",
+    "file": "regionprops.c",
+    "output": "build/win64/regionprops.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect_RegionMetrics.c -o build/win64/SkinDetect_RegionMetrics.o",
+    "file": "SkinDetect_RegionMetrics.c",
+    "output": "build/win64/SkinDetect_RegionMetrics.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  mtimes.c -o build/win64/mtimes.o",
+    "file": "mtimes.c",
+    "output": "build/win64/mtimes.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  abs.c -o build/win64/abs.o",
+    "file": "abs.c",
+    "output": "build/win64/abs.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect_ROIValidate.c -o build/win64/SkinDetect_ROIValidate.o",
+    "file": "SkinDetect_ROIValidate.c",
+    "output": "build/win64/SkinDetect_ROIValidate.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  ifWhileCond.c -o build/win64/ifWhileCond.o",
+    "file": "ifWhileCond.c",
+    "output": "build/win64/ifWhileCond.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect_RegionBoundariesByCategory.c -o build/win64/SkinDetect_RegionBoundariesByCategory.o",
+    "file": "SkinDetect_RegionBoundariesByCategory.c",
+    "output": "build/win64/SkinDetect_RegionBoundariesByCategory.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  bwlookup.c -o build/win64/bwlookup.o",
+    "file": "bwlookup.c",
+    "output": "build/win64/bwlookup.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  any.c -o build/win64/any.o",
+    "file": "any.c",
+    "output": "build/win64/any.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  find.c -o build/win64/find.o",
+    "file": "find.c",
+    "output": "build/win64/find.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinSegmentMask_MorphClose.c -o build/win64/SkinSegmentMask_MorphClose.o",
+    "file": "SkinSegmentMask_MorphClose.c",
+    "output": "build/win64/SkinSegmentMask_MorphClose.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  interface/_coder_SkinDetect_api.c -o build/win64/_coder_SkinDetect_api.o",
+    "file": "interface/_coder_SkinDetect_api.c",
+    "output": "build/win64/_coder_SkinDetect_api.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  interface/_coder_SkinDetect_mex.c -o build/win64/_coder_SkinDetect_mex.o",
+    "file": "interface/_coder_SkinDetect_mex.c",
+    "output": "build/win64/_coder_SkinDetect_mex.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  setPackedFillBits.c -o build/win64/setPackedFillBits.o",
+    "file": "setPackedFillBits.c",
+    "output": "build/win64/setPackedFillBits.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  exp.c -o build/win64/exp.o",
+    "file": "exp.c",
+    "output": "build/win64/exp.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  sort.c -o build/win64/sort.o",
+    "file": "sort.c",
+    "output": "build/win64/sort.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  sortIdx.c -o build/win64/sortIdx.o",
+    "file": "sortIdx.c",
+    "output": "build/win64/sortIdx.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  SkinDetect_emxutil.c -o build/win64/SkinDetect_emxutil.o",
+    "file": "SkinDetect_emxutil.c",
+    "output": "build/win64/SkinDetect_emxutil.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  interface/_coder_SkinDetect_info.c -o build/win64/_coder_SkinDetect_info.o",
+    "file": "interface/_coder_SkinDetect_info.c",
+    "output": "build/win64/_coder_SkinDetect_info.o"
+  },
+  {
+    "directory": "G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect",
+    "command": "C:\\ProgramData\\MATLAB\\SupportPackages\\R2020a\\3P.instrset\\mingw_w64.instrset\\bin\\gcc -c -fexceptions -fno-omit-frame-pointer -m64 -DMATLAB_MEX_FILE  -DMATLAB_MEX_FILE -O2 -fwrapv -DNDEBUG -std=c99 -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\" -I \"C:\\Program Files\\MATLAB\\R2020b\\extern\\include\" -I \"G:\\My Drive\\Articles\\Design & Analysis\\FacePulseRate\\Git\\FacePulseRate\\codegen\\mex\\SkinDetect\\interface\" -I \".\" -DMODEL=SkinDetect_mex -D__USE_MINGW_ANSI_STDIO=1 -fopenmp  \"C:/Program Files/MATLAB/R2020b/extern/version/c_mexapi_version.c\" -o build/win64/c_mexapi_version.o",
+    "file": "C:/Program Files/MATLAB/R2020b/extern/version/c_mexapi_version.c",
+    "output": "build/win64/c_mexapi_version.o"
+  }
+]

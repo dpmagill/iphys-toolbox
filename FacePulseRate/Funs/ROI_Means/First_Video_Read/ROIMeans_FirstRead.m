@@ -875,6 +875,10 @@ if SkinAttemptedTF_ith
     ROIDiagnostic.ROISkin.RegionAnyAvailable(i) = ROIDiagnostic_ROISkin_ith.RegionAnyAvailable;
 
     %If the display of skin-detection algorithm diagnostics on the output video is enabled
+    %Note: This diagnostic information is only used (displayed in the output video) if the detailed  
+    %display option is enabled, in which case flag OutputConfig.WriteVideoDetailedDiagnosticsTF  
+    %will be true. By default, it is false. Flag OutputConfig.WriteVideoDetailedDiagnosticsTF is  
+    %set by function ValidateAndConfigure_InternalFlags.        
     if OutputConfig.WriteVideoShowROISkinDiagnosisTF
     
         ROIDiagnostic.ROISkin.RegionSkinROIAttempted(i)              = ROIDiagnostic_ROISkin_ith.RegionSkinROIAttempted;

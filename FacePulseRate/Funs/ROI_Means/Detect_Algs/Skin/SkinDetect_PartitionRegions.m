@@ -47,8 +47,8 @@ function [IsSkinMask, RegionIndices, NRegions, RegionNPixels, RegionCentroids, R
 %    regions to classify" in the notes of function SkinDetect.
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
@@ -190,8 +190,8 @@ end
 %Find the number of column partitions and the number of row partitions
 %Local function.
 [NColPartitions, NRowPartitions] = ...
-    FindNPartitions(Col_ith, PartitionColInterval, NCols_Matrix, Row_ith, ...
-        PartitionRowInterval, NRows_Matrix);
+    FindNPartitions(Col_ith, PartitionColInterval, NCols_Matrix, Row_ith, PartitionRowInterval, ...
+        NRows_Matrix);
 
 %Note: NColPartitions * NRowPartitions approximates the number of regions; 250 is added because 
 %many possible regions will likely have been removed by skin segmentation.

@@ -25,8 +25,8 @@ function [ROI_Selected_ith, SkinTF_ith, HasROITF_SkinNotPresent_ith] = ...
 %    ProportionSkinPixelsTooLowTF_ith will be false and vice versa.
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  

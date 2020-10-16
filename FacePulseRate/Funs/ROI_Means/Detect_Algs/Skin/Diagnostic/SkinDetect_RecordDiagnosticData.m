@@ -26,6 +26,11 @@ function ROIDiagnostic_ROISkin_ith = ...
 %    algorithm. This information will be displayed on the output video (by function WriteFaceVideo 
 %    and, more specifically, WriteFaceVideo_SkinDetectDiagnosis). 
 %
+%    This diagnostic information is shown in the output video only if the detailed display option
+%    is enabled, in which case flag OutputConfig.WriteVideoDetailedDiagnosticsTF will be true. By 
+%    default, it is false. Flag OutputConfig.WriteVideoDetailedDiagnosticsTF is set by function
+%    ValidateAndConfigure_InternalFlags.
+%
 %    Four states are possible from function SkinDetect, from which the current function is called.
 %
 %    The first state is a successful ROI detection. In this state, region borders are shown for all 
@@ -47,8 +52,8 @@ function ROIDiagnostic_ROISkin_ith = ...
 %    see functions WriteFaceVideo and WriteFaceVideo_SkinDetectDiagnosis.
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
@@ -70,13 +75,6 @@ coder.varsize('RegionBoundaries{:}',      [inf, 1],     [1, 0]); %cell array ele
 
 
 %%%%%% Setup %%%%%%
-
-%Record that at least one region was available for skin detection for ith frame
-%Note: a false value will be present if the area corresponding to the skin-detection bounding box 
-%was completely segmented and, hence, has no regions available. Note that a false value will also 
-%be present if the frame did not have the skin-detection algorithm applied on it, that is, if 
-%function SkinDetect was not used for the frame. 
-ROIDiagnostic_ROISkin_ith.RegionAnyAvailable = true;  
 
 %Proceed if the proportion of pixels classified as skin within the ROI from the selected region was 
 %above the specified threshold. If not, it is likely that skin-segmentation completely segmented 

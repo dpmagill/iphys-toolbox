@@ -12,22 +12,18 @@ function Text = ...
 %
 %    Prepare text for detection attempts. See function WriteFaceVideo_ROIAnnotation for details.
 %
-%    -- Default vs. detailed display --
+%    The current function is called only when the detailed display option is enabled (i.e., flag 
+%    OutputConfig.WriteVideoDetailedDiagnosticsTF == true).
 %
-%    More detailed ROI-detection information is displayed under the detailed display option
-%    compared to the default display option. The detailed display option is intended only for 
-%    internal development and, by default, is not enabled. The detailed display is enabled by flag   
-%    OutputConfig.WriteVideoDetailedDiagnosticsTF, which is assigned by function 
-%    ValidateAndConfigure_InternalFlags. Examples of the differences between the options are  
-%    provided in function WriteFaceVideo_ROIAnnotation.
-%
-%    Under the default display option (OutputConfig.WriteVideoDetailedDiagnosticsTF == false), the 
-%    characters '[R]' and '[NR]' are prepared by function WriteFaceVideo_ROIAnnotation_ROIMethod.
-%    Under the detailed display option, these characters are prepared in the current function. 
+%    Note: Under the default display option (OutputConfig.WriteVideoDetailedDiagnosticsTF ==  
+%    false), the characters '[R]' and '[NR]' are prepared by function 
+%    WriteFaceVideo_ROIAnnotation_ROIMethod. Under the detailed display option, these characters 
+%    are prepared in the current function. The characters '[RE]' are only displayed when the
+%    detailed display option is enabled.
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
@@ -36,8 +32,8 @@ function Text = ...
 
 %If at least one method attempted a detection on the ith frame.
 %Note: if no method attempted a detection, this indicates the frame was intentionally skipped (see 
-%function ROIMeans_FirstRead_DetermineSkipFrame, called within function 
-%ROIMeans_FirstRead, and function ROIMeans_SecondRead_SkinDetect).
+%function ROIMeans_FirstRead_DetermineSkipFrame, called within function ROIMeans_FirstRead, and 
+%function ROIMeans_SecondRead_SkinDetect).
 if HasROI_TF.FacePrimaryAttempted(i)    || ... primary face-detection algorithm
    HasROI_TF.FaceSecondary1Attempted(i) || ... secondary #1 face-detection algorithm
    HasROI_TF.FaceSecondary2Attempted(i) || ... secondary #2 face-detection algorithm
@@ -213,7 +209,23 @@ if HasROI_TF.FacePrimaryAttempted(i)    || ... primary face-detection algorithm
 
         %If no regions were avilable to the skin-detection algorithm
         if ~ ROIDiagnostic.ROISkin.RegionAnyAvailable(i)
+            
+            %The if-statement above should not be true if a skin-detection algorithm detection was 
+            %made. If so, this indicates an implementation error.
+            if HasROI_TF.Skin(i)
 
+                %Error message
+                ME = ...
+                    MException( ...
+                        'Component:Internal', ...
+                        ['Internal Error: The skin-detection algorithm should not have made a', ... 
+                        ' detection in this condition.'] ...
+                    );
+
+                %Throw exception
+                throw(ME);  
+            end
+            
             Text = [Text, '[NR]'];
         end        
     end     

@@ -20,7 +20,7 @@ function PulseRateConfigAndData = ...
 %    is conducted by function TableOutput.
 %
 %
-%    Description of pulse-rate operations conducted in function PulseRate
+%    Description of Pulse-Rate Operations Conducted in Function PulseRate
 %    --------------------------------------------------------------------
 %
 %    -- ROI RGB means to blood volume pulse (BVP) --
@@ -115,8 +115,8 @@ function PulseRateConfigAndData = ...
 %    Medicine and Biology Society (EMBC), pp. 6521-6524.
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  
@@ -128,6 +128,7 @@ function PulseRateConfigAndData = ...
 PulseRateConfigAndData = ...
     struct( ...
         'TF',                 {PulseRateTF}, ... note: brackets ensure scalar structure
+        'WindowDurationSec_Specified', {double(0)}, ...
         'WindowDurationSec',  {double(0)}, ...
         'ExternallyMeasured', {PulseRateExternallyMeasured}, ...
         'ControlLuminanceTF', {false}, ...
@@ -171,25 +172,41 @@ PulseRateConfigAndData = ...
 
 %%%%%% Specify the window duration %%%%%%
 
-%If PulseRateWindowDurationSec == inf, use the duration of the full video as the window duration.
-%Note: if blocks are specified, function PulseRate_DetermineSpans will cap the window duration to
-%the duration of each respective block.
-if PulseRateWindowDurationSec == inf
+%If PulseRateWindowDurationSec == inf 
+if isinf(PulseRateWindowDurationSec)
     
-    PulseRateWindowDurationSec = double(VideoReadConfig.EndTime - VideoReadConfig.StartTime);        
-end    
+    %Record that inf was specified
+    %This will be displayed on the legend of the output video.
+    PulseRateConfigAndData.WindowDurationSec_Specified = double(PulseRateWindowDurationSec);
+    
+    %Use the duration of the full video as the window duration
+    %Round down to integer.
+    %Scalar; type double.
+    %Note: if blocks are specified, function PulseRate_DetermineSpans will cap the window duration 
+    %to the duration of each respective block.    
+    PulseRateConfigAndData.WindowDurationSec = ...
+        floor( double(VideoReadConfig.EndTime - VideoReadConfig.StartTime) );
+    
+else    
 
-%Must be an integer (although not an integer type).
-%Scalar; type double. 
-PulseRateConfigAndData.WindowDurationSec = floor(PulseRateWindowDurationSec);
+    %Record the value that was specified
+    %Round down to integer.
+    %This will be displayed on the legend of the output video.
+    PulseRateConfigAndData.WindowDurationSec_Specified = ...
+        floor( double(PulseRateWindowDurationSec) ); 
+    
+    %Round down to integer.
+    %Scalar; type double.
+    %Note: if blocks are specified, function PulseRate_DetermineSpans will cap the window duration 
+    %to the duration of each respective block.
+    PulseRateConfigAndData.WindowDurationSec = floor( double(PulseRateWindowDurationSec) );
+end 
 
 
 %%%%%% Preallocate matrixs to store ROI RGB means and luminance (Y) means %%%%%%
 
 %Note: the RGB means must be of type double for use in the pulse rate functions.   
 PulseRateConfigAndData.ColorData.SkinRGBMeans = nan(VideoReadConfig.NFrames, 3);   
-
-%If controlling ROI RGB means for luminance enabled
 
 %Note: Controlling for luminance is based upon Madan et al. (2018).
 %Madan et al. (2018) used L from the LAB colorspace, but Y from the YCbCr color space is nearly 

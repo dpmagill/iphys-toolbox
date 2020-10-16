@@ -57,7 +57,7 @@ function [ROI_Selected_ith, SkinTF_ith, HasROITF_SkinNotPresent_ith, ROIDiagnost
 %    --------------------
 %
 %
-%    -- Partitioning bounding box into regions to classify --
+%    -- Partitioning Bounding Box into Regions to Classify --
 %
 %    See function SkinDetect_PartitionRegions, which is called by the current function.
 % 
@@ -65,7 +65,7 @@ function [ROI_Selected_ith, SkinTF_ith, HasROITF_SkinNotPresent_ith, ROIDiagnost
 %    assessed as being skin. By the completion of the algorithm, one region (or no regions) will be
 %    selected as the skin detection.
 %
-%    - Bounding box:
+%    - Bounding Box:
 %
 %    Using a bounding box may reduce false positive skin detections by focusing on an area of the 
 %    frame potentially more likely to contain skin. Using a bounding box may also reduce 
@@ -78,7 +78,7 @@ function [ROI_Selected_ith, SkinTF_ith, HasROITF_SkinNotPresent_ith, ROIDiagnost
 %    ROIMeans_FirstRead_SetBoundingBoxes. In the second-read operations, the bounding box is set by
 %    function ROIMeans_SecondRead_SkinDetect. 
 %      
-%    - Skin segmentation:
+%    - Skin Segmentation:
 %
 %    Within the bounding box, skin segmentation (see function SkinSegmentMask) is applied to remove 
 %    areas less likely to be skin. The term "skin segmentation" is used to define the operations
@@ -199,7 +199,7 @@ function [ROI_Selected_ith, SkinTF_ith, HasROITF_SkinNotPresent_ith, ROIDiagnost
 %    (SkinClassifyRegionColorThresholds(1)) to function FacePulseRate. A Larger threshold value may   
 %    decrease false positives but increase false negatives.
 %
-%    - Cb, Cr Mean:
+%    - Cb, Cr means:
 %
 %    Regarding the YCbCr color space, only Cb and Cr are used for rejection thresholds because of
 %    greater luminance invariance compared to Y. The Cb and Cr similarities are quanitifed as 
@@ -214,7 +214,7 @@ function [ROI_Selected_ith, SkinTF_ith, HasROITF_SkinNotPresent_ith, ROIDiagnost
 %    SkinClassifyRegionColorThresholds(3) = Cr z-score threshold. Smaller threshold values may  
 %    decrease false positives but increase false negatives.
 %
-%   - Pixel Count:
+%   - Pixel count:
 %
 %    In addition to assessing regions by their means, they are also assessed by their pixel counts,
 %    with the assumption that small pixel counts indicate non-skin as skin is assumed to be present 
@@ -223,7 +223,7 @@ function [ROI_Selected_ith, SkinTF_ith, HasROITF_SkinNotPresent_ith, ROIDiagnost
 %    RegionNThreshold, which is specified by function SkinDetect_ConfigSetup. A Larger threshold 
 %    value may decrease false positives but increase false negatives.  
 %
-%    - Standard Deviation of Cr:
+%    - Standard deviation of Cr:
 %
 %    The standard deviation of colors within a region can be an indication that the region is not
 %    skin as it has been observed that skin regions have fairly homogeneous color ranges, which 
@@ -231,7 +231,7 @@ function [ROI_Selected_ith, SkinTF_ith, HasROITF_SkinNotPresent_ith, ROIDiagnost
 %    rejected as skin.
 %
 %
-%    -- Selecting one region out of candidates (regions that were not rejected) --
+%    -- Selecting one Region Out of Candidates (Regions That were Not Rejected) --
 %
 %    See function SkinDetect_SelectRegion, which is called by the current function.
 %
@@ -525,24 +525,48 @@ end
 %Record data to be displayed on the output video for the purpose of assessing the effectiveness of 
 %the skin-detection algorithm.
 
-%If including skin-detection algorithm diagnostic information on output video is enabled
-%Also, proceed only if at least one region was available to the skin-detection algorithm.
-%If no regions are available, this is likely due to skin segmentation classifying all pixels as 
-%non-skin.
-if OutputConfig_WriteVideoShowROISkinDiagnosisTF && ...
-   NRegions > 0 %at least one region available
+%At least one region was available
+%(See function SkinDetect_PartitionRegions).
+if NRegions > 0 
+
+    %Record that at least one region was available for skin detection for the ith frame
+    %If the skin-detection algorithm was attempted for the ith frame (HasROI_TF.SkinAttempted(i) ==
+    %true) but at least one region was not available, the characters '[NS]' will be displayed on
+    %the output video (see function WriteFaceVideo_ROIAnnotation_ROIMethod). These characters are 
+    %an acronym for "no skin", indicating that no skin regions were available.
     
-    %Scalar struct.
-    %Note: 'SkinDetect_RecordDiagnosticData' is a custom function located within folder 
-    %'FacePulseRate'.
-    ROIDiagnostic_ROISkin_ith = ...
-        SkinDetect_RecordDiagnosticData(ROIDiagnostic_ROISkin_ith, ... 
-            RegionPassAllThresholdsTF_LogIdx, RegionSelectedLinIdx, RegionIndices, ... 
-            BoundingBoxSkin, RegionCentroids, ROIPredicted_CenterX, ROIPredicted_CenterY, ... 
-            RegionRGBProbSkin, RegionZ_Y, RegionZ_Cb, RegionZ_Cr, RegionPoints, RegionNPixels, ...
-            NRegions, RegionNPixels_PassNThresholdTF_LogIdx, RegionSD_Cr, ...
-            RegionSD_Cr_PassThresholdTF_LogIdx, nRows_IsSkinMask, nCols_IsSkinMask, ...
-            VideoReadConfig_VidObjHeight);                        
+    %Note: This will be false (assigned by local function ROIDiagnosticInitialize) if the area 
+    %corresponding to the skin-detection bounding box was completely segmented and, hence, has no 
+    %regions available (NRegions == 0). Note that a false value will also be present if the frame 
+    %did not have the skin-detection algorithm applied on it, that is, if function SkinDetect was 
+    %not used for the frame; in this case, the value would have been preallocated as false by
+    %function SkinDetect_PreallocateDiagnosticData.
+    
+    ROIDiagnostic_ROISkin_ith.RegionAnyAvailable = true;  
+
+    %%%%%% --- Detailed skin-diagnostic information %%%%%%
+        
+    %Record detailed skin-detection algorithm diagnostic information. 
+    
+    %Note: the following condition will be true only if the detailed display option is enabled. 
+    %This diagnostic information is shown in the output video only if the detailed display option
+    %is enabled, in which case flag OutputConfig.WriteVideoDetailedDiagnosticsTF will be true. By 
+    %default, it is false. Flag OutputConfig.WriteVideoDetailedDiagnosticsTF is set by function
+    %ValidateAndConfigure_InternalFlags.
+    if OutputConfig_WriteVideoShowROISkinDiagnosisTF
+
+        %Scalar struct.
+        %Note: 'SkinDetect_RecordDiagnosticData' is a custom function located within folder 
+        %'FacePulseRate'.
+        ROIDiagnostic_ROISkin_ith = ...
+            SkinDetect_RecordDiagnosticData(ROIDiagnostic_ROISkin_ith, ... 
+                RegionPassAllThresholdsTF_LogIdx, RegionSelectedLinIdx, RegionIndices, ... 
+                BoundingBoxSkin, RegionCentroids, ROIPredicted_CenterX, ROIPredicted_CenterY, ... 
+                RegionRGBProbSkin, RegionZ_Y, RegionZ_Cb, RegionZ_Cr, RegionPoints, ...
+                RegionNPixels, NRegions, RegionNPixels_PassNThresholdTF_LogIdx, RegionSD_Cr, ...
+                RegionSD_Cr_PassThresholdTF_LogIdx, nRows_IsSkinMask, nCols_IsSkinMask, ...
+                VideoReadConfig_VidObjHeight);                        
+    end
 end
 
 
@@ -579,6 +603,10 @@ end %end main function
 %=============================================================================================
 function ROIDiagnostic_ROISkin_ith = ROIDiagnosticPreallocate()
 %ROIDiagnosticPreallocate   Preallocate values for ROIDiagnostic_ROISkin_ith.
+%
+%    Note: only the types, but not the values, are assigned when coder.nullcopy is used. Local
+%    function ROIDiagnosticInitialize is used to assign values (i.e., initialize the values) when
+%    the values are not assigned elsewhere in function SkinDetect.
 
 
 %Inline function
