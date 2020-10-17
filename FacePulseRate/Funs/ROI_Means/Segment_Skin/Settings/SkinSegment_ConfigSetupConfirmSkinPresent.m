@@ -11,8 +11,8 @@ function SkinSegmentConfig = SkinSegment_ConfigSetupConfirmSkinPresent(SkinSegme
 %    Function ConfirmSkinPresent determines whether there is a sufficient proportion of pixels 
 %    classified as skin within an ROI to consider the ROI valid. Function ConfirmSkinPresent makes
 %    a verification for any ROI returned by a detection algorithm (see functions 
-%    FaceDetect_ROIValidate and SkinDetect_SelectedRegionROI) and also verifies the final ROI 
-%    before means are taken for pulse rate operations (see function ROIMeans_TakeMeans).
+%    FaceDetect_ROIValidate and SkinDetect_ROIValidate) and also verifies the final ROI before  
+%    means are taken for pulse rate operations (see function ROIMeans_TakeMeans_ROIValidate).
 %      
 %    In the current function, the minimum proportion of pixels classified as skin within an ROI to 
 %    consider the ROI valid is set. If an ROI contains a proportion above this threshold, it will 
@@ -76,8 +76,8 @@ function SkinSegmentConfig = SkinSegment_ConfigSetupConfirmSkinPresent(SkinSegme
 %    SkinDetect_PartitionRegions. 
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  

@@ -607,8 +607,8 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                                                   SkinSegmentThresholdsGenericYCbCr = ...
 %                                                       [ 29,  ... Y minimum threshold 
 %                                                         78,  ... Cb minimum threshold         
-%                                                         132, ... Cb maximum threshold 
-%                                                         132, ... Cr minimum threshold       
+%                                                         130, ... Cb maximum threshold 
+%                                                         134, ... Cr minimum threshold       
 %                                                         172, ... Cr maximum threshold
 %                                                        .55,  ... Cb-to-Cr ratio minimum threshold 
 %                                                        .97]; %   Cb-to-Cr ratio maximum threshold 
@@ -733,7 +733,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %               PulseRateWindowDurationSec  = Duration, in seconds, of the each window from which
 %                                             pulse rate is calculated.
-%                                             Default = 90.
+%                                             Default = 60.
 %                                             Numeric scalar.
 %
 %               Pulse rate can be controlled for variations in luminance across the video. 
@@ -1311,7 +1311,7 @@ arguments
     NVArgs.DetectVerifyPercentilesS                 (1, 2) double  {mustBeNonempty, ...                
                                                                     mustBeNonnegative}                = [1, 99]     
     NVArgs.SkinSegmentThresholdsGenericYCbCr        (1, 7) single  {mustBeNonempty, ...
-                                                                    mustBePositive}                   = [29, 78, 132, 132, 172, .55, .97] %note: argument block also accepts column vector, which will be automatically converted to row vector
+                                                                    mustBePositive}                   = [29, 78, 130, 134, 172, .55, .97] %note: argument block also accepts column vector, which will be automatically converted to row vector
     NVArgs.SkinSegmentThresholdsGenericHSV          (1, 2) single  {mustBeNonempty, ...
                                                                     mustBePositive}                   = [.96, .09] %note: argument block also accepts column vector, which will be automatically converted to row vector    
     NVArgs.SkinSegmentSeverityFactor                (1, 1) double  {mustBeNonempty, ...

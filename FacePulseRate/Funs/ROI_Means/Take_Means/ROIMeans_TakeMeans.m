@@ -119,7 +119,9 @@ function [IsSkinMask, TrueCount_i, IsSkinMaskAnyTF, YROI_Single, ...
                  VideoReadConfig_VidObjHeight, FirstReadTF)                                 
 %CropAndSkinSegment.  Crop the frame to the ROI and return a skin-segmentation mask.  
 %
-%    Description:
+%
+%    Description
+%    -----------
 %
 %    The frame is cropped to the ROI and broken down into the R, G, and B color channels. These
 %    color channels are returned. 
@@ -177,10 +179,11 @@ assert(nRows_ROI < 5001);
 assert(nCols_ROI < 5001);
 
 %Crop frame to ROI and separate by color channel
-%Local function.
+%Note: ROIMeans_TakeMeans_CropSeparateChannels is a custom function located within folder
+%'FacePulseRate'.
 [RROI_Uint8, GROI_Uint8, BROI_Uint8] = ...
-    CropSeparateChannels(VidFrame, x_ROI_int16, y_ROI_int16, nRows_ROI, nCols_ROI, ...
-        VideoReadConfig_VidObjWidth, VideoReadConfig_VidObjHeight);
+    ROIMeans_TakeMeans_CropSeparateChannels(VidFrame, x_ROI_int16, y_ROI_int16, nRows_ROI, ...
+        nCols_ROI, VideoReadConfig_VidObjWidth, VideoReadConfig_VidObjHeight);
     
 
 %%%%%% Segment skin %%%%%%
@@ -262,168 +265,33 @@ if SkinSegmentConfig.SkinSegmentTF
         );
 
 
-    %%%%%% Adjust ROI if proportion of pixels classified as skin in ROI is below threshold %%%%%%
-
-    %The ROI is considered valid if the proportion of pixels classified as skin exceeds a specified
-    %threshold. The proportion is calculated by inspecting the skin-segmentation mask, which  
-    %corresponds to the location of the ROI. Specifically, from the skin-segmentation mask, the   
-    %number of elements classified as true is divided by the total number of elements. This 
-    %calculation is conducted by function ConfirmSkinPresent. This function returns a true / false
-    %determination on whether the proportion exceeded the specified threshold 
-    %(SkinSegmentConfig.ConfirmSkin).    
+    %%%%%% Validate ROI and adjust ROI if necessary %%%%%% 
     
     %If the ROI is considered invalid, it will be replaced with an ROI from a previous frame to 
-    %attempt to increase accuracy. The ROI will come from a few frames back because it has been 
-    %observed that the proportion threshold is typically activated several frames after the ROI 
-    %began to drift from the face. 
+    %attempt to increase accuracy. 
 
-    %Specify condition for skin-color proportion check
-    FaceAlgorithm = 'm'; %indication to use the threshold for use with taking means  
-
-    %Note: 'ConfirmSkinPresent' is a custom function located within folder 'FacePulseRate'.
-    SkinColorTF = ... true/false indication on whether the proportion is above the threshold
-        ConfirmSkinPresent( ...
-            SkinSegmentConfig, ... data and configurations
-            FaceAlgorithm, ... 
-            IsSkinMask, ...
-            single(TrueCount_i), ...
-            nRows_ROI, ...
-            nCols_ROI ...        
-        );
-
-    %If the proportion is considered valid
-    if SkinColorTF 
+    %Note: ROIMeans_TakeMeans_ROIValidate is a custom function located within folder 
+    %'FacePulseRate'.
+    [AdjustedBecauseLowSkinProportionTF_i, ROIAdjusted_i, ROIAdjustCellArray] = ...
+        ROIMeans_TakeMeans_ROIValidate(i, IsSkinMask, TrueCount_i, nRows_ROI, nCols_ROI, ...
+             VidFrame, ROI, FirstReadTF, ROIGeneralConfig_ROIMSIR_FirstFrameIdx, CountTrueTF, ...
+             SkinSegmentMask_LocalRange, ReturnYTF, ReturnCbCrTF, ReturnHSTF, ...
+             TailoredThresholdsTF, TailoredThresholdsSevereTF, MorphCloseSevereTF, ...
+             SkinSegmentConfig, VideoReadConfig_VidObjWidth, VideoReadConfig_VidObjHeight, ...
+             VideoReadConfig_FrameIdx);
+               
+    %If the ROI was replaced   
+    if AdjustedBecauseLowSkinProportionTF_i
         
-        %Flag that the ROI was not replaced
-        AdjustedBecauseLowSkinProportionTF_i = false; 
-
-        %Assign empty values
-        ROIAdjusted_i = zeros(0, 4, 'int16');
-
-    %If the proportion is considered invalid
-    else
-
-        %The number of frames back from which to retrieve a replacement ROI
-        FramesBack = int32(4);
-
-        %Conditions when a previous ROI is available for retrieval:
-
-        %During the first-read operations, a previous frame will not be available if the current 
-        %frame  is near the first frame where ROI operations began  
-        %(ROIGeneralConfig.ROIMSIR_FirstFrameIdx). During second-read operations, a previous frame 
-        %will not be available if the current frame is near the beginning of the video. Note that, 
-        %perhaps counterintuitively, the second-read operations begin at the beginning of the video 
-        %whereas the first-read operations begin farther into the video.
-
-        %Initialize flag that a previous ROI is available for retrieval
-        ReplaceROIOK = false;
-
-        %Current frame read during first-read operations        
-        if FirstReadTF
-
-            if i >= ROIGeneralConfig_ROIMSIR_FirstFrameIdx + FramesBack 
-
-                ReplaceROIOK = true;
-            end        
-
-        %Current frame read during second-read operations           
-        else
-             if i - FramesBack > 0
-
-                ReplaceROIOK = true;
-            end                
-        end   
-
-        %If a previous ROI can be retrieved, replace the current ROI with a previous ROI 
-        if ReplaceROIOK
-
-            %Indicate that ROI was adjusted for display on output video
-            %Note: annotation superimposed on output video by function 
-            %WriteFaceVideo_ROIAnnotation.
-            AdjustedBecauseLowSkinProportionTF_i = true;                                   
-
-            %Frame index of replacement ROI
-            FrameIdx_Replacement = i - FramesBack;
-
-            %Replace the ith ROI coordinates with the ROI of a previous frame
-            %1 x 4 row vector; type int16.                
-            ROIAdjusted_i = ROI(FrameIdx_Replacement, :);       
-
-            %Check if any value of the previous ROI is zero
-            %The operations of this function were intended to prevent values of zero, so such a   
-            %value is likely due to an implementation error in this function. 
-            if ROIAdjusted_i(1) == 0 || ...
-               ROIAdjusted_i(2) == 0 || ...
-               ROIAdjusted_i(3) == 0 || ...
-               ROIAdjusted_i(4) == 0
-
-                %Display error indicating frame index
-                error(...
-                    'Component:InternalError', ...
-                    ['Internal Error: An ROI adjustment operation assigned a value of zero', ...
-                     ' for an ROI. ROI accuracy may be affected. The frame index of the', ...
-                     ' corresponding frame is: ', ...
-                     sprintf( '%d', int32( VideoReadConfig_FrameIdx(FrameIdx_Replacement) ) ), ...
-                     '.'] ...
-                );              
-            end
-
-            %Determine the number of rows and columns of adjusted ROI
-            %Scalars; int32.
-            %Note: int32 is the specified input type for some mex functions.
-            nRows_ROI = int32( ROIAdjusted_i(4) );
-            nCols_ROI = int32( ROIAdjusted_i(3) );         
-
-            %Assert values to prevent dynamic memory allocation where the colon operator is used
-            assert(nRows_ROI < 5001);
-            assert(nCols_ROI < 5001);        
-
-            %Crop frame using new ROI and separate by color channel
-            %Local function.
-            [RROI_Uint8, GROI_Uint8, BROI_Uint8] = ...
-                CropSeparateChannels(VidFrame, ROIAdjusted_i(1), ROIAdjusted_i(2), nRows_ROI, ...
-                     nCols_ROI, VideoReadConfig_VidObjWidth, VideoReadConfig_VidObjHeight);   
-
-            %Segment skin within new ROI:
-
-            %Note: SkinSegmentMask is a custom function located within folder FacePulseRate.
-            [IsSkinMask, ... M x N matrix; type logical 
-             TrueCount_i,  ... Count of pixels classified as skin; scalar, type uint32   
-             YROI_Single] =  ... M x N matrix; type single
-                SkinSegmentMask( ...
-                    RROI_Uint8, ... 
-                    GROI_Uint8, ...
-                    BROI_Uint8, ... 
-                    single([]), ...                               
-                    single([]), ...
-                    single([]), ...
-                    single([]), ...                                
-                    single([]), ...
-                    SkinSegmentMask_LocalRange, ...  
-                    nRows_ROI, ...     
-                    nCols_ROI, ... 
-                    CountTrueTF, ...
-                    TailoredThresholdsTF, ...
-                    ReturnYTF, ... 
-                    ReturnCbCrTF, ...  
-                    ReturnHSTF, ... 
-                    TailoredThresholdsSevereTF, ...
-                    MorphCloseSevereTF, ... 
-                    int32(-1), ...
-                    int32(-1), ...             
-                    SkinSegmentConfig.Args, ...
-                    SkinSegmentConfig.UseCompiledFunctionsTF ... 
-                ); 
-
-        %If a previous ROI cannot be retrieved    
-        else
-
-            AdjustedBecauseLowSkinProportionTF_i = false;
-
-            %Assign empty values
-            ROIAdjusted_i = zeros(0, 4, 'int16');      
-        end
-    end %end skin-proportion check
+        nRows_ROI   = ROIAdjustCellArray{1};
+        nCols_ROI   = ROIAdjustCellArray{2};
+        RROI_Uint8  = ROIAdjustCellArray{3};
+        GROI_Uint8  = ROIAdjustCellArray{4};
+        BROI_Uint8  = ROIAdjustCellArray{5};
+        IsSkinMask  = ROIAdjustCellArray{6};
+        TrueCount_i = ROIAdjustCellArray{7};
+        YROI_Single = ROIAdjustCellArray{8};
+    end         
 end
 
 
@@ -465,9 +333,11 @@ function [SkinRGBMeans_i, Mean_Y_of_YCbCr_i, Mean_L_of_LAB_i] = ...
                  PulseRateConfigAndData_ControlLuminanceColorspace, LuminanceMatrix_Single)
 %TakeMeans.  Take the R, G, and B means of the RGB colorspace and the luminance mean.  
 %
-%    Description:
 %
-%    --- RGB Means ---
+%    Description
+%    -----------
+%
+%    -- RGB Means --
 %
 %    Take the R, G, and B means from the either the portion of the frame that corresponds to the 
 %    ROI or, if an ROI was not identified, the entire frame.
@@ -477,7 +347,7 @@ function [SkinRGBMeans_i, Mean_Y_of_YCbCr_i, Mean_L_of_LAB_i] = ...
 %    three-dimensional array AreaToTakeMean, where the R, G, and B channels are still in their 
 %    concatenated form.
 %
-%   --- Luminance Means ---
+%    -- Luminance Means --
 %
 %    Take the luminance mean from the either the portion of the frame that corresponds to the ROI
 %    or, if an ROI was not identified, the entire frame. The luminance mean is used to control the
@@ -493,7 +363,9 @@ function [SkinRGBMeans_i, Mean_Y_of_YCbCr_i, Mean_L_of_LAB_i] = ...
 %    LAB colorspace might be used for closer adherance to the colorspace used by Madan et al. 
 %    (2018).                   
 %
-%    References:
+%
+%    References
+%    ----------
 %
 %    Madan, C. R., Harrison, T., & Mathewson, K. E. (2018). Noncontact measurement of emotional and 
 %    physiological changes in heart rate from a webcam. Psychophysiology, 55(4), e13005.       
@@ -667,138 +539,6 @@ else
             Mean_L_of_LAB_i = sum(LROI_Double) / NElements;            
         end
     end
-end
-
-
-end %end local function
-
-
-%=============================================================================================
-function [RROI_Uint8, GROI_Uint8, BROI_Uint8] = ...
-             CropSeparateChannels(VidFrame, x_ROI_int16, y_ROI_int16, nRows_ROI, nCols_ROI, ...
-                 nCols_Full_int16, nRows_Full_int16)                
-%CropSeparateChannels  Crop the input frame and separate it into its colorspace channels.
-%
-%    Note: 
-%
-%    The parfor-loop is slower than a for-loop when run in Matlab code, so use the parfor-loop only  
-%    for code generation.
-
-
-%%%%%% Code-generation settings %%%%%%
-
-%Inline function
-coder.inline('always');
-
-
-%%%%%% Code generation running %%%%%%
-
-%If code generation running
-if ~ coder.target('MATLAB') 
-
-    %Cast to int32 to prevent overflow when converting to linear index
-    %Scalars; type int32.
-    nCols_Full = int32(nCols_Full_int16); 
-    nRows_Full = int32(nRows_Full_int16);
-    
-    %X and Y-coordinates to crop to
-    %Cast to int32 to prevent overflow when converting to linear index.
-    %Scalars; type int32.
-    x_crop = int32( x_ROI_int16 ); 
-    y_crop = int32( y_ROI_int16 ); 
-
-    %Preallocate channel matrices:
-    
-    %Red channel
-    %M x N matrix; type uint8.
-    RROI_Uint8 = coder.nullcopy( zeros(nRows_ROI, nCols_ROI, 'uint8') );
-    
-    %Green channel
-    %M x N matrix; type uint8.
-    GROI_Uint8 = coder.nullcopy( zeros(nRows_ROI, nCols_ROI, 'uint8') );
-    
-    %Blue channel
-    %M x N matrix; type uint8.
-    BROI_Uint8 = coder.nullcopy( zeros(nRows_ROI, nCols_ROI, 'uint8') );
-
-    %Crop offsets
-    %Scalars; type int32.
-    %Note: the step prevents repeated subtraction by one in the parfor loop.
-    ColOffset = x_crop - 1;
-    RowOffset = y_crop - 1;    
-    
-    %Number of elements in one color channel of the full frame
-    %Scalar; type int32.
-    NPageElements = nCols_Full * nRows_Full;
-    
-    %Number multiplied by 2
-    %Scalar; type int32.
-    NPageElementsBy2 = NPageElements * 2;
-    
-    %Crop to ROI and separate by color channel:
-    
-    %Loop across columns
-    parfor i = 1 : nCols_ROI 
-
-        %Adjust column index to align with coordinate plane of full frame
-        iFull = i + ColOffset;
-        
-        %Loop across rows
-        for j = 1 : nRows_ROI             
-            
-            %Adjust row index to align with coordinate plane of full frame
-            jFull = j + RowOffset;
-            
-            %Convert from subscript indices to a linear index for more efficient indexing
-            %Scalar; type int32.
-            %Note: In compiled C code, the faster indexing outweighs the cost of this conversion.
-            LinIdxFull = jFull + (iFull - 1) * nRows_Full;
-            
-            %Red channel element:
-            
-            %Extract value from full frame                      
-            jth = VidFrame(LinIdxFull); %#ok<PFBNS>
-
-            %Insert value into bounded frame
-            RROI_Uint8(j, i) = jth;
-
-            %Green channel element:
-            
-            %Extract value from full frame
-            jth = VidFrame(LinIdxFull + NPageElements); 
-
-            %Insert value into bounded frame
-            GROI_Uint8(j, i) = jth;
-
-            %Blue channel element:
-            
-            %Extract value from full frame
-            jth = VidFrame(LinIdxFull + NPageElementsBy2);
-
-            %Insert value into bounded frame
-            BROI_Uint8(j, i) = jth;
-        end       
-    end
-
-    
-%%%%%% Code generation not running %%%%%%   
-
-else 
-
-    %Crop ROI from frame
-    %M x N x 3 array; type uint8.
-    VidFrame = ...
-        VidFrame( ...
-            y_ROI_int16 : y_ROI_int16 + int16(nRows_ROI - 1), ... rows
-            x_ROI_int16 : x_ROI_int16 + int16(nCols_ROI - 1), ... columns
-            :                                                 ... pages
-        ); 
-    
-    %Separate by color channel
-    %M x N matrices; type uint8.
-    RROI_Uint8 = VidFrame(:, :, 1); %Red channel
-    GROI_Uint8 = VidFrame(:, :, 2); %Green channel
-    BROI_Uint8 = VidFrame(:, :, 3); %Blue channel
 end
 
 

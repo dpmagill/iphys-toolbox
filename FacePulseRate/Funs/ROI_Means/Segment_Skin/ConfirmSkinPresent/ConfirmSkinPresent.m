@@ -4,7 +4,7 @@ function varargout = ConfirmSkinPresent(SkinSegmentConfig, FaceAlgorithm, vararg
 %    
 %    Helper function to function FacePulseRate.
 %    Within function FacePulseRate, called by functions FaceDetect_ROIValidate,   
-%    SkinDetect_ROIValidate, and ROIMeans_TakeMeans.
+%    SkinDetect_ROIValidate, and ROIMeans_TakeMeans_ROIValidate.
 %
 %
 %    Code Generation
@@ -355,13 +355,13 @@ switch FaceAlgorithm
  
         thresholdContainsSkin = SkinSegmentConfig.ConfirmSkin.ProportionThresholdSecondary2;
     
-    %ROI returned by skin-detection algorithm setting (see function SkinDetect_SelectedRegionROI)    
+    %ROI returned by skin-detection algorithm setting (see function SkinDetect_ROIValidate)    
     case 's'   
     
         thresholdContainsSkin = SkinSegmentConfig.ConfirmSkin.ProportionThresholdSkin;            
 
     %ROI after all modifications when means are taken for pulse-rate purposes (see function 
-    %ROIMeans_TakeMeans)    
+    %ROIMeans_TakeMeans_ROIValidate)    
     case 'm' 
         
         thresholdContainsSkin = SkinSegmentConfig.ConfirmSkin.ProportionThresholdMeans;            
