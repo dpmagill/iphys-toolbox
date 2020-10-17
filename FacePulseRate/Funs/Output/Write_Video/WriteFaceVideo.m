@@ -14,7 +14,8 @@ function WriteFaceVideo(VideoReadConfig, ROI, HasROI_TF, ROIDiagnostic, SkinSegm
 %
 %   -- Differences Between Output Video Seek Time and Timestamp Annotations --
 %
-%
+%       On the output video, the timestamp annotations, but not necessarily the seek time, will
+%       correspond to the seek time of input video.
 %
 %   -- Annotations --
 %
@@ -366,8 +367,8 @@ function WriteFaceVideo(VideoReadConfig, ROI, HasROI_TF, ROIDiagnostic, SkinSegm
 %             available during the skin-detection algorithm.
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  

@@ -119,8 +119,8 @@ function SkinSegmentConfig = ...
 %             max(H), min(S), max(S)].                           
 %
 %
-%    Copyright
-%    ---------
+%    License
+%    -------
 %
 %    Copyright (c) 2020 Douglas Magill <dpmdpm@vt.edu>. Licensed under the GPL v.2 and RAIL 
 %    licenses with exceptions noted in file FacePulseRate/License.txt. For interest in commercial  

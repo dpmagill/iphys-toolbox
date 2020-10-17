@@ -6,10 +6,8 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %   Summary
 %   -------
 %
-%       Calculate frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face 
-%       present within an input video. This toolbox accepts pre-recorded video rather than video
-%       streams. The benefit of pre-recorded video is that some operations can be aware of the 
-%       future (they can look ahead in the video), which improves the accuracy of ROI placement.      
+%       Return frame-by-frame blood volume pulse (BVP) and windows of pulse rate from a face 
+%       present within an input video.       
 %
 %       FacePulseRate is designed to return output from the four (as of November, 2019) blood 
 %       volume pulse (BVP) algorithms provided by iPhys Toolbox (McDuff & Blackford, 2019). As in 
@@ -57,6 +55,10 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       For additional discussion and recommendations, see 
 %       Video_and_Recording_Environment_Recommendations.pdf.
+%
+%       This toolbox accepts pre-recorded video rather than video streams. The benefit of 
+%       pre-recorded video is that some operations can be aware of the future (they can look ahead 
+%       in the video), which improves the accuracy of ROI placement.
 %
 %       -- Output --
 %
@@ -607,8 +609,8 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %                                                   SkinSegmentThresholdsGenericYCbCr = ...
 %                                                       [ 29,  ... Y minimum threshold 
 %                                                         78,  ... Cb minimum threshold         
-%                                                         130, ... Cb maximum threshold 
-%                                                         134, ... Cr minimum threshold       
+%                                                         131, ... Cb maximum threshold 
+%                                                         133, ... Cr minimum threshold       
 %                                                         172, ... Cr maximum threshold
 %                                                        .55,  ... Cb-to-Cr ratio minimum threshold 
 %                                                        .97]; %   Cb-to-Cr ratio maximum threshold 
@@ -1311,7 +1313,7 @@ arguments
     NVArgs.DetectVerifyPercentilesS                 (1, 2) double  {mustBeNonempty, ...                
                                                                     mustBeNonnegative}                = [1, 99]     
     NVArgs.SkinSegmentThresholdsGenericYCbCr        (1, 7) single  {mustBeNonempty, ...
-                                                                    mustBePositive}                   = [29, 78, 130, 134, 172, .55, .97] %note: argument block also accepts column vector, which will be automatically converted to row vector
+                                                                    mustBePositive}                   = [29, 78, 131, 133, 172, .55, .97] %note: argument block also accepts column vector, which will be automatically converted to row vector
     NVArgs.SkinSegmentThresholdsGenericHSV          (1, 2) single  {mustBeNonempty, ...
                                                                     mustBePositive}                   = [.96, .09] %note: argument block also accepts column vector, which will be automatically converted to row vector    
     NVArgs.SkinSegmentSeverityFactor                (1, 1) double  {mustBeNonempty, ...
