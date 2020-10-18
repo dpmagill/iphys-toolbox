@@ -869,7 +869,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       -- Function Speed Influenced by Start Time -- 
 %
 %       Faster read performance will occur when argument StartTime is less than 10% the length of 
-%       the full video based on video-reading implementations.
+%       the full video as a result of video-reading implementations.
 %
 %       -- Time used in Output Video --
 %
@@ -935,9 +935,29 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %       generation. 
 %
 %       Mex files are named after the function that generated them and are appended with "_mex". 
-%       For example, the function file "Fun" will produce file "Fun_mex". The file extentsion  
-%       of a mex file indicates the computer architecture is it compatible with; for example,
-%       ".mexw64" indicates the file is compatible with 64-bit Windows.
+%       For example, the function file "Fun" will produce file "Fun_mex". The file extentsion of a  
+%       mex file indicates the computer architecture is it compatible with; for example, ".mexw64"
+%       indicates the file is compatible with 64-bit Windows.
+%
+%       Currently, mex files have only been produced for 64-bit Windows. 
+%
+%
+%   Adaptation To Video Streams
+%   ---------------------------
+%
+%       Currently, FacePulseRate is implemented for prerecorded video rather than real-time video 
+%       streams. The benefit of pre-recorded video is that ROI-adjustment operations can be aware  
+%       of the future (they can look ahead in the video), which improves the accuracy of ROI 
+%       placement (for details, see function ROIMeans_FirstRead_TakeMeans). An additional benefit
+%       is that operations can start over if it appears settings need to be changed (see function
+%       SkinSegment_OversegmentationCheck).       
+%
+%       To adapt to a video stream, ...
+%       (1) Modify the ROI-adjustment operations (function ROIMSIR) not to use data from frames
+%           after the current frame.
+%       (2) Modify the oversegmentation detection check (SkinSegment_OversegmentationCheck) not to
+%           start the video from the beginning (this is implemented in function 
+%           SkinSegment_OversegmentationCheck_Reduce).
 %
 %
 %   Execution Path
@@ -1038,7 +1058,7 @@ function [TableByFrame, TableByWindow] = FacePulseRate(Video_InputFile, NVArgs)
 %
 %       For commercial licensing, please contact the author.
 %
-%       Note: the author is not affilation with iPhys Toolbox, which is the property of its 
+%       Note: the author is not affilated with iPhys Toolbox, which is the property of its 
 %       respective owners.
 % 
 %       -- GNU General Public License, Version 2 --
@@ -1476,16 +1496,29 @@ end
 %     some input arguments to function FacePulseRate.
 %
 %
-%   Uses of Frame Cache
-%   -------------------
+%   Delayed Operations
+%   ------------------
+%
+%   Note: a copy of this section is also included in function ROIMean_FirstRead.
 %
 %   A number of operations depend on settings that are not assigned until data from a specified 
-%   number of frames have been collected (see function ROIGeneralConfig_Setup). These settings 
-%   apply to tailored skin segmentation, the skin-detection algorithm (function SkinDetect), the  
-%   ROI-adjustment operations (function ROIMSIR), and the taking of means (ROIMeans_TakeMeans). 
-%   Consequently, these operations will not begin until a sufficient number of frames has elapsed 
-%   to collect the data (the precise number of frames needed varies by video depending on the ease 
-%   of collecting some data; see ROIMeans_FirstRead_CollectSkinColorSamples). 
+%   number of frames have been collected. These settings apply to tailored skin segmentation 
+%   (function SkinSegmentMask), the skin-detection algorithm (function SkinDetect), the 
+%   ROI-adjustment operations (function ROIMSIR), and the taking of means (ROIMeans_TakeMeans). For
+%   the requirements for each of these operations, see the following: for tailored skin 
+%   segmentation, see function SkinSegment_ConfigSetupTailoredThresholds; for skin detection, see
+%   function SkinDetect_ConfigSetupColorThresholds; for ROI-adjustment operations and the taking of
+%   means, see functions ROIMeans_FirstRead_TakeMeans and ROIGeneralConfig_Setup. 
+%
+%   The number of frames required to have elapsed to collect the required data is not predictable.
+%   This is because the data used for tailored skin segmentation and the skin-detection algorithm
+%   must come from frames with a valid frontal-face detection (see function 
+%   ROIMeans_FirstRead_CollectSkinColorSamples), and many frames may not contain a valid  
+%   frontal-face detection. The ROI-adjustment operations, in turn, cannot begin until tailored 
+%   skin segmentation and the skin-detection algorithm are enabled. The ROI-means operations, in
+%   turn, cannot begin until the ROI-adjustment operations begin.
+%
+%   -- Use of Frame Cache --
 %
 %   To reduce the number of frames that need to be reread because settings were not assigned when 
 %   they were read by the video reader, read frames are temporarily assigned to a cache of a 
@@ -1498,13 +1531,13 @@ end
 %   being reread). Because some frames are processed the first time they are read and  others are
 %   processed the second time they are read, a distinction is made in FacePulseRate between frames
 %   read during "first-read operations" and "second-read operations". Frames processed by the
-%   current function are considered to be processed during first-read operations. 
+%   current function are considered to be processed during first-read operations.    
 %
-%   The presence of a frame cache, beside being used to increase efficiency, as previously 
-%   described, is also used to increase the accuracy of ROI-adjustment operations (function 
-%   ROIMSIR). Specifically, these operations index the frame in the middle of the frame cache,
-%   rather than the beginning, to be able to base smoothing and other adjustment operations on data
-%   for frames both before and after the frame.
+%   The presence of a frame cache, beside being used to reduce rereading, as previously described, 
+%   is also used to increase the accuracy of ROI-adjustment operations (function ROIMSIR). 
+%   Specifically, these operations use ROI data not only from frames before the current frame, but 
+%   from frames after the current frame. This increases the effectiveness of smoothing and other
+%   ROI-adjustment operations.
 
 
 %Conduct first-read operations:

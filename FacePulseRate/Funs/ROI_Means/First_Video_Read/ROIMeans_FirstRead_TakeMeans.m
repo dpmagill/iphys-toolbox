@@ -26,19 +26,45 @@ function [ii, ROIOut_FirstRead_ii, ROIMatchSizeData, ...
 %    the previous frame if it detects the proportion of pixels classified as skin is below the 
 %    specified threshold.
 %
-%    To conduct the ROI-modification operations, a certain number of frames must have elapsed to
-%    provide a sufficient number of ROIs on either side of the ROI to be processed. Further, before   
-%    the ROI-means operations can be activated, the skin-detection operations must have completed  
-%    scanning the frame for a detection, if needed, and the skin-detection operations require a 
-%    certain number of detections to have previously occurred from which to draw skin-color samples.
-%    Finally, both the ROI-means operations and the skin-detection operations rely upon tailored
-%    skin segmentation, which, like the skin-detection operations, require certain number of 
-%    detections to have previously occurred. Because of these needs for a sufficient number of 
-%    frames to have elapsed, the operations in this nested function cannot occur simultaneouly with
-%    frame reading. To improve efficiency by avoiding re-reading as few frames as possible, this
-%    function conducts its operations a lagged number of frames behind the frame reading, where it
-%    retrieves the frames stored in a cache. By retriving the frame from a cache, having been 
-%    deposited on an earlier iteration by the frame reading, re-reading is mostly avoided.
+%    -- Data Required Before Use --
+%
+%    Data from frames before the current frame: 
+%
+%    - ROI adjustments (function ROIMSIR): The ROI-adjustment operations (function ROIMSIR) use ROI 
+%      position and size data from ROIs that come before the current frame (index ii) to improve  
+%      smoothing and other operations that affect ROI accuracy. ROIMSIR has been implemented to
+%      require data from a specified number of frames before starting operations (see function
+%      ROIGeneralConfig_Setup).
+%      
+%    - ROI means (function ROIMeans_TakeMeans): The ROI-means operations are implemented not to 
+%      take place until the skin-detection algorithm and tailored skin segmentation have been 
+%      enabled. In order for these to be enabled, certain settings must first be assigned, and this 
+%      assignment requires data from a specified number of frames to have been collected (see  
+%      functions SkinDetect_ConfigSetupColorThresholds and  
+%      SkinSegment_ConfigSetupTailoredThresholds). The precise number of frames needed to assign  
+%      settings for skin-detection algorithm and tailored skin segmentation varies by video  
+%      depending on the ease of collecting skin-color samples (see 
+%      ROIMeans_FirstRead_CollectSkinColorSamples). Additionally, ROI means will not be taken until
+%      ROI-operations have begun (see above).
+%
+%    Data from frames after the current frame:
+%
+%    - ROI adjustment (function ROIMSIR): In addition to using data from frames that come before
+%      the current frame (index ii) (see note above), ROI-adjustment operations also used use ROI 
+%      position and size data from ROIs that come after the current frame to improve smoothing and 
+%      other operations that affect ROI accuracy. 
+%
+%    Use of frame cache:
+%
+%    - Using a frame cache reduces the number of frames that need to be reread (by the video 
+%      reader) because data from the required number of frames has not yet been collected (see note 
+%      above on "Data from frames before the current frame"). The frame cache can only store a  
+%      limited number of frames, so some frames will need to be reread (in second-read operations; 
+%      see function ROIMeans_SecondRead).
+%
+%    - Using a frame cache also allows the ROI-means operations (function ROIMeans_TakeMeans) to   
+%      use ROIs that were adjusted by frames that come after the current frame (index ii) (see note 
+%      above on "Data from frames after the current frame").
 %
 %
 %    License
